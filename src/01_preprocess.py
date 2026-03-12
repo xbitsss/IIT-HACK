@@ -38,36 +38,61 @@ from tqdm import tqdm
 # Allow running from project root
 sys.path.insert(0, str(Path(__file__).parent))
 from config import (
-    DATA_RAW_DIR, DATA_PROCESSED_DIR, CLASSES,
+    DATA_RAW_DIR, DATA_PROCESSED_DIR, CLASSES, SHAPEFILE_CLASS_MAP, CLASS_PRIORITY,
     TILE_SIZE, TILE_OVERLAP, BAND_INDICES, MIN_VALID_RATIO, RANDOM_SEED
 )
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
-def find_shapefiles(raw_dir: Path) -> dict[str, Path]:
-    """Find shapefiles matching class names (case-insensitive)."""
-    shp_map = {}
+def find_shapefiles(raw_dir: Path) -> dict[str, list[Path]]:
+    """
+    Find shapefiles and map them to class IDs using SHAPEFILE_CLASS_MAP.
+    A single class (e.g. 'water_body') can have MULTIPLE shapefiles
+    (e.g. Water_Body polygon + Water_Body_Line + Waterbody_Point).
+    Returns: { class_name: [shp_path1, shp_path2, ...] }
+    """
+    all_shps = list(raw_dir.glob("**/*.shp"))
+    shp_map  = {}   # class_name → list of matching shp paths
+
+    print(f"  Found {len(all_shps)} shapefile(s) in {raw_dir}")
+
+    for shp_path in all_shps:
+        stem_lower = shp_path.stem.lower().replace("-", "_").replace(" ", "_")
+        matched = False
+        # Check against every keyword in SHAPEFILE_CLASS_MAP
+        # Use longest-match to avoid 'road' matching 'road_centre_line' wrong
+        best_key, best_class = None, None
+        for keyword, class_name in SHAPEFILE_CLASS_MAP.items():
+            if keyword.lower() in stem_lower:
+                if best_key is None or len(keyword) > len(best_key):
+                    best_key   = keyword
+                    best_class = class_name
+                matched = True
+
+        if best_class:
+            shp_map.setdefault(best_class, []).append(shp_path)
+            print(f"    {shp_path.name:40s} → class '{best_class}'")
+        else:
+            print(f"    {shp_path.name:40s} → [UNMATCHED — add to SHAPEFILE_CLASS_MAP in config.py]")
+
+    # Report which classes have no shapefiles
     for class_name in CLASSES:
         if class_name == "background":
-            continue  # background is the default; no shapefile needed
-        matches = list(raw_dir.glob(f"**/*{class_name}*.shp"))
-        if not matches:
-            print(f"  [WARN] No shapefile found for class '{class_name}' — pixels not covered will be background")
-        else:
-            shp_map[class_name] = matches[0]
-            if len(matches) > 1:
-                print(f"  [WARN] Multiple matches for '{class_name}', using {matches[0]}")
+            continue
+        if class_name not in shp_map:
+            print(f"  [WARN] No shapefile matched class '{class_name}' — will default to background")
+
     return shp_map
 
 
 def rasterize_shapefile(shp_path: Path, ref_tif: rasterio.DatasetReader) -> np.ndarray:
     """
-    Burns shapefile polygons into a binary mask aligned to ref_tif's grid.
-    Returns uint8 array of shape (H, W): 1 inside polygons, 0 outside.
+    Burns shapefile polygons/lines/points into a binary mask aligned to ref_tif.
+    Returns uint8 array (H, W): 1 inside features, 0 outside.
+    Handles all geometry types: Polygon, LineString, Point.
     """
     gdf = gpd.read_file(shp_path)
 
-    # Reproject to match the TIFF's CRS if needed
     if gdf.crs is None:
         print(f"    [WARN] {shp_path.name} has no CRS — assuming it matches the TIFF")
     elif gdf.crs != ref_tif.crs:
@@ -75,6 +100,18 @@ def rasterize_shapefile(shp_path: Path, ref_tif: rasterio.DatasetReader) -> np.n
 
     if gdf.empty:
         return np.zeros((ref_tif.height, ref_tif.width), dtype=np.uint8)
+
+    # Buffer lines and points to give them pixel width
+    geom_type = gdf.geometry.geom_type.iloc[0] if len(gdf) > 0 else "Unknown"
+    if "Line" in geom_type:
+        # Buffer road/railway lines by ~1 pixel width in CRS units
+        pixel_size = abs(ref_tif.res[0])
+        gdf = gdf.copy()
+        gdf["geometry"] = gdf.geometry.buffer(pixel_size * 1.5)
+    elif "Point" in geom_type:
+        pixel_size = abs(ref_tif.res[0])
+        gdf = gdf.copy()
+        gdf["geometry"] = gdf.geometry.buffer(pixel_size * 3)
 
     shapes = [(geom.__geo_interface__, 1) for geom in gdf.geometry if geom is not None]
     if not shapes:
@@ -86,7 +123,7 @@ def rasterize_shapefile(shp_path: Path, ref_tif: rasterio.DatasetReader) -> np.n
         transform=ref_tif.transform,
         fill=0,
         dtype=np.uint8,
-        all_touched=True,   # important for thin roads — catches edge pixels
+        all_touched=True,
     )
     return mask
 
@@ -94,19 +131,27 @@ def rasterize_shapefile(shp_path: Path, ref_tif: rasterio.DatasetReader) -> np.n
 def build_label_mask(shp_map: dict, tif: rasterio.DatasetReader) -> np.ndarray:
     """
     Builds a single H×W label mask where each pixel = class ID.
-    Later classes overwrite earlier ones if they overlap (road > builtup > background).
+    Renders classes in priority order so higher-priority classes overwrite lower.
+    shp_map: { class_name: [shp_path1, shp_path2, ...] }
     """
-    H, W = tif.height, tif.width
+    H, W  = tif.height, tif.width
     label = np.zeros((H, W), dtype=np.uint8)   # 0 = background
 
-    # Paint in priority order: builtup first, road last (roads should win)
-    priority_order = ["builtup", "waterbody", "road"]
-    for class_name in priority_order:
-        if class_name not in shp_map:
-            continue
-        class_id = CLASSES[class_name]
-        binary = rasterize_shapefile(shp_map[class_name], tif)
-        label[binary == 1] = class_id
+    # Sort classes by render priority (low → high), so high priority paints last
+    sorted_classes = sorted(
+        [c for c in shp_map if c in CLASS_PRIORITY],
+        key=lambda c: CLASS_PRIORITY.get(c, 0)
+    )
+
+    for class_name in sorted_classes:
+        class_id  = CLASSES[class_name]
+        shp_paths = shp_map[class_name]
+        # Merge all shapefiles for this class into one mask
+        combined = np.zeros((H, W), dtype=np.uint8)
+        for shp_path in shp_paths:
+            binary   = rasterize_shapefile(shp_path, tif)
+            combined = np.maximum(combined, binary)
+        label[combined == 1] = class_id
 
     return label
 
