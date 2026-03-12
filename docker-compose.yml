@@ -1,0 +1,59 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Usage:
+#   docker compose run inspect
+#   docker compose run preprocess
+#   docker compose run train
+#   docker compose run infer --input data/raw/test.tif --output outputs/mask.tif --visualize
+#
+# All containers share the same mounted volumes so data flows between stages.
+# ─────────────────────────────────────────────────────────────────────────────
+
+x-base: &base
+  build: .
+  volumes:
+    - ./data:/app/data           # raw TIFFs + shapefiles go here
+    - ./outputs:/app/outputs     # predicted masks written here
+    - ./checkpoints:/app/checkpoints  # model checkpoints
+  environment:
+    - PYTHONUNBUFFERED=1
+  # Remove 'deploy' block if you don't have a GPU
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: 1
+            capabilities: [gpu]
+
+services:
+  # ── Step 0: Inspect data ──────────────────────────────────────────────────
+  inspect:
+    <<: *base
+    entrypoint: ["python", "src/00_inspect.py"]
+
+  # ── Step 1: Preprocess TIFFs + shapefiles into tiles ─────────────────────
+  preprocess:
+    <<: *base
+    entrypoint: ["python", "src/01_preprocess.py"]
+
+  # ── Step 2: Train ─────────────────────────────────────────────────────────
+  train:
+    <<: *base
+    entrypoint: ["python", "src/03_train.py"]
+    # Increase shared memory for DataLoader workers
+    shm_size: "4gb"
+
+  # ── Step 3: Inference (default — accepts CLI args) ────────────────────────
+  infer:
+    <<: *base
+    entrypoint: ["python", "src/04_inference.py"]
+    # Example: docker compose run infer --input data/raw/test.tif --output outputs/mask.tif --visualize
+
+  # ── Interactive shell (debug / explore) ───────────────────────────────────
+  shell:
+    <<: *base
+    entrypoint: ["/bin/bash"]
+    stdin_open: true
+    tty: true
