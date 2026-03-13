@@ -31,3 +31,14 @@ Thumbs.db
 
 # Logs
 *.log
+
+
+data/
+outputs/
+checkpoints/
+__pycache__/
+*.pyc
+*.pth
+*.pt
+.git/
+*.md
