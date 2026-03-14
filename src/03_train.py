@@ -35,7 +35,9 @@ from config import (
     NUM_EPOCHS, LR, WEIGHT_DECAY, PATIENCE,
     CHECKPOINT_DIR, DATA_PROCESSED_DIR, RANDOM_SEED
 )
-from dataset import build_dataloaders
+import importlib
+dataset = importlib.import_module("02_dataset")
+build_dataloaders = dataset.build_dataloaders
 
 # ── Reproducibility ──────────────────────────────────────────────────────────
 torch.manual_seed(RANDOM_SEED)

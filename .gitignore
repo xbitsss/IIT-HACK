@@ -1,0 +1,12 @@
+data/raw/
+data/processed/
+outputs/
+checkpoints/
+*.tif
+*.tiff
+*.shp
+*.dbf
+*.prj
+*.shx
+*.npy
+*.pt
