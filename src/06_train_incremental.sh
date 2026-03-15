@@ -1,12 +1,4 @@
 #!/bin/bash
-# 06_train_incremental.sh
-# Trains the model folder by folder, resuming from the previous checkpoint.
-# Each folder: preprocess → train (resume) → clear tiles → next folder
-#
-# Usage:
-#   bash src/06_train_incremental.sh
-#
-# Set these to your actual folder paths:
 FOLDERS=(
     "/raw_data/CG_1"
     "/raw_data/CG_2"
@@ -14,10 +6,11 @@ FOLDERS=(
     "/raw_data/CG_4"
 )
 SHP_DIR="/raw_data/CG_SHP"
+TOTAL=${#FOLDERS[@]}
 
 echo "========================================"
 echo " Incremental Training Pipeline"
-echo " Folders: ${#FOLDERS[@]}"
+echo " Folders: $TOTAL"
 echo " Shapefiles: $SHP_DIR"
 echo "========================================"
 
@@ -25,7 +18,6 @@ for i in "${!FOLDERS[@]}"; do
     FOLDER="${FOLDERS[$i]}"
     FOLDER_NAME=$(basename "$FOLDER")
     STEP=$((i + 1))
-    TOTAL=${#FOLDERS[@]}
 
     echo ""
     echo "========================================"
@@ -36,31 +28,52 @@ for i in "${!FOLDERS[@]}"; do
     echo "[$(date +%H:%M:%S)] Preprocessing $FOLDER_NAME..."
     RAW_DATA_DIR="$FOLDER" SHP_DIR="$SHP_DIR" python src/01_preprocess.py
     if [ $? -ne 0 ]; then
-        echo "[ERROR] Preprocessing failed for $FOLDER_NAME — skipping"
+        echo "[ERROR] Preprocessing failed for $FOLDER_NAME"
+        python src/07_notify.py --error \
+            --folder "$FOLDER_NAME" --step $STEP --total $TOTAL \
+            --error-msg "Preprocessing failed for $FOLDER_NAME"
         continue
     fi
 
     # ── Train ──
+    echo "[$(date +%H:%M:%S)] Training on $FOLDER_NAME..."
     if [ $STEP -eq 1 ]; then
-        echo "[$(date +%H:%M:%S)] Training from scratch on $FOLDER_NAME..."
-        python src/03_train.py
+        python src/03_train.py 2>&1 | tee /tmp/train_log.txt
     else
-        echo "[$(date +%H:%M:%S)] Resuming training on $FOLDER_NAME..."
-        python src/03_train.py --resume
+        python src/03_train.py --resume 2>&1 | tee /tmp/train_log.txt
     fi
+    TRAIN_EXIT=$?
 
-    if [ $? -ne 0 ]; then
+    if [ $TRAIN_EXIT -ne 0 ]; then
         echo "[ERROR] Training failed for $FOLDER_NAME"
-        echo "Checkpoint preserved. Fix the issue and re-run with --resume."
+        python src/07_notify.py --error \
+            --folder "$FOLDER_NAME" --step $STEP --total $TOTAL \
+            --error-msg "$(tail -20 /tmp/train_log.txt)"
         exit 1
     fi
 
-    echo "[$(date +%H:%M:%S)] ✓ Finished $FOLDER_NAME"
+    # ── Parse stats from log ──
+    TRAIN_LOSS=$(grep "train_loss=" /tmp/train_log.txt | tail -1 | grep -oP "train_loss=\K[0-9.]+")
+    VAL_LOSS=$(grep "val_loss=" /tmp/train_log.txt | tail -1 | grep -oP "val_loss=\K[0-9.]+")
+    TRAIN_MIOU=$(grep "train_mIoU=" /tmp/train_log.txt | tail -1 | grep -oP "train_mIoU=\K[0-9.]+")
+    VAL_MIOU=$(grep "val_mIoU=" /tmp/train_log.txt | tail -1 | grep -oP "val_mIoU=\K[0-9.]+")
+    EPOCHS=$(grep -c "Epoch " /tmp/train_log.txt || echo "0")
 
-    # ── Clear processed tiles to free space ──
+    # ── Notify ──
+    python src/07_notify.py \
+        --folder "$FOLDER_NAME" \
+        --step $STEP --total $TOTAL \
+        --train-loss "${TRAIN_LOSS:-0}" \
+        --val-loss "${VAL_LOSS:-0}" \
+        --train-miou "${TRAIN_MIOU:-0}" \
+        --val-miou "${VAL_MIOU:-0}" \
+        --epochs "${EPOCHS:-0}" \
+        --checkpoint "checkpoints/best_model.pt"
+
+    # ── Clear tiles ──
     echo "[$(date +%H:%M:%S)] Clearing processed tiles..."
     rm -rf data/processed/images data/processed/masks data/processed/tiles_meta.json
-    echo "  ✓ Tiles cleared"
+    echo "  Tiles cleared"
 done
 
 echo ""

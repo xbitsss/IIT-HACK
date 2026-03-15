@@ -80,3 +80,7 @@ services:
     entrypoint: ["/bin/bash"]
     stdin_open: true
     tty: true
+
+  notify-test:
+    <<: *base
+    entrypoint: ["python", "src/07_notify.py", "--test"]
