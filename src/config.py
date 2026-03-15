@@ -10,6 +10,10 @@ DATA_PROCESSED_DIR = os.environ.get("PROCESSED_DIR", "data/processed")
 CHECKPOINT_DIR     = os.environ.get("CHECKPOINT_DIR", "checkpoints")
 OUTPUT_DIR         = os.environ.get("OUTPUT_DIR", "outputs")
 
+# ─── Shapefile directory ──────────────────────────────────────────────────────
+# Shapefiles are shared across all TIFF folders
+SHP_DIR = os.environ.get("SHP_DIR", "data/raw/CG_SHP")
+
 # ─── Exact shapefile filenames → class name ───────────────────────────────────
 SHAPEFILE_MAP = {
     "builtup":   "Built_Up_Area_type.shp",
@@ -35,7 +39,6 @@ CLASS_COLORS = {
     3: (80,  160, 230),
 }
 
-# Render priority — higher = painted last = wins overlaps
 CLASS_PRIORITY = {
     "builtup":   1,
     "waterbody": 2,

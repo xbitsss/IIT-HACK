@@ -1,6 +1,7 @@
 """
-01_preprocess.py — Single-core windowed preprocessing, chunk-by-chunk.
-Processes and saves each chunk immediately — no memory accumulation.
+01_preprocess.py — Windowed preprocessing for large GeoTIFFs.
+Shapefiles are loaded from SHP_DIR (separate from TIFF folders).
+TIFFs are loaded from DATA_RAW_DIR (set per-folder via env var).
 """
 
 import os
@@ -19,22 +20,22 @@ from tqdm import tqdm
 
 sys.path.insert(0, os.path.dirname(__file__))
 from config import (
-    DATA_RAW_DIR, DATA_PROCESSED_DIR, CLASSES, SHAPEFILE_MAP, CLASS_PRIORITY,
-    TILE_SIZE, TILE_OVERLAP, BAND_INDICES, MIN_VALID_RATIO
+    DATA_RAW_DIR, DATA_PROCESSED_DIR, SHP_DIR, CLASSES, SHAPEFILE_MAP,
+    CLASS_PRIORITY, TILE_SIZE, TILE_OVERLAP, BAND_INDICES, MIN_VALID_RATIO
 )
 
 CHUNK_SIZE = 8192
 
 
-def find_shapefiles(raw_dir):
+def find_shapefiles(shp_dir):
     shp_map = {}
     for class_name, filename in SHAPEFILE_MAP.items():
-        shp_path = raw_dir / filename
+        shp_path = shp_dir / filename
         if shp_path.exists():
             shp_map[class_name] = shp_path
-            print(f"  ✓ {class_name} → {filename}", flush=True)
+            print(f"  ✓ {class_name} → {shp_path}", flush=True)
         else:
-            print(f"  ✗ Not found: {filename}", flush=True)
+            print(f"  ✗ Not found: {shp_path}", flush=True)
     return shp_map
 
 
@@ -113,7 +114,6 @@ def process_tif(tif_path, shp_map, proc_dir):
                     label = rasterize_chunk(gdfs, win_transform, chunk_h, chunk_w)
                     bands = normalize(bands)
 
-                    # Save tiles immediately
                     chunk_tiles = 0
                     for r in range(0, chunk_h - TILE_SIZE + 1, stride):
                         for c in range(0, chunk_w - TILE_SIZE + 1, stride):
@@ -143,6 +143,7 @@ def process_tif(tif_path, shp_map, proc_dir):
 
 def preprocess():
     raw_dir  = Path(DATA_RAW_DIR)
+    shp_dir  = Path(SHP_DIR)
     proc_dir = Path(DATA_PROCESSED_DIR)
 
     # Clear previous processed data
@@ -162,9 +163,9 @@ def preprocess():
         print(f"[ERROR] No .tif files in {raw_dir}")
         sys.exit(1)
 
-    print(f"Found {len(tif_files)} TIFF(s)", flush=True)
-    print("Locating shapefiles...", flush=True)
-    shp_map = find_shapefiles(raw_dir)
+    print(f"Found {len(tif_files)} TIFF(s) in {raw_dir}", flush=True)
+    print(f"Shapefiles from: {shp_dir}", flush=True)
+    shp_map = find_shapefiles(shp_dir)
     print(f"  Using: {list(shp_map.keys())}\n", flush=True)
 
     total_tiles = 0

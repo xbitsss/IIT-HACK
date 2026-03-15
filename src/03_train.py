@@ -1,21 +1,13 @@
 """
-03_train.py
-───────────
-Fine-tunes SegFormer on your geospatial tiles.
-
-Key design choices:
-- SegFormer-B2 backbone (good accuracy/speed tradeoff)
-- Combined Dice + CrossEntropy loss (handles class imbalance)
-- AdamW + cosine LR schedule
-- Early stopping on val mIoU
-- Saves best checkpoint + training curves
-- Handles arbitrary number of input bands by patching the patch embedding
+03_train.py — Fine-tunes SegFormer on geospatial tiles.
+Supports incremental training: pass --resume to continue from last checkpoint.
+When resuming, loads weights from best_model.pt and trains with lower LR.
 """
 
 import sys
 import json
-import math
 import time
+import argparse
 import numpy as np
 import torch
 import torch.nn as nn
@@ -39,230 +31,195 @@ import importlib
 dataset = importlib.import_module("02_dataset")
 build_dataloaders = dataset.build_dataloaders
 
-# ── Reproducibility ──────────────────────────────────────────────────────────
 torch.manual_seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Device: {DEVICE}")
+print(f"Device: {DEVICE}", flush=True)
 
 
-# ── Model Builder ────────────────────────────────────────────────────────────
+# ── Model ─────────────────────────────────────────────────────────────────────
 
-def build_model(num_input_bands: int) -> nn.Module:
-    """
-    Loads SegFormer and patches its patch embedding layer to accept
-    `num_input_bands` channels instead of the default 3.
-    """
-    print(f"Loading {MODEL_NAME} with {num_input_bands} input band(s)...")
+def build_model(num_input_bands, checkpoint_path=None):
+    print(f"Loading {MODEL_NAME} with {num_input_bands} band(s)...", flush=True)
 
-    # Load config and modify for our task
     cfg = SegformerConfig.from_pretrained(MODEL_NAME)
-    cfg.num_labels    = NUM_CLASSES
-    cfg.id2label      = {i: l for i, l in enumerate(CLASS_LABELS)}
-    cfg.label2id      = {l: i for i, l in enumerate(CLASS_LABELS)}
-    cfg.num_channels  = num_input_bands   # <-- key: tells SegFormer our band count
+    cfg.num_labels   = NUM_CLASSES
+    cfg.id2label     = {i: l for i, l in enumerate(CLASS_LABELS)}
+    cfg.label2id     = {l: i for i, l in enumerate(CLASS_LABELS)}
+    cfg.num_channels = num_input_bands
 
-    model = SegformerForSemanticSegmentation.from_pretrained(
-        MODEL_NAME,
-        config=cfg,
-        ignore_mismatched_sizes=True,   # allows head replacement
-    )
-
-    # If num_input_bands != 3, the pretrained patch embedding won't match.
-    # We re-initialize it but copy weights for the RGB channels if possible.
-    if num_input_bands != 3:
-        old_embed = model.segformer.encoder.patch_embeddings[0].proj
-        new_embed = nn.Conv2d(
-            num_input_bands,
-            old_embed.out_channels,
-            kernel_size=old_embed.kernel_size,
-            stride=old_embed.stride,
-            padding=old_embed.padding,
-            bias=old_embed.bias is not None,
+    if checkpoint_path and checkpoint_path.exists():
+        # Incremental training — load our saved weights, skip HuggingFace download
+        print(f"  Resuming from checkpoint: {checkpoint_path}", flush=True)
+        model = SegformerForSemanticSegmentation(cfg)
+        if num_input_bands != 3:
+            _patch_embedding(model, num_input_bands)
+        ckpt = torch.load(checkpoint_path, map_location=DEVICE, weights_only=True)
+        model.load_state_dict(ckpt["model_state"])
+        print(f"  Loaded checkpoint (epoch={ckpt['epoch']}, val_mIoU={ckpt['val_miou']:.4f})", flush=True)
+    else:
+        # Fresh training — download pretrained weights
+        model = SegformerForSemanticSegmentation.from_pretrained(
+            MODEL_NAME, config=cfg, ignore_mismatched_sizes=True
         )
-        # Initialize new embedding
-        nn.init.kaiming_normal_(new_embed.weight)
-        # Copy RGB weights for first 3 channels if available
-        with torch.no_grad():
-            channels_to_copy = min(3, num_input_bands)
-            new_embed.weight[:, :channels_to_copy] = old_embed.weight[:, :channels_to_copy]
-        model.segformer.encoder.patch_embeddings[0].proj = new_embed
-        print(f"  Patched input embedding: 3 → {num_input_bands} channels (RGB weights preserved)")
+        if num_input_bands != 3:
+            _patch_embedding(model, num_input_bands)
 
     return model.to(DEVICE)
 
 
-# ── Loss ─────────────────────────────────────────────────────────────────────
+def _patch_embedding(model, num_input_bands):
+    old = model.segformer.encoder.patch_embeddings[0].proj
+    new = nn.Conv2d(num_input_bands, old.out_channels,
+                    kernel_size=old.kernel_size, stride=old.stride,
+                    padding=old.padding, bias=old.bias is not None)
+    nn.init.kaiming_normal_(new.weight)
+    with torch.no_grad():
+        n = min(3, num_input_bands)
+        new.weight[:, :n] = old.weight[:, :n]
+    model.segformer.encoder.patch_embeddings[0].proj = new
+    print(f"  Patched input embedding → {num_input_bands} channels", flush=True)
+
+
+# ── Loss ──────────────────────────────────────────────────────────────────────
 
 class DiceCELoss(nn.Module):
-    """Combined Dice + CrossEntropy loss with class weights."""
-
     def __init__(self, class_weights=None, dice_weight=0.5):
         super().__init__()
         self.dice_weight = dice_weight
-        weights = torch.tensor(class_weights, dtype=torch.float32).to(DEVICE) if class_weights else None
-        self.ce = nn.CrossEntropyLoss(weight=weights, ignore_index=255)
+        w = torch.tensor(class_weights, dtype=torch.float32).to(DEVICE) if class_weights else None
+        self.ce = nn.CrossEntropyLoss(weight=w, ignore_index=255)
 
-    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        # logits: (B, C, H, W)  targets: (B, H, W)
+    def forward(self, logits, targets):
         ce_loss = self.ce(logits, targets)
-
-        # Dice loss
         probs   = F.softmax(logits, dim=1)
-        targets_onehot = F.one_hot(targets.clamp(0, NUM_CLASSES-1), NUM_CLASSES).permute(0,3,1,2).float()
-        intersection = (probs * targets_onehot).sum(dim=(2, 3))
-        union        = probs.sum(dim=(2, 3)) + targets_onehot.sum(dim=(2, 3))
-        dice         = 1 - (2 * intersection + 1e-6) / (union + 1e-6)
-        dice_loss    = dice.mean()
-
-        return (1 - self.dice_weight) * ce_loss + self.dice_weight * dice_loss
+        oh      = F.one_hot(targets.clamp(0, NUM_CLASSES-1), NUM_CLASSES).permute(0,3,1,2).float()
+        inter   = (probs * oh).sum(dim=(2,3))
+        union   = probs.sum(dim=(2,3)) + oh.sum(dim=(2,3))
+        dice    = (1 - (2*inter+1e-6)/(union+1e-6)).mean()
+        return (1-self.dice_weight)*ce_loss + self.dice_weight*dice
 
 
-# ── Metrics ──────────────────────────────────────────────────────────────────
+# ── Metrics ───────────────────────────────────────────────────────────────────
 
-def compute_miou(preds: torch.Tensor, targets: torch.Tensor, num_classes: int) -> float:
-    """Mean Intersection over Union across all classes."""
+def compute_miou(preds, targets, num_classes):
     ious = []
-    preds   = preds.view(-1)
-    targets = targets.view(-1)
+    p, t = preds.view(-1), targets.view(-1)
     for cls in range(num_classes):
-        pred_c   = preds   == cls
-        target_c = targets == cls
-        intersection = (pred_c & target_c).sum().float()
-        union        = (pred_c | target_c).sum().float()
-        if union == 0:
-            continue   # class not present — skip
-        ious.append((intersection / union).item())
+        inter = ((p==cls) & (t==cls)).sum().float()
+        union = ((p==cls) | (t==cls)).sum().float()
+        if union > 0:
+            ious.append((inter/union).item())
     return np.mean(ious) if ious else 0.0
 
 
-# ── Train / Val Loop ─────────────────────────────────────────────────────────
+# ── Epoch ─────────────────────────────────────────────────────────────────────
 
 def run_epoch(model, loader, criterion, optimizer=None, phase="train"):
     is_train = phase == "train"
     model.train() if is_train else model.eval()
-
-    total_loss, total_miou, n_batches = 0.0, 0.0, 0
+    total_loss = total_miou = n = 0
 
     with torch.set_grad_enabled(is_train):
         for images, masks in tqdm(loader, desc=f"  {phase}", leave=False):
-            images = images.to(DEVICE)
-            masks  = masks.to(DEVICE)
-
-            outputs = model(pixel_values=images)
-            logits  = outputs.logits   # (B, C, H/4, W/4) — SegFormer outputs at 1/4 scale
-
-            # Upsample logits to full mask size
-            logits_up = F.interpolate(logits, size=masks.shape[-2:], mode="bilinear", align_corners=False)
-
+            images, masks = images.to(DEVICE), masks.to(DEVICE)
+            logits_up = F.interpolate(
+                model(pixel_values=images).logits,
+                size=masks.shape[-2:], mode="bilinear", align_corners=False
+            )
             loss = criterion(logits_up, masks)
-
             if is_train:
                 optimizer.zero_grad()
                 loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                 optimizer.step()
-
-            preds = logits_up.argmax(dim=1)
-            miou  = compute_miou(preds.cpu(), masks.cpu(), NUM_CLASSES)
-
             total_loss += loss.item()
-            total_miou += miou
-            n_batches  += 1
+            total_miou += compute_miou(logits_up.argmax(1).cpu(), masks.cpu(), NUM_CLASSES)
+            n += 1
 
-    return total_loss / n_batches, total_miou / n_batches
+    return total_loss/n, total_miou/n
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
+# ── Train ─────────────────────────────────────────────────────────────────────
 
-def train():
-    ckpt_dir = Path(CHECKPOINT_DIR)
+def train(resume=False):
+    ckpt_dir  = Path(CHECKPOINT_DIR)
     ckpt_dir.mkdir(parents=True, exist_ok=True)
+    ckpt_path = ckpt_dir / "best_model.pt"
 
-    # Data
     train_loader, val_loader, num_bands = build_dataloaders()
 
-    # Model
-    model     = build_model(num_bands)
+    # Use lower LR when resuming (fine-tuning on new data)
+    lr = LR * 0.3 if resume and ckpt_path.exists() else LR
+
+    model     = build_model(num_bands, ckpt_path if resume else None)
     criterion = DiceCELoss(class_weights=CLASS_WEIGHTS)
-    optimizer = AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
+    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
     scheduler = CosineAnnealingLR(optimizer, T_max=NUM_EPOCHS, eta_min=1e-6)
 
-    # Training state
-    best_miou     = 0.0
-    patience_cnt  = 0
-    history       = {"train_loss": [], "val_loss": [], "train_miou": [], "val_miou": []}
+    best_miou    = 0.0
+    patience_cnt = 0
+    history      = {"train_loss": [], "val_loss": [], "train_miou": [], "val_miou": []}
 
-    print(f"\nStarting training — {NUM_EPOCHS} epochs, device={DEVICE}\n")
+    mode = "RESUMING (incremental)" if resume and ckpt_path.exists() else "FRESH"
+    print(f"\n{'='*50}", flush=True)
+    print(f"Training mode: {mode} | lr={lr:.2e} | epochs={NUM_EPOCHS} | device={DEVICE}", flush=True)
+    print(f"{'='*50}\n", flush=True)
 
     for epoch in range(1, NUM_EPOCHS + 1):
         t0 = time.time()
-
         train_loss, train_miou = run_epoch(model, train_loader, criterion, optimizer, "train")
         val_loss,   val_miou   = run_epoch(model, val_loader,   criterion, None,      "val")
         scheduler.step()
 
-        elapsed = time.time() - t0
         print(f"Epoch {epoch:03d}/{NUM_EPOCHS}  "
               f"train_loss={train_loss:.4f}  train_mIoU={train_miou:.4f}  "
               f"val_loss={val_loss:.4f}  val_mIoU={val_miou:.4f}  "
-              f"lr={scheduler.get_last_lr()[0]:.2e}  [{elapsed:.0f}s]")
+              f"lr={scheduler.get_last_lr()[0]:.2e}  [{time.time()-t0:.0f}s]", flush=True)
 
-        # Record history
         history["train_loss"].append(train_loss)
         history["val_loss"].append(val_loss)
         history["train_miou"].append(train_miou)
         history["val_miou"].append(val_miou)
 
-        # Save best checkpoint
         if val_miou > best_miou:
             best_miou    = val_miou
             patience_cnt = 0
             torch.save({
-                "epoch":      epoch,
-                "model_state": model.state_dict(),
+                "epoch":           epoch,
+                "model_state":     model.state_dict(),
                 "optimizer_state": optimizer.state_dict(),
-                "val_miou":   val_miou,
-                "num_bands":  num_bands,
-            }, ckpt_dir / "best_model.pt")
-            print(f"  ✓ Saved best checkpoint (val_mIoU={best_miou:.4f})")
+                "val_miou":        val_miou,
+                "num_bands":       num_bands,
+            }, ckpt_path)
+            print(f"  ✓ Saved best checkpoint (val_mIoU={best_miou:.4f})", flush=True)
         else:
             patience_cnt += 1
             if patience_cnt >= PATIENCE:
-                print(f"\nEarly stopping at epoch {epoch} (no improvement for {PATIENCE} epochs)")
+                print(f"\nEarly stopping at epoch {epoch}", flush=True)
                 break
 
-    # Save training curves
-    _plot_history(history, ckpt_dir / "training_curves.png")
+    # Save curves
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+    e = range(1, len(history["train_loss"])+1)
+    ax1.plot(e, history["train_loss"], label="Train"); ax1.plot(e, history["val_loss"], label="Val")
+    ax1.set_title("Loss"); ax1.legend()
+    ax2.plot(e, history["train_miou"], label="Train"); ax2.plot(e, history["val_miou"], label="Val")
+    ax2.set_title("mIoU"); ax2.legend()
+    plt.tight_layout()
+    plt.savefig(ckpt_dir / "training_curves.png", dpi=120)
+    plt.close()
+
     with open(ckpt_dir / "history.json", "w") as f:
         json.dump(history, f, indent=2)
 
-    print(f"\n✓ Training complete. Best val_mIoU: {best_miou:.4f}")
-    print(f"  Checkpoint: {ckpt_dir / 'best_model.pt'}")
-
-
-def _plot_history(history, save_path):
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-    epochs = range(1, len(history["train_loss"]) + 1)
-
-    ax1.plot(epochs, history["train_loss"], label="Train")
-    ax1.plot(epochs, history["val_loss"],   label="Val")
-    ax1.set_title("Loss")
-    ax1.set_xlabel("Epoch")
-    ax1.legend()
-
-    ax2.plot(epochs, history["train_miou"], label="Train")
-    ax2.plot(epochs, history["val_miou"],   label="Val")
-    ax2.set_title("mIoU")
-    ax2.set_xlabel("Epoch")
-    ax2.legend()
-
-    plt.tight_layout()
-    plt.savefig(save_path, dpi=120)
-    plt.close()
-    print(f"  Training curves saved to {save_path}")
+    print(f"\n✓ Done. Best val_mIoU={best_miou:.4f} | Checkpoint: {ckpt_path}", flush=True)
 
 
 if __name__ == "__main__":
-    train()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--resume", action="store_true",
+                        help="Resume from existing checkpoint (incremental training)")
+    args = parser.parse_args()
+    train(resume=args.resume)

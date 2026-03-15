@@ -1,14 +1,5 @@
 version: "3.9"
 
-# ─────────────────────────────────────────────────────────────────────────────
-# External data — set RAW_DATA_DIR in .env (or export in your shell):
-#
-#   echo "RAW_DATA_DIR=/media/my_drive/tiff_data" > .env
-#
-# Your TIFFs and SHPs stay on the external drive — nothing is copied.
-# Processed tiles and outputs stay in this project folder.
-# ─────────────────────────────────────────────────────────────────────────────
-
 x-base: &base
   build: .
   env_file:
@@ -16,6 +7,7 @@ x-base: &base
   environment:
     - PYTHONUNBUFFERED=1
     - RAW_DATA_DIR=/raw_data
+    - SHP_DIR=/raw_data/CG_SHP
     - PROCESSED_DIR=data/processed
     - CHECKPOINT_DIR=checkpoints
     - OUTPUT_DIR=outputs
@@ -24,37 +16,64 @@ x-base: &base
     - ./data/processed:/app/data/processed
     - ./outputs:/app/outputs
     - ./checkpoints:/app/checkpoints
-  deploy:
-    resources:
-      reservations:
-        devices:
-          - driver: nvidia
-            count: 1
-            capabilities: [gpu]
 
 services:
-
-  data_prep:
-    <<: *base
-    entrypoint: ["python", "src/00_data_prep.py"]
-    command: ["--source", "/raw_data"]
 
   inspect:
     <<: *base
     entrypoint: ["python", "src/00_inspect.py"]
 
+  # Preprocess a specific folder:
+  # docker compose run --rm -e RAW_DATA_DIR=/raw_data/CG_1 preprocess
   preprocess:
     <<: *base
     entrypoint: ["python", "src/01_preprocess.py"]
 
+  visualize:
+    <<: *base
+    entrypoint: ["python", "src/05_visualize.py"]
+
+  # Fresh training (first folder):
+  # docker compose run --rm train
+  #
+  # Incremental training (subsequent folders):
+  # docker compose run --rm train --resume
   train:
     <<: *base
     entrypoint: ["python", "src/03_train.py"]
     shm_size: "4gb"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # Run full incremental pipeline automatically:
+  # docker compose run --rm train-all
+  train-all:
+    <<: *base
+    entrypoint: ["bash", "src/06_train_incremental.sh"]
+    shm_size: "4gb"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   infer:
     <<: *base
     entrypoint: ["python", "src/04_inference.py"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   shell:
     <<: *base
