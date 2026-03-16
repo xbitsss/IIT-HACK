@@ -11,9 +11,13 @@ x-base: &base
     - PROCESSED_DIR=data/processed
     - CHECKPOINT_DIR=checkpoints
     - OUTPUT_DIR=outputs
+    # Replay buffer — persistent across all shards, NEVER wiped
+    - REPLAY_DIR=data/replay
   volumes:
     - ${RAW_DATA_DIR:-./data/raw}:/raw_data:ro
     - ./data/processed:/app/data/processed
+    # Replay dir is a separate persistent mount — survives between container runs
+    - ./data/replay:/app/data/replay
     - ./outputs:/app/outputs
     - ./checkpoints:/app/checkpoints
 

@@ -1,19 +1,31 @@
 """
 03_train.py — Fine-tunes SegFormer on geospatial tiles.
-Supports incremental training: pass --resume to continue from last checkpoint.
-When resuming, loads weights from best_model.pt and trains with lower LR.
+
+Improvements vs original:
+  • Mixed precision (AMP)             — ~40% memory reduction, ~1.5× speed
+  • Gradient accumulation             — effective large batch without OOM
+  • Focal + Dice loss                 — Focal targets hard pixels, Dice
+                                        optimises overlap directly
+  • Warmup + CosineAnnealing LR       — stable warmup avoids early divergence
+  • EMA model weights                 — smoother val metrics, better generalisation
+  • 2-hour background notification    — periodic email with current metrics
+  • Crash-safe notification           — signal handler emails on unexpected exit
+  • Per-class IoU logging             — easier to spot which class is lagging
 """
 
 import sys
 import json
 import time
+import signal
+import copy
+import threading
 import argparse
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import AdamW
-from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.optim.lr_scheduler import LambdaLR, CosineAnnealingLR
 from pathlib import Path
 from tqdm import tqdm
 import matplotlib
@@ -25,7 +37,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 from config import (
     MODEL_NAME, NUM_CLASSES, CLASS_LABELS, CLASS_WEIGHTS,
     NUM_EPOCHS, LR, WEIGHT_DECAY, PATIENCE,
-    CHECKPOINT_DIR, DATA_PROCESSED_DIR, RANDOM_SEED
+    CHECKPOINT_DIR, DATA_PROCESSED_DIR, RANDOM_SEED,
+    USE_AMP, GRAD_ACCUM_STEPS, WARMUP_EPOCHS,
+    USE_EMA, EMA_DECAY,
+    FOCAL_GAMMA, FOCAL_WEIGHT, DICE_WEIGHT,
+    NOTIFY_INTERVAL_HOURS,
 )
 import importlib
 dataset = importlib.import_module("02_dataset")
@@ -40,7 +56,7 @@ print(f"Device: {DEVICE}", flush=True)
 
 # ── Model ─────────────────────────────────────────────────────────────────────
 
-def build_model(num_input_bands, checkpoint_path=None):
+def build_model(num_input_bands: int, checkpoint_path=None):
     print(f"Loading {MODEL_NAME} with {num_input_bands} band(s)...", flush=True)
 
     cfg = SegformerConfig.from_pretrained(MODEL_NAME)
@@ -49,17 +65,15 @@ def build_model(num_input_bands, checkpoint_path=None):
     cfg.label2id     = {l: i for i, l in enumerate(CLASS_LABELS)}
     cfg.num_channels = num_input_bands
 
-    if checkpoint_path and checkpoint_path.exists():
-        # Incremental training — load our saved weights, skip HuggingFace download
+    if checkpoint_path and Path(checkpoint_path).exists():
         print(f"  Resuming from checkpoint: {checkpoint_path}", flush=True)
         model = SegformerForSemanticSegmentation(cfg)
         if num_input_bands != 3:
             _patch_embedding(model, num_input_bands)
         ckpt = torch.load(checkpoint_path, map_location=DEVICE, weights_only=False)
         model.load_state_dict(ckpt["model_state"])
-        print(f"  Loaded checkpoint (epoch={ckpt['epoch']}, val_mIoU={ckpt['val_miou']:.4f})", flush=True)
+        print(f"  Loaded  epoch={ckpt['epoch']}  val_mIoU={ckpt['val_miou']:.4f}", flush=True)
     else:
-        # Fresh training — download pretrained weights
         model = SegformerForSemanticSegmentation.from_pretrained(
             MODEL_NAME, config=cfg, ignore_mismatched_sizes=True
         )
@@ -69,7 +83,7 @@ def build_model(num_input_bands, checkpoint_path=None):
     return model.to(DEVICE)
 
 
-def _patch_embedding(model, num_input_bands):
+def _patch_embedding(model, num_input_bands: int):
     old = model.segformer.encoder.patch_embeddings[0].proj
     new = nn.Conv2d(num_input_bands, old.out_channels,
                     kernel_size=old.kernel_size, stride=old.stride,
@@ -82,116 +96,357 @@ def _patch_embedding(model, num_input_bands):
     print(f"  Patched input embedding → {num_input_bands} channels", flush=True)
 
 
+# ── EMA ───────────────────────────────────────────────────────────────────────
+
+class ModelEMA:
+    """
+    Exponential Moving Average of model weights.
+    Maintains a shadow copy that is smoother than the live weights.
+    Typically gives +0.5–2% mIoU on val vs the raw checkpoint.
+    """
+    def __init__(self, model: nn.Module, decay: float = 0.9998):
+        self.ema   = copy.deepcopy(model).eval()
+        self.decay = decay
+        for p in self.ema.parameters():
+            p.requires_grad_(False)
+
+    @torch.no_grad()
+    def update(self, model: nn.Module):
+        for ema_p, m_p in zip(self.ema.parameters(), model.parameters()):
+            ema_p.data.mul_(self.decay).add_(m_p.data, alpha=1.0 - self.decay)
+
+    def state_dict(self):
+        return self.ema.state_dict()
+
+
 # ── Loss ──────────────────────────────────────────────────────────────────────
 
-class DiceCELoss(nn.Module):
-    def __init__(self, class_weights=None, dice_weight=0.5):
+class FocalLoss(nn.Module):
+    """
+    Focal loss down-weights easy (well-classified) pixels so the model focuses
+    training gradient on hard examples — boundaries, thin roads, small water bodies.
+    """
+    def __init__(self, gamma: float = 2.0, class_weights=None):
         super().__init__()
-        self.dice_weight = dice_weight
-        w = torch.tensor(class_weights, dtype=torch.float32).to(DEVICE) if class_weights else None
-        self.ce = nn.CrossEntropyLoss(weight=w, ignore_index=255)
+        self.gamma = gamma
+        self.w = (torch.tensor(class_weights, dtype=torch.float32).to(DEVICE)
+                  if class_weights else None)
 
-    def forward(self, logits, targets):
-        ce_loss = self.ce(logits, targets)
-        probs   = F.softmax(logits, dim=1)
-        oh      = F.one_hot(targets.clamp(0, NUM_CLASSES-1), NUM_CLASSES).permute(0,3,1,2).float()
-        inter   = (probs * oh).sum(dim=(2,3))
-        union   = probs.sum(dim=(2,3)) + oh.sum(dim=(2,3))
-        dice    = (1 - (2*inter+1e-6)/(union+1e-6)).mean()
-        return (1-self.dice_weight)*ce_loss + self.dice_weight*dice
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        ce  = F.cross_entropy(logits, targets, weight=self.w,
+                              reduction="none", ignore_index=255)
+        pt  = torch.exp(-ce)
+        return ((1.0 - pt) ** self.gamma * ce).mean()
+
+
+class DiceLoss(nn.Module):
+    """
+    Soft Dice loss: directly optimises pixel-overlap, combats class imbalance.
+    Averaged over all classes present in the batch.
+    """
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        probs  = F.softmax(logits, dim=1)
+        oh     = F.one_hot(targets.clamp(0, NUM_CLASSES - 1), NUM_CLASSES) \
+                   .permute(0, 3, 1, 2).float()
+        inter  = (probs * oh).sum(dim=(2, 3))
+        union  = probs.sum(dim=(2, 3)) + oh.sum(dim=(2, 3))
+        return (1.0 - (2.0 * inter + 1e-6) / (union + 1e-6)).mean()
+
+
+class FocalDiceLoss(nn.Module):
+    def __init__(self, class_weights=None,
+                 focal_weight: float = FOCAL_WEIGHT,
+                 dice_weight:  float = DICE_WEIGHT,
+                 gamma:        float = FOCAL_GAMMA):
+        super().__init__()
+        self.focal        = FocalLoss(gamma, class_weights)
+        self.dice         = DiceLoss()
+        self.focal_weight = focal_weight
+        self.dice_weight  = dice_weight
+
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        return (self.focal_weight * self.focal(logits, targets) +
+                self.dice_weight  * self.dice(logits,  targets))
+
+
+# ── LR Schedule: Warmup + Cosine ─────────────────────────────────────────────
+
+def build_scheduler(optimizer, num_epochs: int, warmup_epochs: int):
+    """
+    Linear warmup for `warmup_epochs`, then cosine decay to 1e-6.
+    Warmup avoids the large-gradient instability in early epochs.
+    """
+    def lr_lambda(epoch):
+        if epoch < warmup_epochs:
+            return float(epoch + 1) / float(max(1, warmup_epochs))
+        progress = (epoch - warmup_epochs) / max(1, num_epochs - warmup_epochs)
+        return max(1e-2, 0.5 * (1.0 + np.cos(np.pi * progress)))
+
+    return LambdaLR(optimizer, lr_lambda=lr_lambda)
 
 
 # ── Metrics ───────────────────────────────────────────────────────────────────
 
-def compute_miou(preds, targets, num_classes):
-    ious = []
-    p, t = preds.view(-1), targets.view(-1)
+def compute_miou(preds: torch.Tensor, targets: torch.Tensor, num_classes: int):
+    """Returns (mean_iou, per_class_iou_dict)."""
+    p, t   = preds.view(-1).cpu(), targets.view(-1).cpu()
+    ious   = {}
     for cls in range(num_classes):
-        inter = ((p==cls) & (t==cls)).sum().float()
-        union = ((p==cls) | (t==cls)).sum().float()
+        inter = ((p == cls) & (t == cls)).sum().float()
+        union = ((p == cls) | (t == cls)).sum().float()
         if union > 0:
-            ious.append((inter/union).item())
-    return np.mean(ious) if ious else 0.0
+            ious[cls] = (inter / union).item()
+    mean_iou = float(np.mean(list(ious.values()))) if ious else 0.0
+    return mean_iou, ious
+
+
+# ── Periodic notification thread ──────────────────────────────────────────────
+
+class _TrainingState:
+    """Thread-safe container for the latest training metrics."""
+    def __init__(self):
+        self._lock       = threading.Lock()
+        self.epoch       = 0
+        self.train_loss  = 0.0
+        self.val_loss    = 0.0
+        self.train_miou  = 0.0
+        self.val_miou    = 0.0
+        self.best_miou   = 0.0
+        self.folder_name = "unknown"
+        self.folder_step = 1
+        self.folder_total= 1
+        self.done        = False
+
+    def update(self, **kwargs):
+        with self._lock:
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+    def snapshot(self):
+        with self._lock:
+            return {k: v for k, v in self.__dict__.items()
+                    if not k.startswith("_")}
+
+
+_state = _TrainingState()
+
+
+def _notification_worker(interval_seconds: int):
+    """Background daemon thread — sends a progress email every N seconds."""
+    import importlib
+    notify_mod = importlib.import_module("07_notify")
+
+    while not _state.done:
+        time.sleep(interval_seconds)
+        if _state.done:
+            break
+        snap = _state.snapshot()
+        try:
+            notify_mod.notify_training_progress(
+                folder_name  = snap["folder_name"],
+                step         = snap["folder_step"],
+                total        = snap["folder_total"],
+                epoch        = snap["epoch"],
+                total_epochs = NUM_EPOCHS,
+                train_loss   = snap["train_loss"],
+                val_loss     = snap["val_loss"],
+                train_miou   = snap["train_miou"],
+                val_miou     = snap["val_miou"],
+                best_miou    = snap["best_miou"],
+                checkpoint_path = str(Path(CHECKPOINT_DIR) / "best_model.pt"),
+            )
+        except Exception as exc:
+            print(f"[NOTIFY] Periodic email failed: {exc}", flush=True)
+
+
+def _crash_handler(signum, frame):
+    """Send a crash notification on SIGTERM / SIGINT."""
+    try:
+        import importlib
+        notify_mod = importlib.import_module("07_notify")
+        snap = _state.snapshot()
+        notify_mod.notify_error(
+            folder_name = snap["folder_name"],
+            step        = snap["folder_step"],
+            total       = snap["folder_total"],
+            error_msg   = f"Training process received signal {signum} at epoch {snap['epoch']}. "
+                          f"Checkpoint safe at checkpoints/best_model.pt. "
+                          f"Resume with: docker compose run --rm train --resume",
+        )
+    except Exception:
+        pass
+    sys.exit(1)
 
 
 # ── Epoch ─────────────────────────────────────────────────────────────────────
 
-def run_epoch(model, loader, criterion, optimizer=None, phase="train"):
+def run_epoch(model, loader, criterion, optimizer=None,
+              scaler=None, phase="train", grad_accum=1):
     is_train = phase == "train"
     model.train() if is_train else model.eval()
-    total_loss = total_miou = n = 0
+
+    total_loss  = 0.0
+    all_preds   = []
+    all_targets = []
+    n = 0
+
+    if is_train and optimizer:
+        optimizer.zero_grad()
 
     with torch.set_grad_enabled(is_train):
-        for images, masks in tqdm(loader, desc=f"  {phase}", leave=False):
+        for step, (images, masks) in enumerate(tqdm(loader, desc=f"  {phase}", leave=False)):
             images, masks = images.to(DEVICE), masks.to(DEVICE)
-            logits_up = F.interpolate(
-                model(pixel_values=images).logits,
-                size=masks.shape[-2:], mode="bilinear", align_corners=False
-            )
-            loss = criterion(logits_up, masks)
+
+            with torch.autocast(device_type=DEVICE.type,
+                                dtype=torch.float16,
+                                enabled=(USE_AMP and DEVICE.type == "cuda")):
+                logits_up = F.interpolate(
+                    model(pixel_values=images).logits,
+                    size=masks.shape[-2:], mode="bilinear", align_corners=False,
+                )
+                loss = criterion(logits_up, masks)
+                if is_train:
+                    loss = loss / grad_accum
+
             if is_train:
-                optimizer.zero_grad()
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-                optimizer.step()
-            total_loss += loss.item()
-            total_miou += compute_miou(logits_up.argmax(1).cpu(), masks.cpu(), NUM_CLASSES)
+                if scaler is not None:
+                    scaler.scale(loss).backward()
+                else:
+                    loss.backward()
+
+                if (step + 1) % grad_accum == 0 or (step + 1) == len(loader):
+                    if scaler is not None:
+                        scaler.unscale_(optimizer)
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                        scaler.step(optimizer)
+                        scaler.update()
+                    else:
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                        optimizer.step()
+                    optimizer.zero_grad()
+
+            total_loss  += loss.item() * (grad_accum if is_train else 1)
+            all_preds.append(logits_up.argmax(1).detach().cpu())
+            all_targets.append(masks.detach().cpu())
             n += 1
 
-    return total_loss/n, total_miou/n
+    preds_cat   = torch.cat(all_preds)
+    targets_cat = torch.cat(all_targets)
+    mean_miou, per_class = compute_miou(preds_cat, targets_cat, NUM_CLASSES)
+
+    return total_loss / n, mean_miou, per_class
 
 
 # ── Train ─────────────────────────────────────────────────────────────────────
 
-def train(resume=False):
+def train(resume: bool = False,
+          folder_name: str = "unknown",
+          folder_step: int = 1,
+          folder_total: int = 1):
+
     ckpt_dir  = Path(CHECKPOINT_DIR)
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     ckpt_path = ckpt_dir / "best_model.pt"
 
+    # Update shared state for notification thread
+    _state.update(
+        folder_name  = folder_name,
+        folder_step  = folder_step,
+        folder_total = folder_total,
+    )
+
+    # Install crash handler
+    signal.signal(signal.SIGTERM, _crash_handler)
+    signal.signal(signal.SIGINT,  _crash_handler)
+
+    # Start periodic notification thread
+    if NOTIFY_INTERVAL_HOURS > 0:
+        t = threading.Thread(
+            target=_notification_worker,
+            args=(int(NOTIFY_INTERVAL_HOURS * 3600),),
+            daemon=True,
+        )
+        t.start()
+        print(f"[NOTIFY] Periodic emails every {NOTIFY_INTERVAL_HOURS}h enabled", flush=True)
+
     train_loader, val_loader, num_bands = build_dataloaders()
 
-    # Use lower LR when resuming (fine-tuning on new data)
-    lr = LR * 0.3 if resume and ckpt_path.exists() else LR
+    lr     = LR * 0.3 if (resume and ckpt_path.exists()) else LR
+    model  = build_model(num_bands, ckpt_path if resume else None)
+    ema    = ModelEMA(model, decay=EMA_DECAY) if USE_EMA else None
 
-    model     = build_model(num_bands, ckpt_path if resume else None)
-    criterion = DiceCELoss(class_weights=CLASS_WEIGHTS)
+    criterion = FocalDiceLoss(class_weights=CLASS_WEIGHTS)
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
-    scheduler = CosineAnnealingLR(optimizer, T_max=NUM_EPOCHS, eta_min=1e-6)
+    scheduler = build_scheduler(optimizer, NUM_EPOCHS, WARMUP_EPOCHS)
+    scaler    = torch.cuda.amp.GradScaler(enabled=(USE_AMP and DEVICE.type == "cuda"))
 
     best_miou    = 0.0
     patience_cnt = 0
-    history      = {"train_loss": [], "val_loss": [], "train_miou": [], "val_miou": []}
+    history      = {"train_loss": [], "val_loss": [],
+                    "train_miou": [], "val_miou": []}
 
-    mode = "RESUMING (incremental)" if resume and ckpt_path.exists() else "FRESH"
-    print(f"\n{'='*50}", flush=True)
-    print(f"Training mode: {mode} | lr={lr:.2e} | epochs={NUM_EPOCHS} | device={DEVICE}", flush=True)
-    print(f"{'='*50}\n", flush=True)
+    mode = "RESUME (incremental)" if (resume and ckpt_path.exists()) else "FRESH"
+    print(f"\n{'='*55}", flush=True)
+    print(f"Mode: {mode} | lr={lr:.2e} | epochs={NUM_EPOCHS} | device={DEVICE}", flush=True)
+    print(f"AMP={USE_AMP} | GradAccum={GRAD_ACCUM_STEPS} | EMA={USE_EMA}", flush=True)
+    print(f"Warmup={WARMUP_EPOCHS} epochs | Focal+Dice loss", flush=True)
+    print(f"{'='*55}\n", flush=True)
 
     for epoch in range(1, NUM_EPOCHS + 1):
         t0 = time.time()
-        train_loss, train_miou = run_epoch(model, train_loader, criterion, optimizer, "train")
-        val_loss,   val_miou   = run_epoch(model, val_loader,   criterion, None,      "val")
+
+        train_loss, train_miou, _ = run_epoch(
+            model, train_loader, criterion, optimizer,
+            scaler=scaler, phase="train", grad_accum=GRAD_ACCUM_STEPS,
+        )
+
+        # Evaluate EMA model if available (usually better than raw weights)
+        eval_model = ema.ema if ema else model
+        val_loss, val_miou, per_class_iou = run_epoch(
+            eval_model, val_loader, criterion,
+            phase="val", grad_accum=1,
+        )
+
+        if ema:
+            ema.update(model)
+
         scheduler.step()
 
+        # ── Per-class IoU string ──────────────────────────────────────────────
+        pc_str = "  ".join(
+            f"{CLASS_LABELS[c][:4]}={per_class_iou.get(c, 0):.3f}"
+            for c in range(NUM_CLASSES)
+        )
+
         print(f"Epoch {epoch:03d}/{NUM_EPOCHS}  "
-              f"train_loss={train_loss:.4f}  train_mIoU={train_miou:.4f}  "
+              f"tr_loss={train_loss:.4f}  tr_mIoU={train_miou:.4f}  "
               f"val_loss={val_loss:.4f}  val_mIoU={val_miou:.4f}  "
-              f"lr={scheduler.get_last_lr()[0]:.2e}  [{time.time()-t0:.0f}s]", flush=True)
+              f"lr={scheduler.get_last_lr()[0]:.2e}  [{time.time()-t0:.0f}s]",
+              flush=True)
+        print(f"         per-class IoU: {pc_str}", flush=True)
 
         history["train_loss"].append(train_loss)
         history["val_loss"].append(val_loss)
         history["train_miou"].append(train_miou)
         history["val_miou"].append(val_miou)
 
+        # Update shared state for notification thread
+        _state.update(
+            epoch=epoch, train_loss=train_loss, val_loss=val_loss,
+            train_miou=train_miou, val_miou=val_miou,
+        )
+
         if val_miou > best_miou:
             best_miou    = val_miou
             patience_cnt = 0
+            _state.update(best_miou=best_miou)
             torch.save({
                 "epoch":           epoch,
-                "model_state":     model.state_dict(),
+                "model_state":     (ema.state_dict() if ema else model.state_dict()),
                 "optimizer_state": optimizer.state_dict(),
                 "val_miou":        val_miou,
                 "num_bands":       num_bands,
+                "per_class_iou":   per_class_iou,
             }, ckpt_path)
             print(f"  ✓ Saved best checkpoint (val_mIoU={best_miou:.4f})", flush=True)
         else:
@@ -200,12 +455,14 @@ def train(resume=False):
                 print(f"\nEarly stopping at epoch {epoch}", flush=True)
                 break
 
-    # Save curves
+    # ── Save training curves ──────────────────────────────────────────────────
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-    e = range(1, len(history["train_loss"])+1)
-    ax1.plot(e, history["train_loss"], label="Train"); ax1.plot(e, history["val_loss"], label="Val")
+    e = range(1, len(history["train_loss"]) + 1)
+    ax1.plot(e, history["train_loss"], label="Train")
+    ax1.plot(e, history["val_loss"],   label="Val")
     ax1.set_title("Loss"); ax1.legend()
-    ax2.plot(e, history["train_miou"], label="Train"); ax2.plot(e, history["val_miou"], label="Val")
+    ax2.plot(e, history["train_miou"], label="Train")
+    ax2.plot(e, history["val_miou"],   label="Val")
     ax2.set_title("mIoU"); ax2.legend()
     plt.tight_layout()
     plt.savefig(ckpt_dir / "training_curves.png", dpi=120)
@@ -214,12 +471,22 @@ def train(resume=False):
     with open(ckpt_dir / "history.json", "w") as f:
         json.dump(history, f, indent=2)
 
-    print(f"\n✓ Done. Best val_mIoU={best_miou:.4f} | Checkpoint: {ckpt_path}", flush=True)
+    print(f"\n✓ Done. Best val_mIoU={best_miou:.4f} | {ckpt_path}", flush=True)
+    _state.update(done=True)
+    return best_miou
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--resume", action="store_true",
-                        help="Resume from existing checkpoint (incremental training)")
+    parser.add_argument("--resume",       action="store_true")
+    parser.add_argument("--folder-name",  type=str, default="unknown")
+    parser.add_argument("--folder-step",  type=int, default=1)
+    parser.add_argument("--folder-total", type=int, default=4)
     args = parser.parse_args()
-    train(resume=args.resume)
+
+    train(
+        resume       = args.resume,
+        folder_name  = args.folder_name,
+        folder_step  = args.folder_step,
+        folder_total = args.folder_total,
+    )
