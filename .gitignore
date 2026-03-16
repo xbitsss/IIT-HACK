@@ -10,3 +10,4 @@ checkpoints/
 *.shx
 *.npy
 *.pt
+*.env
