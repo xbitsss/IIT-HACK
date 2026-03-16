@@ -55,7 +55,7 @@ def build_model(num_input_bands, checkpoint_path=None):
         model = SegformerForSemanticSegmentation(cfg)
         if num_input_bands != 3:
             _patch_embedding(model, num_input_bands)
-        ckpt = torch.load(checkpoint_path, map_location=DEVICE, weights_only=True)
+        ckpt = torch.load(checkpoint_path, map_location=DEVICE, weights_only=False)
         model.load_state_dict(ckpt["model_state"])
         print(f"  Loaded checkpoint (epoch={ckpt['epoch']}, val_mIoU={ckpt['val_miou']:.4f})", flush=True)
     else:

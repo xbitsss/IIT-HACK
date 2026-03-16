@@ -23,8 +23,6 @@ services:
     <<: *base
     entrypoint: ["python", "src/00_inspect.py"]
 
-  # Preprocess a specific folder:
-  # docker compose run --rm -e RAW_DATA_DIR=/raw_data/CG_1 preprocess
   preprocess:
     <<: *base
     entrypoint: ["python", "src/01_preprocess.py"]
@@ -33,11 +31,11 @@ services:
     <<: *base
     entrypoint: ["python", "src/05_visualize.py"]
 
-  # Fresh training (first folder):
-  # docker compose run --rm train
-  #
-  # Incremental training (subsequent folders):
-  # docker compose run --rm train --resume
+  notify-test:
+    <<: *base
+    entrypoint: ["python", "src/07_notify.py", "--test"]
+
+  # Fresh training (first folder only)
   train:
     <<: *base
     entrypoint: ["python", "src/03_train.py"]
@@ -50,8 +48,12 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # Run full incremental pipeline automatically:
-  # docker compose run --rm train-all
+  # Full pipeline from CG_1:
+  #   docker compose run --rm train-all
+  # Start from CG_2 (resume):
+  #   docker compose run --rm train-all --from 2
+  # Start from CG_3:
+  #   docker compose run --rm train-all --from 3
   train-all:
     <<: *base
     entrypoint: ["bash", "src/06_train_incremental.sh"]
@@ -80,7 +82,3 @@ services:
     entrypoint: ["/bin/bash"]
     stdin_open: true
     tty: true
-
-  notify-test:
-    <<: *base
-    entrypoint: ["python", "src/07_notify.py", "--test"]
