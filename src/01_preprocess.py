@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from config import (
     DATA_RAW_DIR, DATA_PROCESSED_DIR, SHP_DIR, CLASSES, SHAPEFILE_MAP,
     CLASS_PRIORITY, TILE_SIZE, TILE_OVERLAP, BAND_INDICES,
-    MIN_VALID_RATIO, MIN_COVERAGE_RATIO,
+    MIN_VALID_RATIO, MIN_COVERAGE_RATIO, RANDOM_SEED,
 )
 
 CHUNK_SIZE = 8192   # pixels processed per chunk pass
