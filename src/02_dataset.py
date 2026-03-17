@@ -122,11 +122,21 @@ class GeoSegDataset(Dataset):
         image = np.load(self._img_path(tid))   # (C, H, W) float32
         mask  = np.load(self._msk_path(tid))   # (H, W) uint8
 
-        image_hwc = np.transpose(image, (1, 2, 0))
+        image_hwc = np.transpose(image, (1, 2, 0))   # (H, W, C)
         if self.transform:
-            aug       = self.transform(image=image_hwc, mask=mask)
-            image_hwc = aug["image"]
-            mask      = aug["mask"]
+            n_channels = image_hwc.shape[2]
+            # Albumentations radiometric transforms (HueSaturationValue,
+            # RandomShadow, CLAHE) only accept 1- or 3-channel images.
+            # When >3 bands, augment first 3 and carry extras unchanged.
+            if n_channels > 3:
+                rgb_hwc   = image_hwc[:, :, :3]
+                extra_hwc = image_hwc[:, :, 3:]   # (H, W, C-3)
+                aug       = self.transform(image=rgb_hwc, mask=mask)
+                image_hwc = np.concatenate([aug["image"], extra_hwc], axis=2)
+            else:
+                aug       = self.transform(image=image_hwc, mask=mask)
+                image_hwc = aug["image"]
+            mask = aug["mask"]
 
         image_tensor = torch.from_numpy(
             np.ascontiguousarray(np.transpose(image_hwc, (2, 0, 1)))
