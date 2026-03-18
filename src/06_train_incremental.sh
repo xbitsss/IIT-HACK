@@ -1,37 +1,49 @@
 #!/bin/bash
 # 06_train_incremental.sh — Incremental training pipeline
 #
-# The dataset is sharded across 4 folders, each containing 2 TIFFs.
-# All shapefiles are in CG_SHP (shared across all folders).
+# Trains on all CG folders one shard at a time while guaranteeing that
+# pipeline-generated data on disk NEVER exceeds MAX_DISK_GB at any moment.
+#
+# Disk accounting (enforced before every preprocessing step):
+#
+#   disk_used_now  = size of data/replay/ (accumulates across shards)
+#   processed_budget = MAX_DISK_GB - disk_used_now
+#
+#   01_preprocess.py is given MAX_PROCESSED_GB=<processed_budget> so the
+#   tiles it writes cannot push (processed + replay) over MAX_DISK_GB.
+#
+#   After training, processed tiles are wiped.  Only the replay slice for
+#   this shard (~300 tiles ≈ 1.3 GB) is kept permanently in data/replay/.
 #
 # Usage:
-#   bash src/06_train_incremental.sh           # start fresh from CG_1
-#   bash src/06_train_incremental.sh --from 2  # resume from CG_2 onward
-#   bash src/06_train_incremental.sh --from 3  # resume from CG_3 onward
+#   bash src/06_train_incremental.sh              # fresh, start from CG_1
+#   bash src/06_train_incremental.sh --from 2     # resume from CG_2 onward
 #
-# After every folder the tile cache (data/processed/) is wiped to free disk.
-# The model checkpoint (checkpoints/best_model.pt) is NEVER deleted.
-# The next folder always uses --resume so it fine-tunes from the last best model.
+# Environment overrides:
+#   MAX_DISK_GB               hard ceiling in GB          (default: 50)
+#   REPLAY_TILES_PER_SHARD    tiles kept per shard        (default: 300)
+#   SHP_DIR                   shared shapefile folder     (default: /raw_data/CG_SHP)
 
 set -euo pipefail
 
+# ── Configuration ─────────────────────────────────────────────────────────────
 FOLDERS=(
     "/raw_data/CG_1"
     "/raw_data/CG_2"
     "/raw_data/CG_3"
     "/raw_data/CG_4"
 )
-SHP_DIR="/raw_data/CG_SHP"
+export SHP_DIR="${SHP_DIR:-/raw_data/CG_SHP}"
+export MAX_DISK_GB="${MAX_DISK_GB:-50}"
+export REPLAY_TILES_PER_SHARD="${REPLAY_TILES_PER_SHARD:-300}"
+
 TOTAL=${#FOLDERS[@]}
 START_FROM=1
 
 # ── Parse arguments ───────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --from)
-            START_FROM="$2"
-            shift 2
-            ;;
+        --from) START_FROM="$2"; shift 2 ;;
         *)
             echo "Unknown argument: $1"
             echo "Usage: $0 [--from N]"
@@ -47,28 +59,83 @@ fi
 
 echo "========================================"
 echo " Incremental Training Pipeline"
-echo " Total folders : $TOTAL (each has 2 TIFFs)"
+echo " Folders       : $TOTAL"
 echo " Starting from : CG_$START_FROM"
 echo " Shapefiles    : $SHP_DIR"
+echo " Disk ceiling  : ${MAX_DISK_GB} GB (processed + replay combined)"
+echo " Replay/shard  : ${REPLAY_TILES_PER_SHARD} tiles"
 echo "========================================"
 
+# ── Fresh start: wipe replay and checkpoint ───────────────────────────────────
+# When starting from shard 1, any replay/checkpoint from a previous run is
+# stale. Mixing old replay tiles into a new training run would corrupt the
+# model — so we wipe both before doing anything else.
+# When resuming mid-run (--from 2+), replay and checkpoint are intentionally
+# preserved so training continues from where it left off.
+if [ "$START_FROM" -eq 1 ]; then
+    echo ""
+    echo "[FRESH START] Wiping stale data from any previous run..."
+    # Delete CONTENTS of mounted dirs, not the dirs themselves.
+    # Docker volume mount points are always "busy" — rm -rf on the dir root
+    # fails with "Device or resource busy". Deleting contents works fine.
+    if [ -d "data/replay" ]; then
+        echo "  Clearing data/replay/ ($(du -sh data/replay 2>/dev/null | cut -f1) of stale replay tiles)"
+        find data/replay -mindepth 1 -delete
+    fi
+    if [ -d "data/processed" ]; then
+        echo "  Clearing data/processed/ (leftover tiles)"
+        find data/processed -mindepth 1 -delete
+    fi
+    if [ -f "checkpoints/best_model.pt" ]; then
+        echo "  Removing stale checkpoint"
+        rm -f checkpoints/best_model.pt checkpoints/training_curves.png checkpoints/history.json
+    fi
+    echo "[FRESH START] Clean slate ready."
+    echo ""
+fi
+
+# ── Helper: measure directory size in bytes ───────────────────────────────────
+dir_bytes() {
+    # Returns 0 if directory does not exist
+    local dir="$1"
+    if [ -d "$dir" ]; then
+        du -sb "$dir" 2>/dev/null | awk '{print $1}' || echo "0"
+    else
+        echo "0"
+    fi
+}
+
+# ── Helper: compute processed-tile budget for this shard ─────────────────────
+# Budget = MAX_DISK_GB (bytes) − replay_bytes_already_on_disk
+# Clamped to at least 1 GB so preprocessing never gets a zero budget.
+compute_processed_budget_gb() {
+    local replay_bytes
+    replay_bytes=$(dir_bytes "data/replay")
+    local max_bytes
+    max_bytes=$(python3 -c "print(int(${MAX_DISK_GB} * 1024**3))")
+    local budget_bytes=$(( max_bytes - replay_bytes ))
+    if [ "$budget_bytes" -lt $(( 1 * 1024 * 1024 * 1024 )) ]; then
+        budget_bytes=$(( 1 * 1024 * 1024 * 1024 ))
+        echo "[WARN] Replay buffer is very large — processed budget clamped to 1 GB" >&2
+    fi
+    python3 -c "print(f'{${budget_bytes} / 1024**3:.3f}')"
+}
+
 # ── Crash handler ─────────────────────────────────────────────────────────────
-# This fires when the shell script itself crashes (e.g., disk full, OOM killer).
-# The Python train process has its own signal handler for in-process crashes.
 CURRENT_FOLDER="unknown"
 CURRENT_STEP=0
 
 shell_crash_handler() {
-    EXIT_CODE=$?
+    local EXIT_CODE=$?
     echo ""
-    echo "[CRASH] Shell script crashed at folder: $CURRENT_FOLDER (exit $EXIT_CODE)"
+    echo "[CRASH] Shell crashed at $CURRENT_FOLDER (exit $EXIT_CODE)"
     python src/07_notify.py --error \
         --folder   "$CURRENT_FOLDER" \
         --step     "$CURRENT_STEP" \
         --total    "$TOTAL" \
         --error-msg "Shell pipeline crashed (exit $EXIT_CODE) at $CURRENT_FOLDER. \
 Checkpoint safe at checkpoints/best_model.pt. \
-Resume: docker compose run --rm train-all --from $CURRENT_STEP" \
+Resume: bash src/06_train_incremental.sh --from $CURRENT_STEP" \
         || true
 }
 trap shell_crash_handler ERR
@@ -89,52 +156,83 @@ for i in "${!FOLDERS[@]}"; do
 
     echo ""
     echo "========================================"
-    echo " Step $STEP/$TOTAL: $FOLDER_NAME  (2 TIFFs)"
+    echo " Step $STEP/$TOTAL: $FOLDER_NAME"
     echo "========================================"
 
-    # ── Preprocess (this folder only) ────────────────────────────────────────
+    # ── Disk accounting: compute exact processed budget ───────────────────────
+    REPLAY_BYTES=$(dir_bytes "data/replay")
+    REPLAY_GB=$(python3 -c "print(f'{${REPLAY_BYTES}/1024**3:.3f}')")
+    PROCESSED_BUDGET_GB=$(compute_processed_budget_gb)
+    echo "[$(date +%H:%M:%S)] Disk:  replay=${REPLAY_GB} GB  " \
+         "processed_budget=${PROCESSED_BUDGET_GB} GB  " \
+         "ceiling=${MAX_DISK_GB} GB"
+
+    # Safety assertion: replay alone must not already exceed the ceiling.
+    python3 -c "
+replay_gb = ${REPLAY_GB}
+ceiling   = ${MAX_DISK_GB}
+budget    = ${PROCESSED_BUDGET_GB}
+print(f'  replay={replay_gb:.3f} GB  budget={budget:.3f} GB  ceiling={ceiling} GB')
+assert replay_gb < ceiling, f'[ERROR] Replay ({replay_gb:.2f} GB) already exceeds ceiling ({ceiling} GB)!'
+assert budget >= 1.0,       f'[ERROR] Processed budget ({budget:.2f} GB) is less than 1 GB — increase MAX_DISK_GB or reduce REPLAY_TILES_PER_SHARD'
+"
+
+    # ── Preprocess this shard with the computed budget ────────────────────────
     echo "[$(date +%H:%M:%S)] Preprocessing $FOLDER_NAME..."
-    if ! RAW_DATA_DIR="$FOLDER" SHP_DIR="$SHP_DIR" python src/01_preprocess.py; then
+    if ! RAW_DATA_DIR="$FOLDER" \
+         MAX_PROCESSED_GB="$PROCESSED_BUDGET_GB" \
+         python src/01_preprocess.py 2>&1 | tee /tmp/preprocess_log.txt; then
         echo "[ERROR] Preprocessing failed for $FOLDER_NAME"
         python src/07_notify.py --error \
-            --folder "$FOLDER_NAME" --step $STEP --total $TOTAL \
-            --error-msg "Preprocessing failed for $FOLDER_NAME. \
-Check TIFFs at $FOLDER and shapefiles at $SHP_DIR." \
+            --folder "$FOLDER_NAME" --step "$STEP" --total "$TOTAL" \
+            --error-msg "$(tail -40 /tmp/preprocess_log.txt | head -c 2000)" \
             || true
         echo "Skipping to next folder..."
         continue
     fi
 
-    # Count tiles produced
-    TILE_COUNT=$(python -c "
-import json; d=json.load(open('data/processed/tiles_meta.json'))
-print(len(d['tiles']))
-" 2>/dev/null || echo "?")
-    echo "[$(date +%H:%M:%S)] Preprocessing done — $TILE_COUNT tiles"
+    TILE_COUNT=$(python3 -c "
+import json
+try:
+    d = json.load(open('data/processed/tiles_meta.json'))
+    print(len(d['tiles']))
+except:
+    print(0)
+" 2>/dev/null || echo "0")
+    echo "[$(date +%H:%M:%S)] Preprocessed $TILE_COUNT tiles"
 
-    # ── Save replay buffer from this shard ───────────────────────────────────
-    # MUST happen BEFORE training (tiles are wiped afterwards).
-    # The replay dir is persistent — tiles from all previous shards are retained.
-    echo "[$(date +%H:%M:%S)] Saving replay buffer for $FOLDER_NAME..."
-    python -c "
+    # ── Post-preprocess disk check ────────────────────────────────────────────
+    PROC_BYTES=$(dir_bytes "data/processed")
+    REPLAY_BYTES=$(dir_bytes "data/replay")
+    TOTAL_BYTES=$(( PROC_BYTES + REPLAY_BYTES ))
+    python3 -c "
+total_gb  = ${TOTAL_BYTES} / 1024**3
+ceiling   = ${MAX_DISK_GB}
+proc_gb   = ${PROC_BYTES}  / 1024**3
+replay_gb = ${REPLAY_BYTES} / 1024**3
+print(f'  Disk after preprocess: processed={proc_gb:.2f} GB  replay={replay_gb:.2f} GB  total={total_gb:.2f} GB / {ceiling} GB')
+if total_gb > ceiling * 1.02:   # allow 2% rounding tolerance
+    raise SystemExit(f'[ERROR] Disk ceiling exceeded: {total_gb:.2f} GB > {ceiling} GB')
+"
+
+    # ── Save replay buffer BEFORE training (tiles get wiped after) ────────────
+    echo "[$(date +%H:%M:%S)] Saving replay slice for $FOLDER_NAME..."
+    python3 -c "
 import sys; sys.path.insert(0, 'src')
 from replay_buffer import save_replay_from_shard
 save_replay_from_shard('$FOLDER_NAME')
-    " || echo "[WARN] Replay save failed — continuing without replay for this shard"
+" || echo "[WARN] Replay save failed — continuing without replay for this shard"
 
-    # ── Train ────────────────────────────────────────────────────────────────
-    echo "[$(date +%H:%M:%S)] Training on $FOLDER_NAME..."
-
-    # First folder from scratch if START_FROM==1; all others resume
+    # ── Train ─────────────────────────────────────────────────────────────────
     RESUME_FLAG=""
     if [ "$STEP" -gt 1 ] || [ "$START_FROM" -gt 1 ]; then
         RESUME_FLAG="--resume"
         echo "  Mode: RESUME (fine-tuning from checkpoint)"
     else
-        echo "  Mode: FRESH (first folder)"
+        echo "  Mode: FRESH (first shard)"
     fi
 
-    # Pass folder context to train.py so its notification thread can include it
+    echo "[$(date +%H:%M:%S)] Training on $FOLDER_NAME..."
     if ! python src/03_train.py \
             $RESUME_FLAG \
             --folder-name  "$FOLDER_NAME" \
@@ -144,48 +242,54 @@ save_replay_from_shard('$FOLDER_NAME')
         TRAIN_EXIT=${PIPESTATUS[0]}
         echo "[ERROR] Training failed for $FOLDER_NAME (exit $TRAIN_EXIT)"
         python src/07_notify.py --error \
-            --folder "$FOLDER_NAME" --step $STEP --total $TOTAL \
-            --error-msg "$(tail -40 /tmp/train_log.txt)" \
+            --folder "$FOLDER_NAME" --step "$STEP" --total "$TOTAL" \
+            --error-msg "$(tail -40 /tmp/train_log.txt | head -c 2000)" \
             || true
         exit 1
     fi
 
-    # ── Parse final stats ─────────────────────────────────────────────────────
-    TRAIN_LOSS=$(grep "tr_loss="    /tmp/train_log.txt | tail -1 | grep -oP "tr_loss=\K[0-9.]+"    || echo "0")
-    VAL_LOSS=$(grep   "val_loss="   /tmp/train_log.txt | tail -1 | grep -oP "val_loss=\K[0-9.]+"   || echo "0")
-    TRAIN_MIOU=$(grep "tr_mIoU="   /tmp/train_log.txt | tail -1 | grep -oP "tr_mIoU=\K[0-9.]+"   || echo "0")
-    VAL_MIOU=$(grep   "val_mIoU="  /tmp/train_log.txt | tail -1 | grep -oP "val_mIoU=\K[0-9.]+"  || echo "0")
-    BEST_MIOU=$(grep  "Best val_mIoU=" /tmp/train_log.txt | tail -1 | grep -oP "Best val_mIoU=\K[0-9.]+" || echo "$VAL_MIOU")
-    EPOCHS=$(grep -c "^Epoch " /tmp/train_log.txt 2>/dev/null | tr -d '[:space:]' || echo "0")
+    # ── Parse stats ───────────────────────────────────────────────────────────
+    TRAIN_LOSS=$(grep  "tr_loss="  /tmp/train_log.txt | tail -1 | grep -oP "tr_loss=\K[0-9.]+"  || echo "0")
+    VAL_LOSS=$(grep    "val_loss=" /tmp/train_log.txt | tail -1 | grep -oP "val_loss=\K[0-9.]+" || echo "0")
+    TRAIN_MIOU=$(grep  "tr_mIoU=" /tmp/train_log.txt | tail -1 | grep -oP "tr_mIoU=\K[0-9.]+"  || echo "0")
+    VAL_MIOU=$(grep    "val_mIoU=" /tmp/train_log.txt | tail -1 | grep -oP "val_mIoU=\K[0-9.]+" || echo "0")
+    EPOCHS=$(grep -c   "^Epoch "  /tmp/train_log.txt 2>/dev/null | tr -d '[:space:]' || echo "0")
 
-    echo "[$(date +%H:%M:%S)] Results — val_mIoU=$VAL_MIOU  best=$BEST_MIOU  epochs=$EPOCHS"
+    echo "[$(date +%H:%M:%S)] Done — val_mIoU=$VAL_MIOU  epochs=$EPOCHS"
 
-    # ── Notify folder complete ────────────────────────────────────────────────
+    # ── Notify ────────────────────────────────────────────────────────────────
     python src/07_notify.py \
-        --folder        "$FOLDER_NAME" \
-        --step          $STEP \
-        --total         $TOTAL \
-        --train-loss    "${TRAIN_LOSS:-0}" \
-        --val-loss      "${VAL_LOSS:-0}" \
-        --train-miou    "${TRAIN_MIOU:-0}" \
-        --val-miou      "${VAL_MIOU:-0}" \
-        --epochs        "${EPOCHS:-0}" \
-        --checkpoint    "checkpoints/best_model.pt" \
+        --folder     "$FOLDER_NAME" \
+        --step       "$STEP" \
+        --total      "$TOTAL" \
+        --train-loss "${TRAIN_LOSS:-0}" \
+        --val-loss   "${VAL_LOSS:-0}" \
+        --train-miou "${TRAIN_MIOU:-0}" \
+        --val-miou   "${VAL_MIOU:-0}" \
+        --epochs     "${EPOCHS:-0}" \
+        --checkpoint "checkpoints/best_model.pt" \
         || true
 
-    # ── Wipe tile cache to free disk space ───────────────────────────────────
-    # NOTE: Only data/processed/ is wiped.  data/replay/ is NEVER deleted —
-    # it contains the replay tiles needed to prevent catastrophic forgetting
-    # on all future shards.
-    echo "[$(date +%H:%M:%S)] Clearing processed tiles (freeing disk)..."
+    # ── Wipe processed tiles — replay is already saved ────────────────────────
+    # data/replay/ is intentionally NOT touched here.
+    echo "[$(date +%H:%M:%S)] Clearing processed tiles..."
     rm -rf data/processed/images data/processed/masks data/processed/tiles_meta.json
-    echo "  Tiles cleared. (Replay buffer at data/replay/ is preserved.)"
+    echo "  Processed tiles cleared."
 
-    echo "[$(date +%H:%M:%S)] ✓ Done $FOLDER_NAME ($STEP/$TOTAL)"
+    # ── Post-wipe disk check: only replay should remain ───────────────────────
+    REPLAY_BYTES_AFTER=$(dir_bytes "data/replay")
+    python3 -c "
+replay_gb = ${REPLAY_BYTES_AFTER} / 1024**3
+ceiling   = ${MAX_DISK_GB}
+print(f'  Disk after wipe: replay={replay_gb:.2f} GB  (ceiling={ceiling} GB)')
+assert replay_gb < ceiling, f'[ERROR] Replay alone ({replay_gb:.2f} GB) exceeds ceiling after wipe!'
+"
+
+    echo "[$(date +%H:%M:%S)] ✓ Finished $FOLDER_NAME ($STEP/$TOTAL)"
 done
 
 echo ""
 echo "========================================"
-echo " All $TOTAL folders complete!"
-echo " Final model: checkpoints/best_model.pt"
+echo " All $TOTAL shards complete!"
+echo " Final checkpoint: checkpoints/best_model.pt"
 echo "========================================"

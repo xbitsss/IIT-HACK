@@ -11,6 +11,7 @@ x-base: &base
     - PROCESSED_DIR=data/processed
     - CHECKPOINT_DIR=checkpoints
     - OUTPUT_DIR=outputs
+    - HF_TOKEN=${HF_TOKEN}
     # Replay buffer — persistent across all shards, NEVER wiped
     - REPLAY_DIR=data/replay
   volumes:

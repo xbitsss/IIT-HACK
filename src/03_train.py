@@ -259,23 +259,75 @@ def _notification_worker(interval_seconds: int):
             print(f"[NOTIFY] Periodic email failed: {exc}", flush=True)
 
 
+# One-shot flag — ensures the crash handler body runs at most once,
+# even if multiple signals arrive in quick succession (e.g. Ctrl+C spam,
+# or SIGINT propagating to DataLoader worker subprocesses).
+_crash_handler_fired = False
+
+
 def _crash_handler(signum, frame):
-    """Send a crash notification on SIGTERM / SIGINT."""
+    """
+    Send a single crash notification on SIGTERM / SIGINT then exit cleanly.
+
+    Guards against repeated firing:
+      - Resets both signal handlers to SIG_DFL immediately so any further
+        signals (Ctrl+C spam, worker subprocess signals) are handled by the
+        OS default (hard kill) instead of re-entering this function.
+      - _crash_handler_fired flag provides a second layer of protection in
+        case the signal arrives on a different thread before SIG_DFL is set.
+      - Sets _state.done = True so the notification daemon thread stops
+        immediately and does not send any more progress emails while dying.
+    """
+    global _crash_handler_fired
+    if _crash_handler_fired:
+        # Second signal — just exit hard, don't send another email
+        signal.signal(signal.SIGINT,  signal.SIG_DFL)
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        sys.exit(1)
+    _crash_handler_fired = True
+
+    # Unregister immediately — further signals won't re-enter this function
+    signal.signal(signal.SIGINT,  signal.SIG_DFL)
+    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
+    # Stop the notification daemon thread before it can send more emails
+    _state.update(done=True)
+
+    # Only send the crash email if this was an unexpected signal.
+    # SIGINT (Ctrl+C) is a deliberate user stop — send a brief stopped email
+    # rather than a scary "ERROR" email.
+    is_user_stop = (signum == signal.SIGINT)
     try:
         import importlib
         notify_mod = importlib.import_module("07_notify")
         snap = _state.snapshot()
-        notify_mod.notify_error(
-            folder_name = snap["folder_name"],
-            step        = snap["folder_step"],
-            total       = snap["folder_total"],
-            error_msg   = f"Training process received signal {signum} at epoch {snap['epoch']}. "
-                          f"Checkpoint safe at checkpoints/best_model.pt. "
-                          f"Resume with: docker compose run --rm train --resume",
-        )
+        if is_user_stop:
+            notify_mod.notify_error(
+                folder_name = snap["folder_name"],
+                step        = snap["folder_step"],
+                total       = snap["folder_total"],
+                error_msg   = (
+                    f"Training stopped manually (Ctrl+C) at epoch {snap['epoch']}. \n"
+                    f"Best val_mIoU so far: {snap['best_miou']:.4f}\n"
+                    f"Checkpoint is safe at checkpoints/best_model.pt.\n"
+                    f"Resume: docker compose run --rm train-all --from {snap['folder_step']}"
+                ),
+            )
+        else:
+            notify_mod.notify_error(
+                folder_name = snap["folder_name"],
+                step        = snap["folder_step"],
+                total       = snap["folder_total"],
+                error_msg   = (
+                    f"Training process received signal {signum} at epoch {snap['epoch']}.\n"
+                    f"Checkpoint safe at checkpoints/best_model.pt.\n"
+                    f"Resume: docker compose run --rm train-all --from {snap['folder_step']}"
+                ),
+            )
     except Exception:
         pass
-    sys.exit(1)
+
+    sys.exit(0 if is_user_stop else 1)
 
 
 # ── Epoch ─────────────────────────────────────────────────────────────────────
@@ -355,7 +407,11 @@ def train(resume: bool = False,
         folder_total = folder_total,
     )
 
-    # Install crash handler
+    # Install crash handler in main process only.
+    # DataLoader worker subprocesses inherit signal handlers from the parent —
+    # if they also run _crash_handler you get one crash email per worker.
+    # The worker_init_fn below resets SIGINT to SIG_IGN in every worker so
+    # Ctrl+C is handled exclusively by the main process.
     signal.signal(signal.SIGTERM, _crash_handler)
     signal.signal(signal.SIGINT,  _crash_handler)
 
@@ -400,6 +456,9 @@ def train(resume: bool = False,
             scaler=scaler, phase="train", grad_accum=GRAD_ACCUM_STEPS,
         )
 
+        if ema:
+            ema.update(model)
+
         # Evaluate EMA model if available (usually better than raw weights)
         eval_model = ema.ema if ema else model
         val_loss, val_miou, per_class_iou = run_epoch(
@@ -407,8 +466,7 @@ def train(resume: bool = False,
             phase="val", grad_accum=1,
         )
 
-        if ema:
-            ema.update(model)
+        
 
         scheduler.step()
 
