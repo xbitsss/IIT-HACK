@@ -103,17 +103,30 @@ class ModelEMA:
     Exponential Moving Average of model weights.
     Maintains a shadow copy that is smoother than the live weights.
     Typically gives +0.5–2% mIoU on val vs the raw checkpoint.
+
+    FIX (Bug 1): added step-based decay warmup.  With EMA_DECAY=0.9998 and
+    ~1500 steps/epoch, the naive formula kept ~54% of random-init weights after
+    2 epochs, making val_mIoU appear stuck.  The warmup ramps actual decay from
+    ~0.91 at step 1 to EMA_DECAY asymptotically, so the shadow model tracks the
+    live weights closely during the critical early epochs.
+    Formula: d = min(decay, (1 + step) / (10 + step))  — standard PyTorch EMA.
     """
     def __init__(self, model: nn.Module, decay: float = 0.9998):
         self.ema   = copy.deepcopy(model).eval()
         self.decay = decay
+        self._step = 0
         for p in self.ema.parameters():
             p.requires_grad_(False)
 
     @torch.no_grad()
     def update(self, model: nn.Module):
+        self._step += 1
+        # Warmup: ramps from ~0.91 at step 1 up to self.decay asymptotically.
+        # Prevents the shadow model from being dominated by random-init weights
+        # in the first few epochs when step count is low.
+        d = min(self.decay, (1.0 + self._step) / (10.0 + self._step))
         for ema_p, m_p in zip(self.ema.parameters(), model.parameters()):
-            ema_p.data.mul_(self.decay).add_(m_p.data, alpha=1.0 - self.decay)
+            ema_p.data.mul_(d).add_(m_p.data, alpha=1.0 - d)
 
     def state_dict(self):
         return self.ema.state_dict()
@@ -142,7 +155,13 @@ class FocalLoss(nn.Module):
 class DiceLoss(nn.Module):
     """
     Soft Dice loss: directly optimises pixel-overlap, combats class imbalance.
-    Averaged over all classes present in the batch.
+    Averaged over foreground classes only (classes 1+).
+
+    FIX (Bug 4): background (class 0) is ~95% of all pixels.  Including it in
+    the Dice mean caused the loss to be dominated by how well the model predicts
+    background, swamping the gradient signal for rare foreground classes (road,
+    water, built-up).  FocalLoss already down-weights background via CLASS_WEIGHTS
+    [0]=0.4; Dice now mirrors that by skipping class 0 entirely.
     """
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         probs  = F.softmax(logits, dim=1)
@@ -150,7 +169,8 @@ class DiceLoss(nn.Module):
                    .permute(0, 3, 1, 2).float()
         inter  = (probs * oh).sum(dim=(2, 3))
         union  = probs.sum(dim=(2, 3)) + oh.sum(dim=(2, 3))
-        return (1.0 - (2.0 * inter + 1e-6) / (union + 1e-6)).mean()
+        dice   = 1.0 - (2.0 * inter + 1e-6) / (union + 1e-6)
+        return dice[:, 1:].mean()  # skip class 0 (background)
 
 
 class FocalDiceLoss(nn.Module):

@@ -136,36 +136,10 @@ def _tiff_sizes(raw_dir: Path) -> dict:
 
 
 def split_tiles(tiles):
-    sources = list({t["source"] for t in tiles})
-
-    if len(sources) == 1:
-        print("  Single source TIFF — stratified random 80/20 split", flush=True)
-        idx = list(range(len(tiles)))
-        tr, va = train_test_split(idx, test_size=VAL_SPLIT, random_state=RANDOM_SEED)
-        return [tiles[i] for i in tr], [tiles[i] for i in va]
-
-    try:
-        raw_dir        = Path(DATA_RAW_DIR)
-        sizes          = _tiff_sizes(raw_dir)
-        sorted_sources = sorted(sources, key=lambda s: sizes.get(s, 0))
-        n_val          = max(1, round(len(sorted_sources) * VAL_SPLIT))
-        val_set        = set(sorted_sources[:n_val])
-        train_set      = set(sorted_sources[n_val:])
-
-        print(f"  Geographic split: {len(train_set)} train / {len(val_set)} val TIFFs",
-              flush=True)
-        for s in sorted(train_set):
-            print(f"    [TRAIN] {s} ({sizes.get(s,0)/1024**2:.0f} MB)", flush=True)
-        for s in sorted(val_set):
-            print(f"    [VAL]   {s} ({sizes.get(s,0)/1024**2:.0f} MB)", flush=True)
-
-        return ([t for t in tiles if t["source"] in train_set],
-                [t for t in tiles if t["source"] in val_set])
-    except Exception as e:
-        print(f"  [WARN] Geographic split failed ({e}) — random fallback", flush=True)
-        idx = list(range(len(tiles)))
-        tr, va = train_test_split(idx, test_size=VAL_SPLIT, random_state=RANDOM_SEED)
-        return [tiles[i] for i in tr], [tiles[i] for i in va]
+    print("  Stratified random 80/20 split", flush=True)
+    idx = list(range(len(tiles)))
+    tr, va = train_test_split(idx, test_size=VAL_SPLIT, random_state=RANDOM_SEED)
+    return [tiles[i] for i in tr], [tiles[i] for i in va]
 
 
 # ── DataLoaders ───────────────────────────────────────────────────────────────

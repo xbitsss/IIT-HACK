@@ -119,12 +119,40 @@ def rasterize_coverage(gdfs, win_transform, h, w):
     return coverage
 
 
+# ImageNet statistics for the first 3 bands (RGB-equivalent).
+# SegFormer (nvidia/mit-b3) was pretrained on ImageNet-normalized inputs.
+# Without this standardization the pretrained encoder receives out-of-distribution
+# activations and the fine-tuning signal is severely degraded (Bug 2).
+_IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+_IMAGENET_STD  = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+
+
 def normalize(bands: np.ndarray) -> np.ndarray:
+    """
+    Two-stage normalization:
+
+    Stage 1 — robust per-band [0, 1] scaling (Bug 3 fix).
+      Uses p2/p98 percentile clipping instead of global min/max.
+      A single bright/dark outlier pixel can stretch the whole tile's range with
+      min/max, making reflectance values incomparable across tiles.  Percentile
+      clipping is far more robust to sensor saturation and cloud edges.
+
+    Stage 2 — ImageNet standardization of bands 0-2 (Bug 2 fix).
+      SegFormer's pretrained encoder expects inputs centred near 0 with std ~1,
+      following ImageNet statistics.  Applying mean/std to the first 3 bands lets
+      the pretrained features activate correctly, even though the imagery is
+      satellite rather than natural photos.  Band 3 (NIR if present) is left in
+      [0, 1] since it has no ImageNet equivalent.
+    """
     bands = bands.astype(np.float32)
+    # Stage 1: percentile-based robust scaling → [0, 1]
     for i in range(bands.shape[0]):
-        b = bands[i]
-        mn, mx = b.min(), b.max()
-        bands[i] = (b - mn) / (mx - mn) if mx > mn else 0.0
+        b       = bands[i]
+        lo, hi  = np.percentile(b, 2), np.percentile(b, 98)
+        bands[i] = np.clip((b - lo) / (hi - lo + 1e-6), 0.0, 1.0)
+    # Stage 2: ImageNet mean/std on first 3 bands only
+    for i in range(min(3, bands.shape[0])):
+        bands[i] = (bands[i] - _IMAGENET_MEAN[i]) / _IMAGENET_STD[i]
     return bands
 
 

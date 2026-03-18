@@ -121,7 +121,7 @@ PATIENCE      = 12
 USE_AMP          = True
 GRAD_ACCUM_STEPS = 8
 WARMUP_EPOCHS    = 5
-USE_EMA          = True
+USE_EMA          = False
 EMA_DECAY        = 0.9998
 
 # ─── Loss ─────────────────────────────────────────────────────────────────────
