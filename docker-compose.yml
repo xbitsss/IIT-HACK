@@ -1,0 +1,89 @@
+version: "3.9"
+
+x-base: &base
+  build: .
+  env_file:
+    - .env
+  environment:
+    - PYTHONUNBUFFERED=1
+    - RAW_DATA_DIR=/raw_data
+    - SHP_DIR=/raw_data/CG_SHP
+    - PROCESSED_DIR=data/processed
+    - CHECKPOINT_DIR=checkpoints
+    - OUTPUT_DIR=outputs
+    - HF_TOKEN=${HF_TOKEN}
+    # Replay buffer — persistent across all shards, NEVER wiped
+    - REPLAY_DIR=data/replay
+  volumes:
+    - ${RAW_DATA_DIR:-./data/raw}:/raw_data:ro
+    - ./data/processed:/app/data/processed
+    # Replay dir is a separate persistent mount — survives between container runs
+    - ./data/replay:/app/data/replay
+    - ./outputs:/app/outputs
+    - ./checkpoints:/app/checkpoints
+
+services:
+
+  inspect:
+    <<: *base
+    entrypoint: ["python", "src/00_inspect.py"]
+
+  preprocess:
+    <<: *base
+    entrypoint: ["python", "src/01_preprocess.py"]
+
+  visualize:
+    <<: *base
+    entrypoint: ["python", "src/05_visualize.py"]
+
+  notify-test:
+    <<: *base
+    entrypoint: ["python", "src/07_notify.py", "--test"]
+
+  # Fresh training (first folder only)
+  train:
+    <<: *base
+    entrypoint: ["python", "src/03_train.py"]
+    shm_size: "4gb"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # Full pipeline from CG_1:
+  #   docker compose run --rm train-all
+  # Start from CG_2 (resume):
+  #   docker compose run --rm train-all --from 2
+  # Start from CG_3:
+  #   docker compose run --rm train-all --from 3
+  train-all:
+    <<: *base
+    entrypoint: ["bash", "src/06_train_incremental.sh"]
+    shm_size: "4gb"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  infer:
+    <<: *base
+    entrypoint: ["python", "src/04_inference.py"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  shell:
+    <<: *base
+    entrypoint: ["/bin/bash"]
+    stdin_open: true
+    tty: true
