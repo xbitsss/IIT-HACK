@@ -69,15 +69,23 @@ def _size_str(path: Path) -> str:
 
 
 def inspect():
-    # Collect all raw dirs (supports both single DATA_RAW_DIR and ALL_RAW_DIRS)
+    import os
+    raw_root = Path(os.environ.get("RAW_DATA_ROOT", "/raw_data"))
+
+    # Auto-discover shard folders: immediate subdirs of raw_root that contain TIFFs
     raw_dirs = []
-    try:
+    if raw_root.exists():
+        for d in sorted(raw_root.iterdir()):
+            if d.is_dir() and (list(d.rglob("*.tif")) or list(d.rglob("*.tiff"))):
+                raw_dirs.append(d)
+
+    if not raw_dirs:
+        # Fallback: use ALL_RAW_DIRS from config
         for d in ALL_RAW_DIRS:
             p = Path(d)
             if p.exists():
                 raw_dirs.append(p)
-    except Exception:
-        raw_dirs = [Path(DATA_RAW_DIR)]
+
     if not raw_dirs:
         raw_dirs = [Path(DATA_RAW_DIR)]
 

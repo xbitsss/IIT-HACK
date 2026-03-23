@@ -70,15 +70,26 @@ _MAX_TILES      = _BUDGET_BYTES // _BYTES_PER_TILE
 
 # ── Shapefile helpers ─────────────────────────────────────────────────────────
 
-def find_shapefiles(shp_dir: Path) -> dict:
+def find_shapefiles(shp_dirs) -> dict:
+    """
+    shp_dirs: Path or list of Paths — supports multiple SHP folders (Approach B).
+    Searches all directories; later directories take precedence for the same
+    class name, but in practice all dirs should have the same filenames.
+    """
+    if isinstance(shp_dirs, Path):
+        shp_dirs = [shp_dirs]
+
     shp_map = {}
-    for class_name, filename in SHAPEFILE_MAP.items():
-        shp_path = shp_dir / filename
-        if shp_path.exists():
-            shp_map[class_name] = shp_path
-            print(f"  ✓ {class_name} → {shp_path}", flush=True)
-        else:
-            print(f"  ✗ Not found: {shp_path}", flush=True)
+    for shp_dir in shp_dirs:
+        print(f"\nShapefiles: {shp_dir}", flush=True)
+        for class_name, filename in SHAPEFILE_MAP.items():
+            shp_path = shp_dir / filename
+            if shp_path.exists():
+                shp_map[class_name] = shp_path
+                print(f"  ✓ {class_name} → {shp_path}", flush=True)
+            else:
+                if class_name not in shp_map:
+                    print(f"  ✗ Not found: {shp_path}", flush=True)
     return shp_map
 
 
@@ -340,7 +351,6 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
 
 def preprocess():
     raw_dir  = Path(DATA_RAW_DIR)
-    shp_dir  = Path(SHP_DIR)
     proc_dir = Path(DATA_PROCESSED_DIR)
 
     print(f"Clearing {proc_dir}...", flush=True)
@@ -353,18 +363,39 @@ def preprocess():
     if meta_path.exists():
         meta_path.unlink()
 
-    print(f"\nShapefiles: {shp_dir}", flush=True)
-    shp_map = find_shapefiles(shp_dir)
+    # ── SHP directories ────────────────────────────────────────────────────────
+    # SHP_DIRS_LIST env var: colon-separated list of SHP directories.
+    # Used by Approach B where multiple SHP folders cover the same TIFF set.
+    # Falls back to single SHP_DIR if not set.
+    shp_dirs_env = os.environ.get("SHP_DIRS_LIST", "")
+    if shp_dirs_env:
+        shp_dirs = [Path(p.strip()) for p in shp_dirs_env.split(":") if p.strip()]
+    else:
+        shp_dirs = [Path(SHP_DIR)]
+
+    shp_map = find_shapefiles(shp_dirs)
     if not shp_map:
         print("[ERROR] No shapefiles found.")
         sys.exit(1)
 
-    tif_files = list(raw_dir.glob("**/*.tif")) + list(raw_dir.glob("**/*.tiff"))
+    # ── TIFF file list ─────────────────────────────────────────────────────────
+    # TIFF_FILES env var: colon-separated list of specific TIFF paths to process.
+    # Used by Approach B to process a random subset of files as one shard.
+    # Falls back to scanning raw_dir recursively if not set.
+    tiff_files_env = os.environ.get("TIFF_FILES", "")
+    if tiff_files_env:
+        tif_files = [Path(p.strip()) for p in tiff_files_env.split(":") if p.strip()]
+        tif_files = [p for p in tif_files if p.exists()]
+        shard_label = f"approach-b split ({len(tif_files)} TIFFs)"
+    else:
+        tif_files   = list(raw_dir.glob("**/*.tif")) + list(raw_dir.glob("**/*.tiff"))
+        shard_label = f"{raw_dir.name}  ({len(tif_files)} TIFF(s))"
+
     if not tif_files:
-        print(f"[ERROR] No .tif files in {raw_dir}")
+        print(f"[ERROR] No .tif files found.")
         sys.exit(1)
 
-    print(f"\nShard       : {raw_dir.name}  ({len(tif_files)} TIFF(s))", flush=True)
+    print(f"\nShard       : {shard_label}", flush=True)
     print(f"Workers     : {NUM_WORKERS}", flush=True)
     print(f"Budget      : {MAX_PROCESSED_GB:.2f} GB  "
           f"→ max {_MAX_TILES:,} tiles  "

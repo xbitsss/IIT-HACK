@@ -56,7 +56,16 @@ print(f"Device: {DEVICE}", flush=True)
 
 # ── Model ─────────────────────────────────────────────────────────────────────
 
-def build_model(num_input_bands: int, checkpoint_path=None):
+def build_model(num_input_bands: int, checkpoint_path=None, init_weights_path=None):
+    """
+    Three modes:
+      checkpoint_path  : full resume — loads weights + prints epoch/mIoU
+      init_weights_path: weights-only init — loads weights, resets all training
+                         state (epoch=0, fresh optimizer, best_mIoU=0).
+                         Use this to start fresh training from a custom .pth
+                         instead of from HuggingFace pretrained weights.
+      neither          : fresh from HuggingFace pretrained weights (default)
+    """
     print(f"Loading {MODEL_NAME} with {num_input_bands} band(s)...", flush=True)
 
     cfg = SegformerConfig.from_pretrained(MODEL_NAME)
@@ -73,6 +82,23 @@ def build_model(num_input_bands: int, checkpoint_path=None):
         ckpt = torch.load(checkpoint_path, map_location=DEVICE, weights_only=False)
         model.load_state_dict(ckpt["model_state"])
         print(f"  Loaded  epoch={ckpt['epoch']}  val_mIoU={ckpt['val_miou']:.4f}", flush=True)
+
+    elif init_weights_path and Path(init_weights_path).exists():
+        print(f"  Init weights from: {init_weights_path}", flush=True)
+        print(f"  (Training state reset — epoch=0, fresh optimizer, best_mIoU=0)", flush=True)
+        model = SegformerForSemanticSegmentation(cfg)
+        if num_input_bands != 3:
+            _patch_embedding(model, num_input_bands)
+        ckpt = torch.load(init_weights_path, map_location=DEVICE, weights_only=False)
+        # Load only model weights — ignore optimizer/epoch/mIoU from the file
+        state = ckpt.get("model_state", ckpt)
+        missing, unexpected = model.load_state_dict(state, strict=False)
+        if missing:
+            print(f"  [WARN] Missing keys ({len(missing)}): {missing[:5]}{'...' if len(missing)>5 else ''}", flush=True)
+        if unexpected:
+            print(f"  [WARN] Unexpected keys ({len(unexpected)}): {unexpected[:5]}{'...' if len(unexpected)>5 else ''}", flush=True)
+        print(f"  Weights loaded. Starting fresh training.", flush=True)
+
     else:
         model = SegformerForSemanticSegmentation.from_pretrained(
             MODEL_NAME, config=cfg, ignore_mismatched_sizes=True
@@ -412,6 +438,7 @@ def run_epoch(model, loader, criterion, optimizer=None,
 # ── Train ─────────────────────────────────────────────────────────────────────
 
 def train(resume: bool = False,
+          init_weights: str = None,
           folder_name: str = "unknown",
           folder_step: int = 1,
           folder_total: int = 1):
@@ -447,9 +474,17 @@ def train(resume: bool = False,
 
     train_loader, val_loader, num_bands = build_dataloaders()
 
-    lr     = LR * 0.3 if (resume and ckpt_path.exists()) else LR
-    model  = build_model(num_bands, ckpt_path if resume else None)
-    ema    = ModelEMA(model, decay=EMA_DECAY) if USE_EMA else None
+    # LR selection:
+    #   resume        → 0.3× LR (fine-tuning continuation)
+    #   init_weights  → full LR (fresh training, just different weight init)
+    #   fresh         → full LR
+    lr    = LR * 0.3 if (resume and ckpt_path.exists()) else LR
+    model = build_model(
+        num_bands,
+        checkpoint_path   = ckpt_path if resume else None,
+        init_weights_path = init_weights if (init_weights and not resume) else None,
+    )
+    ema   = ModelEMA(model, decay=EMA_DECAY) if USE_EMA else None
 
     criterion = FocalDiceLoss(class_weights=CLASS_WEIGHTS)
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
@@ -461,7 +496,12 @@ def train(resume: bool = False,
     history      = {"train_loss": [], "val_loss": [],
                     "train_miou": [], "val_miou": []}
 
-    mode = "RESUME (incremental)" if (resume and ckpt_path.exists()) else "FRESH"
+    if resume and ckpt_path.exists():
+        mode = "RESUME (incremental)"
+    elif init_weights:
+        mode = f"INIT-WEIGHTS (fresh training from {Path(init_weights).name})"
+    else:
+        mode = "FRESH"
     print(f"\n{'='*55}", flush=True)
     print(f"Mode: {mode} | lr={lr:.2e} | epochs={NUM_EPOCHS} | device={DEVICE}", flush=True)
     print(f"AMP={USE_AMP} | GradAccum={GRAD_ACCUM_STEPS} | EMA={USE_EMA}", flush=True)
@@ -556,14 +596,20 @@ def train(resume: bool = False,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--resume",       action="store_true")
-    parser.add_argument("--folder-name",  type=str, default="unknown")
-    parser.add_argument("--folder-step",  type=int, default=1)
-    parser.add_argument("--folder-total", type=int, default=4)
+    parser.add_argument("--resume",        action="store_true",
+                        help="Resume training from checkpoint (fine-tune, LR×0.3)")
+    parser.add_argument("--init-weights",  type=str, default=None,
+                        help="Load weights from .pth but train completely fresh "
+                             "(epoch=0, full LR, no optimizer state loaded). "
+                             "Use this to start from a custom backbone instead of HuggingFace.")
+    parser.add_argument("--folder-name",   type=str, default="unknown")
+    parser.add_argument("--folder-step",   type=int, default=1)
+    parser.add_argument("--folder-total",  type=int, default=4)
     args = parser.parse_args()
 
     train(
         resume       = args.resume,
+        init_weights = args.init_weights,
         folder_name  = args.folder_name,
         folder_step  = args.folder_step,
         folder_total = args.folder_total,

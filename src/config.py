@@ -35,15 +35,34 @@ OUTPUT_DIR         = os.environ.get("OUTPUT_DIR",     "outputs")
 # for each shard.  This is the only folder scanned during that preprocessing run.
 DATA_RAW_DIR = os.environ.get("RAW_DATA_DIR", "/raw_data/CG")
 
-# All shard folders in order — used by the shell script to iterate.
+# All shard folders — auto-discovered from RAW_DATA_ROOT at import time.
+# Every immediate subdirectory of RAW_DATA_ROOT that contains TIFF files
+# is treated as one shard.  No list to maintain — just drop a folder in.
 _raw_dirs_env = os.environ.get("RAW_DATA_DIRS", "")
 if _raw_dirs_env:
+    # Manual override: colon-separated list of explicit shard paths
     ALL_RAW_DIRS = [p.strip() for p in _raw_dirs_env.split(":") if p.strip()]
 else:
-    ALL_RAW_DIRS = [
-        "/raw_data/CG",
-        "/raw_data/PB",
-    ]
+    # Auto-discover: scan RAW_DATA_ROOT for subdirs containing TIFFs
+    _root = os.environ.get("RAW_DATA_ROOT", "/raw_data")
+    try:
+        from pathlib import Path as _Path
+        _root_path = _Path(_root)
+        if _root_path.exists():
+            ALL_RAW_DIRS = sorted(
+                str(d) for d in _root_path.iterdir()
+                if d.is_dir() and (
+                    list(d.rglob("*.tif")) or list(d.rglob("*.tiff"))
+                )
+            )
+        else:
+            ALL_RAW_DIRS = []
+    except Exception:
+        ALL_RAW_DIRS = []
+
+    # Fallback if discovery finds nothing (e.g. during build time)
+    if not ALL_RAW_DIRS:
+        ALL_RAW_DIRS = ["/raw_data/CG", "/raw_data/PB"]
 
 # ─── Shapefile directory ───────────────────────────────────────────────────────
 # SHP_DIR is auto-detected per dataset by the shell script — it finds the
