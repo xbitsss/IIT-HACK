@@ -89,13 +89,20 @@ def gaussian_window(size: int, sigma_ratio: float = 4.0) -> np.ndarray:
 
 
 # ── Preprocessing ─────────────────────────────────────────────────────────────
+# Must match 01_preprocess.py (p2/p98 clip) + 02_dataset.py (ImageNet mean/std).
+
+_IN_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32).reshape(3, 1, 1)
+_IN_STD  = np.array([0.229, 0.224, 0.225], dtype=np.float32).reshape(3, 1, 1)
+
 
 def normalize_bands(bands: np.ndarray) -> np.ndarray:
+    """Stage 1: p2/p98 clip → [0,1].  Stage 2: ImageNet mean/std on bands 0-2."""
     bands = bands.astype(np.float32)
     for i in range(bands.shape[0]):
-        b = bands[i]
-        bmin, bmax = b.min(), b.max()
-        bands[i]   = (b - bmin) / (bmax - bmin) if bmax > bmin else 0.0
+        lo, hi   = np.percentile(bands[i], 2), np.percentile(bands[i], 98)
+        bands[i] = np.clip((bands[i] - lo) / (hi - lo + 1e-6), 0.0, 1.0)
+    n = min(3, bands.shape[0])
+    bands[:n] = (bands[:n] - _IN_MEAN[:n]) / _IN_STD[:n]
     return bands
 
 

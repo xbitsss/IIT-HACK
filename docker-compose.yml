@@ -7,17 +7,21 @@ x-base: &base
   environment:
     - PYTHONUNBUFFERED=1
     - RAW_DATA_DIR=/raw_data
-    - SHP_DIR=/raw_data/CG_SHP
+    # SHP_DIR is set per-shard by 06_train_incremental.sh via auto-detection.
+    # This default is only used when running preprocess/inspect standalone.
+    - SHP_DIR=/raw_data/CG/CG_SHP
     - PROCESSED_DIR=data/processed
     - CHECKPOINT_DIR=checkpoints
     - OUTPUT_DIR=outputs
     - HF_TOKEN=${HF_TOKEN}
-    # Replay buffer — persistent across all shards, NEVER wiped
     - REPLAY_DIR=data/replay
   volumes:
+    # RAW_DATA_DIR in .env = parent folder containing CG/, PB/, etc. on the host.
+    # Example .env:  RAW_DATA_DIR=C:/Users/name/Documents/QGIS_DATASETS/CG_EXTRACT
+    # Docker reads this from .env on the HOST before starting the container.
+    # The container's own RAW_DATA_DIR=/raw_data env var is separate and set below.
     - ${RAW_DATA_DIR:-./data/raw}:/raw_data:ro
     - ./data/processed:/app/data/processed
-    # Replay dir is a separate persistent mount — survives between container runs
     - ./data/replay:/app/data/replay
     - ./outputs:/app/outputs
     - ./checkpoints:/app/checkpoints
@@ -40,7 +44,6 @@ services:
     <<: *base
     entrypoint: ["python", "src/07_notify.py", "--test"]
 
-  # Fresh training (first folder only)
   train:
     <<: *base
     entrypoint: ["python", "src/03_train.py"]
@@ -53,12 +56,12 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # Full pipeline from CG_1:
+  # Full pipeline:
   #   docker compose run --rm train-all
-  # Start from CG_2 (resume):
+  # Resume from shard 2:
   #   docker compose run --rm train-all --from 2
-  # Start from CG_3:
-  #   docker compose run --rm train-all --from 3
+  # Fine-tune from pretrained:
+  #   docker compose run --rm train-all --pretrained /raw_data/model.pth
   train-all:
     <<: *base
     entrypoint: ["bash", "src/06_train_incremental.sh"]
@@ -71,6 +74,21 @@ services:
               count: 1
               capabilities: [gpu]
 
+  # Inference on a GeoTIFF:
+  #   docker compose run --rm predict --input /raw_data/image.tif --output /app/outputs/mask.tif
+  predict:
+    <<: *base
+    entrypoint: ["python", "src/predict.py"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # Full inference with TTA (04_inference.py):
+  #   docker compose run --rm infer --input /raw_data/image.tif --output /app/outputs/mask.tif
   infer:
     <<: *base
     entrypoint: ["python", "src/04_inference.py"]

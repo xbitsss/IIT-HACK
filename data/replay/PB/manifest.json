@@ -1,0 +1,3652 @@
+{
+  "shard": "PB",
+  "tiles": [
+    {
+      "id": "28996_NADALA_ORTHO_r018624_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 18624,
+      "col": 9536,
+      "coverage_ratio": 0.9516716003417969,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r001344_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 1344,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019968_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19968,
+      "col": 16256,
+      "coverage_ratio": 0.990203857421875,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 10880,
+      "coverage_ratio": 0.9629745483398438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019968_c009088",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19968,
+      "col": 9088,
+      "coverage_ratio": 0.9910240173339844,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 12672,
+      "coverage_ratio": 0.8976325988769531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018624_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 18624,
+      "col": 9984,
+      "coverage_ratio": 0.9440650939941406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018176_c007168",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 18176,
+      "col": 7168,
+      "coverage_ratio": 0.9988479614257812,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r000896_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 896,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r002688_c019968",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 2688,
+      "col": 19968,
+      "coverage_ratio": 0.9965133666992188,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019520_c005376",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19520,
+      "col": 5376,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 10432,
+      "coverage_ratio": 0.9527397155761719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r009984_c008640",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 8640,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r000896_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 896,
+      "col": 11776,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013120_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r009984_c008640",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 8640,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c022208",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 22208,
+      "coverage_ratio": 0.9896011352539062,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 16256,
+      "coverage_ratio": 0.9133644104003906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17280,
+      "col": 20416,
+      "coverage_ratio": 0.9029464721679688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019072_c004928",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 4928,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 12672,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019520_c004480",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19520,
+      "col": 4480,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r017728_c005824",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 5824,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019072_c012672",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 12672,
+      "coverage_ratio": 0.9218978881835938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016384_c007168",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 7168,
+      "coverage_ratio": 0.9326286315917969,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010432_c008640",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 8640,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r001344_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 1344,
+      "col": 11776,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 15808,
+      "coverage_ratio": 0.9654502868652344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c022208",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17280,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011328_c006272",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 6272,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014016_c016832",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 16832,
+      "coverage_ratio": 0.9419784545898438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016256_c017728",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 17728,
+      "coverage_ratio": 0.89801025390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012672_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 10880,
+      "coverage_ratio": 0.9905242919921875,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010880_c009088",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 9088,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r004032_c017728",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 4032,
+      "col": 17728,
+      "coverage_ratio": 0.9005050659179688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r002240_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 2240,
+      "col": 11328,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 13568,
+      "coverage_ratio": 0.951202392578125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 17280,
+      "coverage_ratio": 0.9467926025390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019072_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 9984,
+      "coverage_ratio": 0.9984931945800781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r010432_c007616",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 7616,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010432_c010432",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 10432,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r009536_c008064",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 9536,
+      "col": 8064,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r007168_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 7168,
+      "col": 13120,
+      "coverage_ratio": 0.9768867492675781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r018176_c005376",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 18176,
+      "col": 5376,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r005824_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 5824,
+      "col": 17280,
+      "coverage_ratio": 0.9549293518066406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014912_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14912,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 10432,
+      "coverage_ratio": 0.9120445251464844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r009984_c007616",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 7616,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14912,
+      "col": 16256,
+      "coverage_ratio": 0.9909820556640625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012224_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 13568,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011328_c005376",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 5376,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012672_c025472",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 25472,
+      "coverage_ratio": 0.9941024780273438,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011328_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016832_c018176",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16832,
+      "col": 18176,
+      "coverage_ratio": 0.9471855163574219,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c020864",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 20864,
+      "coverage_ratio": 0.9254150390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009536_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9536,
+      "col": 11776,
+      "coverage_ratio": 0.9164352416992188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012672_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 10432,
+      "coverage_ratio": 0.9517440795898438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012224_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016256_c009536",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 9536,
+      "coverage_ratio": 0.8983840942382812,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010432_c010880",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r002688_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 2688,
+      "col": 11328,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17280,
+      "col": 13120,
+      "coverage_ratio": 0.9836235046386719,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019072_c004480",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 4480,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r010880_c009088",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 9088,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014464_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c019072",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 19072,
+      "coverage_ratio": 0.9333763122558594,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019072_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 9536,
+      "coverage_ratio": 0.9832801818847656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014912_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14912,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008640_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 8640,
+      "col": 9536,
+      "coverage_ratio": 0.9885292053222656,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013568_c007616",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 7616,
+      "coverage_ratio": 0.933441162109375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012672_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014464_c025024",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 25024,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011328_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 13120,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009536_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9536,
+      "col": 13120,
+      "coverage_ratio": 0.9325675964355469,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c019968",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 19968,
+      "coverage_ratio": 0.9552154541015625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014464_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r002688_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 2688,
+      "col": 10880,
+      "coverage_ratio": 0.9136695861816406,
+      "class_ids": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010432_c009088",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 9088,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r007168_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 7168,
+      "col": 13568,
+      "coverage_ratio": 0.9180030822753906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016256_c017280",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 17280,
+      "coverage_ratio": 0.913604736328125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019968_c004480",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19968,
+      "col": 4480,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013120_c013568",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 13568,
+      "coverage_ratio": 0.9204330444335938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012224_c023552",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 23552,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c024000",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 24000,
+      "coverage_ratio": 0.9918060302734375,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r010880_c008640",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 8640,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014464_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008640_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 8640,
+      "col": 12672,
+      "coverage_ratio": 0.9825782775878906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r012224_c014016",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 14016,
+      "coverage_ratio": 0.9014968872070312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c024000",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 24000,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010432_c006720",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 6720,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 11328,
+      "coverage_ratio": 0.9691200256347656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 10880,
+      "coverage_ratio": 0.9967575073242188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019968_c017728",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19968,
+      "col": 17728,
+      "coverage_ratio": 0.926910400390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r021312_c009536",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 21312,
+      "col": 9536,
+      "coverage_ratio": 0.9610404968261719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r010432_c009088",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 9088,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 14464,
+      "coverage_ratio": 0.963958740234375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013120_c015360",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 15360,
+      "coverage_ratio": 0.9114761352539062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019520_c010880",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19520,
+      "col": 10880,
+      "coverage_ratio": 0.9585685729980469,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r011328_c008640",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 8640,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012224_c024000",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 24000,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 16256,
+      "coverage_ratio": 0.8973846435546875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c008192",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 8192,
+      "coverage_ratio": 0.9730606079101562,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016384_c009536",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 9536,
+      "coverage_ratio": 0.9216880798339844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r022208_c017728",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 22208,
+      "col": 17728,
+      "coverage_ratio": 0.9908180236816406,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c007168",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 7168,
+      "coverage_ratio": 0.9978752136230469,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16832,
+      "col": 13120,
+      "coverage_ratio": 0.9794044494628906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 9536,
+      "coverage_ratio": 0.9885368347167969,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r020416_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 20416,
+      "col": 15808,
+      "coverage_ratio": 0.9697723388671875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 15808,
+      "coverage_ratio": 0.9393882751464844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r015360_c023104",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 23104,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 13568,
+      "coverage_ratio": 0.8976783752441406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 20416,
+      "coverage_ratio": 0.9161376953125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 14464,
+      "coverage_ratio": 0.8912162780761719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 14464,
+      "coverage_ratio": 0.9517898559570312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010880_c010880",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012672_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c005824",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 5824,
+      "coverage_ratio": 0.942352294921875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r017728_c009536",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 9536,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016384_c018176",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 18176,
+      "coverage_ratio": 0.9437026977539062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c014016",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 14016,
+      "coverage_ratio": 0.9769859313964844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013120_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c024000",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 24000,
+      "coverage_ratio": 0.9925956726074219,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r022208_c017280",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 22208,
+      "col": 17280,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011328_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 10880,
+      "coverage_ratio": 0.9885063171386719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 16256,
+      "coverage_ratio": 0.97137451171875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r015808_c017280",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 17280,
+      "coverage_ratio": 0.9011459350585938,
+      "class_ids": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012224_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r020416_c008064",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 20416,
+      "col": 8064,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r011328_c009088",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 9088,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 6720,
+      "coverage_ratio": 0.9699020385742188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013568_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011328_c023104",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 23104,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014016_c022656",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 22656,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 15808,
+      "coverage_ratio": 0.9593429565429688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 20416,
+      "coverage_ratio": 0.9049224853515625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c009088",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 9088,
+      "coverage_ratio": 0.9975967407226562,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010432_c005824",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 5824,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14912,
+      "col": 16384,
+      "coverage_ratio": 0.9750556945800781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r020864_c014464",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 20864,
+      "col": 14464,
+      "coverage_ratio": 0.993377685546875,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008192_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 8192,
+      "col": 6720,
+      "coverage_ratio": 0.9349327087402344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c014016",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 14016,
+      "coverage_ratio": 0.9857673645019531,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c006272",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17280,
+      "col": 6272,
+      "coverage_ratio": 0.9359054565429688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c023552",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 23552,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011328_c009088",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 9088,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010880_c010432",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 10432,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008640_c006272",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 8640,
+      "col": 6272,
+      "coverage_ratio": 0.9078407287597656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r010432_c008192",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 8192,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r006720_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 6720,
+      "col": 18176,
+      "coverage_ratio": 0.9759941101074219,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013120_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 10432,
+      "coverage_ratio": 0.9642105102539062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 12672,
+      "coverage_ratio": 0.8947105407714844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 11776,
+      "coverage_ratio": 0.8996162414550781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 11328,
+      "coverage_ratio": 0.9929771423339844,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010432_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016256_c007168",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 7168,
+      "coverage_ratio": 0.9242210388183594,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17280,
+      "col": 15808,
+      "coverage_ratio": 0.9843406677246094,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r018624_c005376",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 18624,
+      "col": 5376,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010880_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r006720_c013120",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 6720,
+      "col": 13120,
+      "coverage_ratio": 0.9089088439941406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r015360_c023552",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 23552,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r024000_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 24000,
+      "col": 14912,
+      "coverage_ratio": 0.9570541381835938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010432_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 16256,
+      "coverage_ratio": 0.8956794738769531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 16832,
+      "coverage_ratio": 0.9169998168945312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 13120,
+      "coverage_ratio": 0.9509315490722656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c023104",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 23104,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14912,
+      "col": 9984,
+      "coverage_ratio": 0.9118309020996094,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 14912,
+      "coverage_ratio": 0.9889678955078125,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 16832,
+      "coverage_ratio": 0.9933395385742188,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012224_c023104",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 23104,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 15360,
+      "coverage_ratio": 0.9965782165527344,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r003136_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 3136,
+      "col": 11328,
+      "coverage_ratio": 0.9376716613769531,
+      "class_ids": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r006272_c013120",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 6272,
+      "col": 13120,
+      "coverage_ratio": 0.9337844848632812,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 14464,
+      "coverage_ratio": 0.8988609313964844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010880_c005824",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 5824,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 16384,
+      "coverage_ratio": 0.9602317810058594,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 14464,
+      "coverage_ratio": 0.8940925598144531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 20416,
+      "coverage_ratio": 0.9000434875488281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 15360,
+      "coverage_ratio": 0.95013427734375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 20416,
+      "coverage_ratio": 0.9201011657714844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r021312_c015360",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 21312,
+      "col": 15360,
+      "coverage_ratio": 0.8987617492675781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 16256,
+      "coverage_ratio": 0.9276618957519531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 16384,
+      "coverage_ratio": 0.9232406616210938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013568_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012224_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 16384,
+      "coverage_ratio": 0.9903564453125,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c017728",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 17728,
+      "coverage_ratio": 0.9812393188476562,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r007616_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 7616,
+      "col": 10432,
+      "coverage_ratio": 0.9902801513671875,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016256_c018176",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 18176,
+      "coverage_ratio": 0.9457778930664062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r007616_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 7616,
+      "col": 18176,
+      "coverage_ratio": 0.9092445373535156,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r002240_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 2240,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16832,
+      "col": 17280,
+      "coverage_ratio": 0.9374847412109375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 18176,
+      "coverage_ratio": 0.9079780578613281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012672_c009984",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 9984,
+      "coverage_ratio": 0.8957557678222656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 16832,
+      "coverage_ratio": 0.8931694030761719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013568_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 17280,
+      "coverage_ratio": 0.9218559265136719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c004032",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 4032,
+      "coverage_ratio": 0.9933547973632812,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014016_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r001792_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 1792,
+      "col": 11776,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016256_c016832",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16256,
+      "col": 16832,
+      "coverage_ratio": 0.9541358947753906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r012224_c013120",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 13120,
+      "coverage_ratio": 0.9705696105957031,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 12672,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r018624_c004928",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 18624,
+      "col": 4928,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019968_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19968,
+      "col": 15808,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016384_c016832",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 16832,
+      "coverage_ratio": 0.8958053588867188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010432_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 11776,
+      "coverage_ratio": 0.8972129821777344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c014016",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 14016,
+      "coverage_ratio": 0.9698410034179688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17280,
+      "col": 10880,
+      "coverage_ratio": 0.9027938842773438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 15360,
+      "coverage_ratio": 0.9908409118652344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r001344_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 1344,
+      "col": 11328,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019520_c004928",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19520,
+      "col": 4928,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 10432,
+      "coverage_ratio": 0.909332275390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 9984,
+      "coverage_ratio": 0.9797554016113281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012672_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013120_c014016",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 14016,
+      "coverage_ratio": 0.9454231262207031,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r018176_c005824",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 18176,
+      "col": 5824,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c009088",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 9088,
+      "coverage_ratio": 0.9861488342285156,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r004928_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 4928,
+      "col": 13568,
+      "coverage_ratio": 0.8990631103515625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 16384,
+      "coverage_ratio": 0.9278068542480469,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c012224",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 12224,
+      "coverage_ratio": 0.9861946105957031,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019072_c005376",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 5376,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018176_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 18176,
+      "col": 20416,
+      "coverage_ratio": 0.9148292541503906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14912,
+      "col": 10432,
+      "coverage_ratio": 0.9996147155761719,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r007616_c015808",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 7616,
+      "col": 15808,
+      "coverage_ratio": 0.9091148376464844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r010432_c008064",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 8064,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 16832,
+      "coverage_ratio": 0.9006690979003906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 17280,
+      "coverage_ratio": 0.9801483154296875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r020864_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 20864,
+      "col": 14912,
+      "coverage_ratio": 0.9036140441894531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 16384,
+      "coverage_ratio": 0.9944801330566406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 10880,
+      "coverage_ratio": 0.9621315002441406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r018176_c009984",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 18176,
+      "col": 9984,
+      "coverage_ratio": 0.9599342346191406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016384_c017280",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 17280,
+      "coverage_ratio": 0.9888076782226562,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 11328,
+      "coverage_ratio": 0.9600296020507812,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r018624_c005824",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 18624,
+      "col": 5824,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r018176_c011328",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 18176,
+      "col": 11328,
+      "coverage_ratio": 0.9095649719238281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r013568_c013120",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 13120,
+      "coverage_ratio": 0.9459266662597656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r009984_c008064",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 8064,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009536_c019968",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 9536,
+      "col": 19968,
+      "coverage_ratio": 0.9571075439453125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019968_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19968,
+      "col": 11776,
+      "coverage_ratio": 0.9946250915527344,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010432_c006272",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 6272,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 10432,
+      "coverage_ratio": 0.9890708923339844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r010432_c008640",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 10432,
+      "col": 8640,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 9984,
+      "coverage_ratio": 0.9980659484863281,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 14912,
+      "coverage_ratio": 0.9762420654296875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r024448_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 24448,
+      "col": 14912,
+      "coverage_ratio": 0.8969535827636719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 18176,
+      "coverage_ratio": 0.9896774291992188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c006272",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 6272,
+      "coverage_ratio": 0.9068145751953125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13120,
+      "col": 9536,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16832,
+      "col": 16832,
+      "coverage_ratio": 0.9998550415039062,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c007616",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 7616,
+      "coverage_ratio": 0.9005699157714844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012672_c023104",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12672,
+      "col": 23104,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r015808_c018176",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 18176,
+      "coverage_ratio": 0.921051025390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r000448_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 448,
+      "col": 9984,
+      "coverage_ratio": 0.8992919921875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019520_c022656",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19520,
+      "col": 22656,
+      "coverage_ratio": 0.9193649291992188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c009088",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 9088,
+      "coverage_ratio": 0.9888839721679688,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r016384_c017728",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 17728,
+      "coverage_ratio": 0.8975906372070312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 11328,
+      "coverage_ratio": 0.9856414794921875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r012224_c021760",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 21760,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 10432,
+      "coverage_ratio": 0.9966468811035156,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 13568,
+      "col": 12672,
+      "coverage_ratio": 0.9296188354492188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019968_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 19968,
+      "col": 14464,
+      "coverage_ratio": 0.9015884399414062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16832,
+      "col": 16256,
+      "coverage_ratio": 0.899871826171875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 10432,
+      "coverage_ratio": 0.9979095458984375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r007168_c015808",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 7168,
+      "col": 15808,
+      "coverage_ratio": 0.8974494934082031,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r009984_c008192",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 9984,
+      "col": 8192,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014016_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019072_c010880",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 10880,
+      "coverage_ratio": 0.9030113220214844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008640_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 8640,
+      "col": 6720,
+      "coverage_ratio": 0.9495697021484375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011776_c019072",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11776,
+      "col": 19072,
+      "coverage_ratio": 0.9712142944335938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014016_c025024",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14016,
+      "col": 25024,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 14464,
+      "coverage_ratio": 0.9028396606445312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r001792_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 1792,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16832,
+      "col": 12672,
+      "coverage_ratio": 0.9699058532714844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r017728_c009088",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 9088,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c014016",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16832,
+      "col": 14016,
+      "coverage_ratio": 0.9237251281738281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r009088_c008192",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 9088,
+      "col": 8192,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 16384,
+      "coverage_ratio": 0.9473190307617188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010880_c022208",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 22208,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r009536_c008640",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 9536,
+      "col": 8640,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 13120,
+      "coverage_ratio": 0.9543075561523438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 13120,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r014464_c025472",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 14464,
+      "col": 25472,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c018624",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 14912,
+      "col": 18624,
+      "coverage_ratio": 0.9449348449707031,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012224_c018624",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 18624,
+      "coverage_ratio": 0.9478759765625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15360,
+      "col": 16256,
+      "coverage_ratio": 0.9998092651367188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 15808,
+      "col": 9536,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018176_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 18176,
+      "col": 11328,
+      "coverage_ratio": 0.9999847412109375,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r011328_c005824",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 11328,
+      "col": 5824,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012224_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 12224,
+      "col": 16256,
+      "coverage_ratio": 0.9860763549804688,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r010880_c006272",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 10880,
+      "col": 6272,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 16384,
+      "col": 16384,
+      "coverage_ratio": 0.9948692321777344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r019072_c009088",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 19072,
+      "col": 9088,
+      "coverage_ratio": 0.9784278869628906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r021312_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 21312,
+      "col": 17280,
+      "coverage_ratio": 0.9471664428710938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho_r007168_c013568",
+      "source": "PINDORI MAYA SINGH-TUGALWAL_28456_ortho.tif",
+      "folder": "/raw_data/PB",
+      "row": 7168,
+      "col": 13568,
+      "coverage_ratio": 0.9392814636230469,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "TIMMOWAL_37695_ORI_r017728_c013568",
+      "source": "TIMMOWAL_37695_ORI.tif",
+      "folder": "/raw_data/PB",
+      "row": 17728,
+      "col": 13568,
+      "coverage_ratio": 0.9243888854980469,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018624_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 18624,
+      "col": 14912,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r021312_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/PB",
+      "row": 21312,
+      "col": 15360,
+      "coverage_ratio": 0.990509033203125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    }
+  ]
+}

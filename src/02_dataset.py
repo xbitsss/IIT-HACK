@@ -12,27 +12,43 @@ import torch
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler, ConcatDataset
 from pathlib import Path
 import albumentations as A
-from sklearn.model_selection import train_test_split
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 
+# ImageNet mean/std applied AFTER augmentation so albumentations always
+# receives clean [0,1] data. Shape (3,1,1) for CHW broadcasting.
+_IN_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32).reshape(3, 1, 1)
+_IN_STD  = np.array([0.229, 0.224, 0.225], dtype=np.float32).reshape(3, 1, 1)
+
+
+def _imagenet_normalize(image_chw: np.ndarray) -> np.ndarray:
+    """Apply ImageNet mean/std to the first 3 channels. Band 3 (NIR) left in [0,1]."""
+    n = min(3, image_chw.shape[0])
+    image_chw = image_chw.copy()
+    image_chw[:n] = (image_chw[:n] - _IN_MEAN[:n]) / _IN_STD[:n]
+    return image_chw
+
 
 def _worker_init_fn(worker_id):
     """
-    Called in each DataLoader worker process at startup.
-    Resets SIGINT to SIG_IGN so Ctrl+C in the terminal is handled only by
-    the main training process — not by each of the 4 worker subprocesses.
-    Without this, pressing Ctrl+C fires the crash handler once per worker
-    plus once in the main process, sending N+1 crash emails.
+    1. SIGINT isolation — Ctrl+C handled only by main process, not workers.
+    2. Per-worker per-epoch RNG seeding from torch.initial_seed() so
+       albumentations augmentation is genuinely random across epochs.
+       Without this all workers inherit the same frozen numpy state from
+       the parent process and apply identical augmentations every epoch.
     """
     import signal as _signal
     _signal.signal(_signal.SIGINT, _signal.SIG_IGN)
+    seed = torch.initial_seed() % (2 ** 32)
+    np.random.seed(seed)
+    import random as _random
+    _random.seed(seed)
 from config import (
     DATA_PROCESSED_DIR, DATA_RAW_DIR, VAL_SPLIT,
     RANDOM_SEED, AUGMENT_TRAIN, BATCH_SIZE,
     USE_WEIGHTED_SAMPLER, SAMPLER_CLASS_WEIGHTS,
-    NUM_CLASSES, REPLAY_RATIO,
+    NUM_CLASSES, REPLAY_RATIO, CLASS_LABELS,
 )
 
 
@@ -48,7 +64,7 @@ def get_train_transforms():
                  rotate=(-20, 20), shear=(-5, 5), p=0.5),
         A.ElasticTransform(alpha=60, sigma=6, p=0.25),
         A.GridDistortion(num_steps=5, distort_limit=0.2, p=0.25),
-        A.OpticalDistortion(distort_limit=0.15, shift_limit=0.1, p=0.2),
+        A.OpticalDistortion(distort_limit=0.15, p=0.2),
         A.RandomBrightnessContrast(brightness_limit=0.25, contrast_limit=0.25, p=0.5),
         A.HueSaturationValue(hue_shift_limit=10, sat_shift_limit=20,
                              val_shift_limit=15, p=0.3),
@@ -109,9 +125,13 @@ class GeoSegDataset(Dataset):
                 image_hwc = aug["image"]
             mask = aug["mask"]
 
+        # ImageNet normalization AFTER augmentation so albumentations
+        # always receives clean [0, 1] inputs.
+        image_chw = np.transpose(image_hwc, (2, 0, 1))
+        image_chw = _imagenet_normalize(image_chw)
+
         return (
-            torch.from_numpy(np.ascontiguousarray(
-                np.transpose(image_hwc, (2, 0, 1)))).float(),
+            torch.from_numpy(np.ascontiguousarray(image_chw)).float(),
             torch.from_numpy(np.ascontiguousarray(mask)).long(),
         )
 
@@ -128,18 +148,98 @@ def compute_sample_weights(tile_meta_list):
 
 # ── Train / val split ─────────────────────────────────────────────────────────
 
-def _tiff_sizes(raw_dir: Path) -> dict:
-    sizes = {}
-    for p in list(raw_dir.glob("**/*.tif")) + list(raw_dir.glob("**/*.tiff")):
-        sizes[p.name] = p.stat().st_size
-    return sizes
-
-
 def split_tiles(tiles):
-    print("  Stratified random 80/20 split", flush=True)
-    idx = list(range(len(tiles)))
-    tr, va = train_test_split(idx, test_size=VAL_SPLIT, random_state=RANDOM_SEED)
-    return [tiles[i] for i in tr], [tiles[i] for i in va]
+    """
+    Split by source TIFF (not individual tile) to prevent spatial leakage.
+
+    Overlapping tiles share 64px border strips — a random tile split puts
+    neighbours in both train and val, inflating val mIoU to ~80% while the
+    model fails completely on new imagery.
+
+    Strategy: pick the single TIFF whose tile count is closest to VAL_SPLIT
+    (20%) of total, capped at 40% so train always has the majority.
+    Also checks foreground class coverage and swaps if val TIFF is missing
+    a class entirely.
+    """
+    from collections import defaultdict
+    import random as _rnd
+
+    tiff_buckets = defaultdict(list)
+    for t in tiles:
+        stem = "_".join(t["id"].split("_")[:-2])
+        tiff_buckets[stem].append(t)
+
+    tiff_keys = sorted(tiff_buckets.keys())
+    n_tiffs   = len(tiff_keys)
+
+    if n_tiffs < 2:
+        print(
+            "  [WARN] Only 1 source TIFF — falling back to random tile split. "
+            "Val mIoU will be optimistic due to tile overlap leakage.",
+            flush=True,
+        )
+        idx = list(range(len(tiles)))
+        rng = _rnd.Random(RANDOM_SEED)
+        rng.shuffle(idx)
+        cut = max(1, int(len(idx) * VAL_SPLIT))
+        va_idx, tr_idx = idx[:cut], idx[cut:]
+        return [tiles[i] for i in tr_idx], [tiles[i] for i in va_idx]
+
+    total    = len(tiles)
+    target   = VAL_SPLIT * total
+    max_val  = 0.40 * total
+    foreground = set(range(1, NUM_CLASSES))
+
+    def classes_in(bucket):
+        return {cid for t in bucket for cid in t.get("class_ids", [0])}
+
+    # Pick TIFF closest to target val size, within 40% cap
+    candidates = sorted(tiff_keys, key=lambda k: abs(len(tiff_buckets[k]) - target))
+    val_key = next((k for k in candidates if len(tiff_buckets[k]) <= max_val), None)
+    if val_key is None:
+        val_key = min(tiff_keys, key=lambda k: len(tiff_buckets[k]))
+
+    val_meta   = tiff_buckets[val_key]
+    train_meta = [t for k in tiff_keys if k != val_key for t in tiff_buckets[k]]
+
+    # Class coverage check — swap if val is missing a foreground class
+    missing = foreground - classes_in(val_meta)
+    if missing:
+        print(
+            f"  [WARN] Val TIFF '{val_key}' missing "
+            f"{[CLASS_LABELS[c] for c in missing]} — searching for better val TIFF.",
+            flush=True,
+        )
+        best_key, best_cov = val_key, len(foreground - missing)
+        for k in tiff_keys:
+            if k == val_key or len(tiff_buckets[k]) > max_val:
+                continue
+            cov = len(foreground & classes_in(tiff_buckets[k]))
+            if cov > best_cov:
+                best_cov, best_key = cov, k
+        if best_key != val_key:
+            print(f"  [INFO] Swapped val TIFF: '{val_key}' → '{best_key}'", flush=True)
+            val_key    = best_key
+            val_meta   = tiff_buckets[val_key]
+            train_meta = [t for k in tiff_keys if k != val_key for t in tiff_buckets[k]]
+        else:
+            print(
+                "  [WARN] No single TIFF covers all foreground classes — "
+                "keeping best size match. Some val class IoU values will be 0.",
+                flush=True,
+            )
+
+    val_frac    = len(val_meta) / max(total, 1)
+    train_tiffs = sorted(k for k in tiff_keys if k != val_key)
+    print(
+        f"  TIFF-level split ({n_tiffs} TIFFs): "
+        f"train={len(train_tiffs)} TIFFs / {len(train_meta)} tiles  "
+        f"val=1 TIFF / {len(val_meta)} tiles  ({val_frac*100:.1f}% val)",
+        flush=True,
+    )
+    print(f"  Val TIFF   : {val_key}",    flush=True)
+    print(f"  Train TIFFs: {train_tiffs}", flush=True)
+    return train_meta, val_meta
 
 
 # ── DataLoaders ───────────────────────────────────────────────────────────────
@@ -165,11 +265,10 @@ def build_dataloaders(proc_dir=None):
 
     # ── Val class distribution check ─────────────────────────────────────────
     from collections import Counter
-    from config import CLASS_LABELS as CL
     val_cls = Counter(cid for t in val_meta for cid in t.get("class_ids", [0]))
     print("  Val class coverage:", flush=True)
-    for cid in range(len(CL)):
-        print(f"    {CL[cid]:12s}: {val_cls.get(cid,0)} tiles", flush=True)
+    for cid in range(len(CLASS_LABELS)):
+        print(f"    {CLASS_LABELS[cid]:12s}: {val_cls.get(cid,0)} tiles", flush=True)
 
     # ── Replay tiles from previous shards ────────────────────────────────────
     from replay_buffer import load_all_replay, replay_exists

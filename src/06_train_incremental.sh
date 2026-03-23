@@ -27,26 +27,40 @@
 set -euo pipefail
 
 # ── Configuration ─────────────────────────────────────────────────────────────
+# One entry per dataset folder.  Each folder must contain:
+#   - TIFF files (anywhere inside, found recursively)
+#   - A subdirectory containing .shp files (auto-detected — no parallel array needed)
+#
+# Example structure:
+#   /raw_data/CG/
+#       image1.tif
+#       image2.tif
+#       CG_SHP/
+#           Built_Up_Area_type.shp  Road.shp  Water_Body.shp
+#   /raw_data/PB/
+#       image3.tif
+#       PB_SHP/
+#           Built_Up_Area_type.shp  Road.shp  Water_Body.shp
 FOLDERS=(
-    "/raw_data/CG_1"
-    "/raw_data/CG_2"
-    "/raw_data/CG_3"
-    "/raw_data/CG_4"
+    "/raw_data/CG"
+    "/raw_data/PB"
 )
-export SHP_DIR="${SHP_DIR:-/raw_data/CG_SHP}"
+
 export MAX_DISK_GB="${MAX_DISK_GB:-50}"
 export REPLAY_TILES_PER_SHARD="${REPLAY_TILES_PER_SHARD:-300}"
 
 TOTAL=${#FOLDERS[@]}
 START_FROM=1
+PRETRAINED_CKPT=""
 
 # ── Parse arguments ───────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --from) START_FROM="$2"; shift 2 ;;
+        --from)        START_FROM="$2";      shift 2 ;;
+        --pretrained)  PRETRAINED_CKPT="$2"; shift 2 ;;
         *)
             echo "Unknown argument: $1"
-            echo "Usage: $0 [--from N]"
+            echo "Usage: $0 [--from N] [--pretrained /path/to/model.pth]"
             exit 1
             ;;
     esac
@@ -59,9 +73,8 @@ fi
 
 echo "========================================"
 echo " Incremental Training Pipeline"
-echo " Folders       : $TOTAL"
-echo " Starting from : CG_$START_FROM"
-echo " Shapefiles    : $SHP_DIR"
+echo " Shards        : $TOTAL"
+echo " Starting from : shard $START_FROM"
 echo " Disk ceiling  : ${MAX_DISK_GB} GB (processed + replay combined)"
 echo " Replay/shard  : ${REPLAY_TILES_PER_SHARD} tiles"
 echo "========================================"
@@ -75,9 +88,6 @@ echo "========================================"
 if [ "$START_FROM" -eq 1 ]; then
     echo ""
     echo "[FRESH START] Wiping stale data from any previous run..."
-    # Delete CONTENTS of mounted dirs, not the dirs themselves.
-    # Docker volume mount points are always "busy" — rm -rf on the dir root
-    # fails with "Device or resource busy". Deleting contents works fine.
     if [ -d "data/replay" ]; then
         echo "  Clearing data/replay/ ($(du -sh data/replay 2>/dev/null | cut -f1) of stale replay tiles)"
         find data/replay -mindepth 1 -delete
@@ -86,9 +96,19 @@ if [ "$START_FROM" -eq 1 ]; then
         echo "  Clearing data/processed/ (leftover tiles)"
         find data/processed -mindepth 1 -delete
     fi
-    if [ -f "checkpoints/best_model.pt" ]; then
-        echo "  Removing stale checkpoint"
-        rm -f checkpoints/best_model.pt checkpoints/training_curves.png checkpoints/history.json
+    if [ -n "$PRETRAINED_CKPT" ]; then
+        if [ ! -f "$PRETRAINED_CKPT" ]; then
+            echo "[ERROR] --pretrained path does not exist: $PRETRAINED_CKPT"
+            exit 1
+        fi
+        mkdir -p checkpoints
+        cp "$PRETRAINED_CKPT" checkpoints/best_model.pt
+        echo "  Installed pretrained checkpoint: $PRETRAINED_CKPT → checkpoints/best_model.pt"
+    else
+        if [ -f "checkpoints/best_model.pt" ]; then
+            echo "  Removing stale checkpoint"
+            rm -f checkpoints/best_model.pt checkpoints/training_curves.png checkpoints/history.json
+        fi
     fi
     echo "[FRESH START] Clean slate ready."
     echo ""
@@ -96,13 +116,40 @@ fi
 
 # ── Helper: measure directory size in bytes ───────────────────────────────────
 dir_bytes() {
-    # Returns 0 if directory does not exist
     local dir="$1"
     if [ -d "$dir" ]; then
         du -sb "$dir" 2>/dev/null | awk '{print $1}' || echo "0"
     else
         echo "0"
     fi
+}
+
+# ── Helper: find the SHP subdirectory inside a dataset folder ─────────────────
+# Walks one level of subdirectories and returns the first one containing .shp
+# files.  This lets each dataset folder own its shapefiles without needing a
+# separate parallel array in the config.
+#
+# Usage: SHP_DIR=$(find_shp_dir "/raw_data/CG")
+# Returns empty string if no SHP subdir is found (preprocessing will warn).
+find_shp_dir() {
+    local dataset_dir="$1"
+
+    # Check one level of subdirectories for .shp files using find (more reliable than ls glob)
+    for subdir in "$dataset_dir"/*/; do
+        [ -d "$subdir" ] || continue
+        if find "$subdir" -maxdepth 1 -iname "*.shp" 2>/dev/null | grep -q .; then
+            echo "${subdir%/}"
+            return 0
+        fi
+    done
+
+    # Fallback: .shp files directly in the dataset folder itself
+    if find "$dataset_dir" -maxdepth 1 -iname "*.shp" 2>/dev/null | grep -q .; then
+        echo "$dataset_dir"
+        return 0
+    fi
+
+    echo ""
 }
 
 # ── Helper: compute processed-tile budget for this shard ─────────────────────
@@ -145,7 +192,7 @@ for i in "${!FOLDERS[@]}"; do
     STEP=$((i + 1))
 
     if [ "$STEP" -lt "$START_FROM" ]; then
-        echo "Skipping CG_$STEP (--from $START_FROM)"
+        echo "Skipping step $STEP ($(basename "${FOLDERS[$i]}")) — --from $START_FROM"
         continue
     fi
 
@@ -154,9 +201,17 @@ for i in "${!FOLDERS[@]}"; do
     CURRENT_FOLDER="$FOLDER_NAME"
     CURRENT_STEP="$STEP"
 
+    # Auto-detect the SHP subdirectory inside this dataset folder
+    SHARD_SHP_DIR=$(find_shp_dir "$FOLDER")
+    if [ -z "$SHARD_SHP_DIR" ]; then
+        echo "[WARN] No SHP subdirectory found in $FOLDER — preprocessing will skip label rasterization"
+        SHARD_SHP_DIR="$FOLDER"   # pass the folder itself; preprocess will warn
+    fi
+
     echo ""
     echo "========================================"
     echo " Step $STEP/$TOTAL: $FOLDER_NAME"
+    echo " Shapefiles   : $SHARD_SHP_DIR"
     echo "========================================"
 
     # ── Disk accounting: compute exact processed budget ───────────────────────
@@ -180,6 +235,7 @@ assert budget >= 1.0,       f'[ERROR] Processed budget ({budget:.2f} GB) is less
     # ── Preprocess this shard with the computed budget ────────────────────────
     echo "[$(date +%H:%M:%S)] Preprocessing $FOLDER_NAME..."
     if ! RAW_DATA_DIR="$FOLDER" \
+         SHP_DIR="$SHARD_SHP_DIR" \
          MAX_PROCESSED_GB="$PROCESSED_BUDGET_GB" \
          python src/01_preprocess.py 2>&1 | tee /tmp/preprocess_log.txt; then
         echo "[ERROR] Preprocessing failed for $FOLDER_NAME"
@@ -225,11 +281,15 @@ save_replay_from_shard('$FOLDER_NAME')
 
     # ── Train ─────────────────────────────────────────────────────────────────
     RESUME_FLAG=""
-    if [ "$STEP" -gt 1 ] || [ "$START_FROM" -gt 1 ]; then
+    if [ "$STEP" -gt 1 ] || [ "$START_FROM" -gt 1 ] || [ -n "$PRETRAINED_CKPT" ]; then
         RESUME_FLAG="--resume"
-        echo "  Mode: RESUME (fine-tuning from checkpoint)"
+        if [ -n "$PRETRAINED_CKPT" ] && [ "$STEP" -eq 1 ]; then
+            echo "  Mode: FINE-TUNE from pretrained checkpoint"
+        else
+            echo "  Mode: RESUME (fine-tuning from checkpoint)"
+        fi
     else
-        echo "  Mode: FRESH (first shard)"
+        echo "  Mode: FRESH (first shard, no pretrained checkpoint)"
     fi
 
     echo "[$(date +%H:%M:%S)] Training on $FOLDER_NAME..."

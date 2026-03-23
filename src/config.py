@@ -19,8 +19,8 @@ Tile size at TILE_SIZE=512, 4 bands float32 image + uint8 mask:
   mask  :     512 × 512 × 1 byte  =   262,144 bytes ≈ 0.25 MB
   total per tile                   ≈ 4.25 MB
 
-With 4 shards × 300 replay tiles = 1200 replay tiles ≈ 5.1 GB total replay.
-That leaves ≈ 44.9 GB for processed tiles on the last shard (~10,565 tiles).
+With 2 dataset shards × 300 replay tiles = 600 replay tiles ≈ 2.5 GB total replay.
+That leaves ≈ 47.5 GB for processed tiles on the last shard (~11,176 tiles).
 """
 
 import os
@@ -33,7 +33,7 @@ OUTPUT_DIR         = os.environ.get("OUTPUT_DIR",     "outputs")
 # ─── Current shard folder (set per-shard by the shell script) ─────────────────
 # The shell script exports RAW_DATA_DIR=<folder> before calling 01_preprocess.py
 # for each shard.  This is the only folder scanned during that preprocessing run.
-DATA_RAW_DIR = os.environ.get("RAW_DATA_DIR", "/raw_data/CG_1")
+DATA_RAW_DIR = os.environ.get("RAW_DATA_DIR", "/raw_data/CG")
 
 # All shard folders in order — used by the shell script to iterate.
 _raw_dirs_env = os.environ.get("RAW_DATA_DIRS", "")
@@ -41,14 +41,15 @@ if _raw_dirs_env:
     ALL_RAW_DIRS = [p.strip() for p in _raw_dirs_env.split(":") if p.strip()]
 else:
     ALL_RAW_DIRS = [
-        "/raw_data/CG_1",
-        "/raw_data/CG_2",
-        "/raw_data/CG_3",
-        "/raw_data/CG_4",
+        "/raw_data/CG",
+        "/raw_data/PB",
     ]
 
-# ─── Shapefile directory (shared across all shards) ───────────────────────────
-SHP_DIR = os.environ.get("SHP_DIR", "/raw_data/CG_SHP")
+# ─── Shapefile directory ───────────────────────────────────────────────────────
+# SHP_DIR is auto-detected per dataset by the shell script — it finds the
+# subdirectory inside each dataset folder that contains .shp files.
+# The default here is only used when running 01_preprocess.py standalone.
+SHP_DIR = os.environ.get("SHP_DIR", "/raw_data/CG/CG_SHP")
 
 # ─── Exact shapefile filenames → class name ───────────────────────────────────
 SHAPEFILE_MAP = {

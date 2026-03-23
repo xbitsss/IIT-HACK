@@ -122,23 +122,42 @@ def inspect():
                 else:
                     print(f"    Band {i}: (no valid pixels in sample)")
 
+    # ── Auto-detect SHP subdirectory in each dataset folder ───────────────────
+    def find_shp_dir(dataset_dir: Path):
+        """Return the first subdirectory inside dataset_dir that contains .shp files."""
+        for sub in sorted(dataset_dir.iterdir()):
+            if sub.is_dir() and list(sub.glob("*.shp")):
+                return sub
+        # Fallback: shapefiles directly in the dataset folder
+        if list(dataset_dir.glob("*.shp")):
+            return dataset_dir
+        return None
+
+    # Build a map: dataset_folder → shp_dir
+    shp_dir_map = {}
+    for raw_dir in raw_dirs:
+        detected = find_shp_dir(raw_dir)
+        shp_dir_map[raw_dir] = detected
+        if detected:
+            print(f"\n  Auto-detected SHP dir for {raw_dir.name}: {detected}")
+        else:
+            print(f"\n  [WARN] No SHP subdir found in {raw_dir} — run inspect to check")
+
     # ── Shapefiles ────────────────────────────────────────────────────────────
-    # Search both the TIFF folders AND the dedicated SHP_DIR
-    shp_search_dirs = list(raw_dirs) + [Path(SHP_DIR)]
     seen_shps = set()
     all_shps  = []
-    for d in shp_search_dirs:
-        if d.exists():
-            for p in d.glob("**/*.shp"):
+    for shp_dir in shp_dir_map.values():
+        if shp_dir and shp_dir.exists():
+            for p in shp_dir.glob("**/*.shp"):
                 if p not in seen_shps:
                     seen_shps.add(p)
                     all_shps.append(p)
 
-    print(f"\nFound {len(all_shps)} shapefile(s) (searched TIFF folders + {SHP_DIR}):")
+    print(f"\nFound {len(all_shps)} shapefile(s):")
     for shp_path in all_shps:
         try:
             gdf = gpd.read_file(shp_path)
-            print(f"\n  {shp_path.name}")
+            print(f"\n  {shp_path.name}  [{shp_path.parent}]")
             print(f"    Features:  {len(gdf)}")
             print(f"    CRS:       {gdf.crs}")
             print(f"    Geometry:  {gdf.geometry.geom_type.unique().tolist()}")
@@ -150,34 +169,43 @@ def inspect():
 
     # ── Config check ──────────────────────────────────────────────────────────
     print(f"\nConfig class map: {CLASSES}")
-    print(f"\nSHAPEFILE_MAP (class → expected filename):")
-    shp_dir = Path(SHP_DIR)
-    for class_name, filename in SHAPEFILE_MAP.items():
-        path = shp_dir / filename
-        status = "✓ found" if path.exists() else "✗ MISSING"
-        print(f"  {class_name:12s} → {filename:45s} {status}")
+    print(f"\nSHAPEFILE_MAP checked against each detected SHP folder:")
+    for raw_dir, shp_dir in shp_dir_map.items():
+        if not shp_dir:
+            print(f"  [{raw_dir.name}] — no SHP dir found")
+            continue
+        print(f"  [{raw_dir.name}] → {shp_dir}")
+        for class_name, filename in SHAPEFILE_MAP.items():
+            path   = shp_dir / filename
+            status = "✓ found" if path.exists() else "✗ MISSING"
+            print(f"    {class_name:12s} → {filename:45s} {status}")
 
-    # ── Overlap check: does each TIFF bbox overlap at least one shapefile? ────
+    # ── Overlap check ─────────────────────────────────────────────────────────
     print("\n── Shapefile ↔ TIFF overlap check ───────────────────────────────────")
     for tif_path in all_tifs:
         with rasterio.open(tif_path) as tif:
-            from rasterio.crs import CRS
+            # Use the SHP dir for whichever dataset folder this TIFF belongs to
+            dataset_dir = next(
+                (rd for rd in raw_dirs if str(tif_path).startswith(str(rd))),
+                list(raw_dirs)[0] if raw_dirs else None,
+            )
+            shp_dir  = shp_dir_map.get(dataset_dir)
+            chk_shps = list(shp_dir.glob("**/*.shp")) if shp_dir else all_shps
             tif_bounds = tif.bounds
             tif_crs    = tif.crs
             overlaps   = []
-            for shp_path in all_shps:
+            for shp_path in chk_shps:
                 try:
                     gdf = gpd.read_file(shp_path)
                     if gdf.crs and gdf.crs != tif_crs:
                         gdf = gdf.to_crs(tif_crs)
-                    sb = gdf.total_bounds  # (minx, miny, maxx, maxy)
-                    # Simple bbox overlap test
+                    sb = gdf.total_bounds
                     if (sb[2] > tif_bounds.left  and sb[0] < tif_bounds.right and
                             sb[3] > tif_bounds.bottom and sb[1] < tif_bounds.top):
                         overlaps.append(shp_path.name)
                 except Exception:
                     pass
-            status = "✓ overlaps: " + ", ".join(overlaps) if overlaps else "✗ NO shapefile overlap — will be skipped in preprocessing"
+            status = "✓ overlaps: " + ", ".join(overlaps) if overlaps else "✗ NO shapefile overlap — will be skipped"
             print(f"  {tif_path.name[:50]:50s}  {status}")
 
     print()

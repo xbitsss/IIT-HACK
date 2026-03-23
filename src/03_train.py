@@ -454,7 +454,7 @@ def train(resume: bool = False,
     criterion = FocalDiceLoss(class_weights=CLASS_WEIGHTS)
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
     scheduler = build_scheduler(optimizer, NUM_EPOCHS, WARMUP_EPOCHS)
-    scaler    = torch.cuda.amp.GradScaler(enabled=(USE_AMP and DEVICE.type == "cuda"))
+    scaler    = torch.amp.GradScaler("cuda", enabled=(USE_AMP and DEVICE.type == "cuda"))
 
     best_miou    = 0.0
     patience_cnt = 0
