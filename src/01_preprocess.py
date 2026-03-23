@@ -127,13 +127,52 @@ def find_shp_dir_for_tif(tif_path: Path, shp_dirs: list) -> Path:
     return Path(shp_dirs[0])
 
 
+def _clean_gdf(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """
+    Remove or repair degenerate geometries before rasterization.
+
+    Rasterio silently skips invalid geometries with a ShapeSkipWarning.
+    The typical culprit is a collapsed polygon (<=2 distinct vertices,
+    zero area, or a bowtie/self-intersection) produced by digitization
+    errors or coordinate precision loss during CRS reprojection.
+
+    Strategy:
+      1. Drop null geometries.
+      2. Apply buffer(0) to repair self-intersections and near-invalid rings
+         (this is the standard shapely fix; it returns an empty geometry for
+         truly degenerate shapes, which step 3 then removes).
+      3. Drop any geometry that is still empty or invalid after the repair.
+
+    A summary is printed so you know how many features were removed and why.
+    """
+    import warnings
+    n_before = len(gdf)
+
+    # Step 1: drop nulls
+    gdf = gdf[~gdf.geometry.isna()].copy()
+
+    # Step 2: buffer(0) repair -- suppresses shapely GEOS warnings during repair
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        gdf["geometry"] = gdf.geometry.buffer(0)
+
+    # Step 3: drop still-empty or still-invalid
+    gdf = gdf[~gdf.geometry.is_empty & gdf.geometry.is_valid].copy()
+
+    n_dropped = n_before - len(gdf)
+    if n_dropped:
+        print(f"  [GEOM] Cleaned {n_dropped} invalid/degenerate geometries "
+              f"({n_before} -> {len(gdf)})", flush=True)
+    return gdf
+
+
 def load_gdfs(shp_map: dict, tif_crs) -> dict:
     gdfs = {}
     for class_name, shp_path in shp_map.items():
         gdf = gpd.read_file(shp_path)
         if gdf.crs is not None and gdf.crs != tif_crs:
             gdf = gdf.to_crs(tif_crs)
-        gdfs[class_name] = gdf
+        gdfs[class_name] = _clean_gdf(gdf)
     return gdfs
 
 
@@ -232,7 +271,7 @@ def process_chunk(args):
                 gdf = gpd.read_file(shp_path)
                 if gdf.crs is not None and gdf.crs != tif.crs:
                     gdf = gdf.to_crs(tif.crs)
-                gdfs[class_name] = gdf
+                gdfs[class_name] = _clean_gdf(gdf)
 
             raw      = tif.read(BAND_INDICES, window=window)
             valid    = ~np.all(raw == 0, axis=0)
