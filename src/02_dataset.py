@@ -3,7 +3,7 @@
 
 Replay buffer is included: when training on shard N, tiles from shards
 1…N-1 are mixed in via WeightedRandomSampler to prevent catastrophic
-forgetting.  The mix ratio is REPLAY_RATIO (default 25% of each batch).
+forgetting. The mix ratio is REPLAY_RATIO (default 25% of each batch).
 """
 
 import json
@@ -21,14 +21,12 @@ sys.path.insert(0, str(Path(__file__).parent))
 _IN_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32).reshape(3, 1, 1)
 _IN_STD  = np.array([0.229, 0.224, 0.225], dtype=np.float32).reshape(3, 1, 1)
 
-
 def _imagenet_normalize(image_chw: np.ndarray) -> np.ndarray:
     """Apply ImageNet mean/std to the first 3 channels. Band 3 (NIR) left in [0,1]."""
     n = min(3, image_chw.shape[0])
     image_chw = image_chw.copy()
     image_chw[:n] = (image_chw[:n] - _IN_MEAN[:n]) / _IN_STD[:n]
     return image_chw
-
 
 def _worker_init_fn(worker_id):
     """
@@ -44,13 +42,13 @@ def _worker_init_fn(worker_id):
     np.random.seed(seed)
     import random as _random
     _random.seed(seed)
+
 from config import (
     DATA_PROCESSED_DIR, DATA_RAW_DIR, VAL_SPLIT,
     RANDOM_SEED, AUGMENT_TRAIN, BATCH_SIZE,
     USE_WEIGHTED_SAMPLER, SAMPLER_CLASS_WEIGHTS,
     NUM_CLASSES, REPLAY_RATIO, CLASS_LABELS,
 )
-
 
 # ── Augmentation ──────────────────────────────────────────────────────────────
 
@@ -77,23 +75,22 @@ def get_train_transforms():
         A.RandomShadow(shadow_roi=(0, 0, 1, 1), num_shadows_limit=(1, 3), p=0.2),
     ])
 
-
 # ── Dataset ───────────────────────────────────────────────────────────────────
 
 class GeoSegDataset(Dataset):
     """
-    proc_dir  : used for current-shard tiles (images/ and masks/ subdirs).
+    proc_dir     : used for current-shard tiles (images/ and masks/ subdirs).
     img_map / msk_map : {tile_id: Path} — used for replay tiles which live in
-                        shard subdirs under data/replay/.
+                   shard subdirs under data/replay/.
     Pass exactly one of (proc_dir) or (img_map + msk_map).
     """
     def __init__(self, tile_ids, proc_dir=None, transform=None,
                  img_map=None, msk_map=None):
-        self.tile_ids  = tile_ids
-        self.img_dir   = proc_dir / "images" if proc_dir else None
-        self.msk_dir   = proc_dir / "masks"  if proc_dir else None
-        self.img_map   = img_map
-        self.msk_map   = msk_map
+        self.tile_ids = tile_ids
+        self.img_dir  = proc_dir / "images" if proc_dir else None
+        self.msk_dir  = proc_dir / "masks"  if proc_dir else None
+        self.img_map  = img_map
+        self.msk_map  = msk_map
         self.transform = transform
 
     def _img_path(self, tid):
@@ -135,7 +132,6 @@ class GeoSegDataset(Dataset):
             torch.from_numpy(np.ascontiguousarray(mask)).long(),
         )
 
-
 # ── Class-balanced sampling ───────────────────────────────────────────────────
 
 def compute_sample_weights(tile_meta_list):
@@ -145,24 +141,24 @@ def compute_sample_weights(tile_meta_list):
         for t in tile_meta_list
     ]
 
-
 # ── Train / val split ─────────────────────────────────────────────────────────
 
 def split_tiles(tiles):
     """
-    Split by source TIFF (not individual tile) to prevent spatial leakage.
+    Stratified TIFF-level split: every TIFF contributes VAL_SPLIT fraction
+    of its tiles to val, so the val class distribution mirrors the whole
+    dataset — no single TIFF's class imbalance (e.g. dense built-up) can
+    deflate or inflate the mIoU signal.
 
-    Overlapping tiles share 64px border strips — a random tile split puts
-    neighbours in both train and val, inflating val mIoU to ~80% while the
-    model fails completely on new imagery.
+    Spatial leakage is mitigated by SYSTEMATIC sampling (every Nth tile)
+    within each TIFF rather than random — tiles are stored in row-major
+    order by 01_preprocess.py, so every-Nth spacing spreads val tiles
+    across the full image rather than clustering neighbours together.
 
-    Strategy: pick the single TIFF whose tile count is closest to VAL_SPLIT
-    (20%) of total, capped at 40% so train always has the majority.
-    Also checks foreground class coverage and swaps if val TIFF is missing
-    a class entirely.
+    Falls back to the old random tile split only when there is exactly
+    1 source TIFF (nothing to stratify over).
     """
     from collections import defaultdict
-    import random as _rnd
 
     tiff_buckets = defaultdict(list)
     for t in tiles:
@@ -172,12 +168,14 @@ def split_tiles(tiles):
     tiff_keys = sorted(tiff_buckets.keys())
     n_tiffs   = len(tiff_keys)
 
+    # ── Fallback: only 1 TIFF ────────────────────────────────────────────
     if n_tiffs < 2:
         print(
-            "  [WARN] Only 1 source TIFF — falling back to random tile split. "
+            " [WARN] Only 1 source TIFF — falling back to random tile split. "
             "Val mIoU will be optimistic due to tile overlap leakage.",
             flush=True,
         )
+        import random as _rnd
         idx = list(range(len(tiles)))
         rng = _rnd.Random(RANDOM_SEED)
         rng.shuffle(idx)
@@ -185,62 +183,32 @@ def split_tiles(tiles):
         va_idx, tr_idx = idx[:cut], idx[cut:]
         return [tiles[i] for i in tr_idx], [tiles[i] for i in va_idx]
 
-    total    = len(tiles)
-    target   = VAL_SPLIT * total
-    max_val  = 0.40 * total
-    foreground = set(range(1, NUM_CLASSES))
+    # ── Stratified split: each TIFF donates VAL_SPLIT% of its tiles ──────
+    train_meta, val_meta = [], []
+    for key in tiff_keys:
+        bucket = tiff_buckets[key]
+        n      = len(bucket)
+        n_val  = max(1, int(round(n * VAL_SPLIT)))
 
-    def classes_in(bucket):
-        return {cid for t in bucket for cid in t.get("class_ids", [0])}
+        # Systematic (every-Nth) sampling within the TIFF.
+        # Tiles are in row-major order from 01_preprocess.py, so picking
+        # every step-th tile spaces val tiles across the full image rather
+        # than clustering them in one corner (which random sampling risks).
+        step       = max(1, n // n_val)
+        val_indices = set(list(range(0, n, step))[:n_val])
 
-    # Pick TIFF closest to target val size, within 40% cap
-    candidates = sorted(tiff_keys, key=lambda k: abs(len(tiff_buckets[k]) - target))
-    val_key = next((k for k in candidates if len(tiff_buckets[k]) <= max_val), None)
-    if val_key is None:
-        val_key = min(tiff_keys, key=lambda k: len(tiff_buckets[k]))
+        for i, tile in enumerate(bucket):
+            (val_meta if i in val_indices else train_meta).append(tile)
 
-    val_meta   = tiff_buckets[val_key]
-    train_meta = [t for k in tiff_keys if k != val_key for t in tiff_buckets[k]]
-
-    # Class coverage check — swap if val is missing a foreground class
-    missing = foreground - classes_in(val_meta)
-    if missing:
-        print(
-            f"  [WARN] Val TIFF '{val_key}' missing "
-            f"{[CLASS_LABELS[c] for c in missing]} — searching for better val TIFF.",
-            flush=True,
-        )
-        best_key, best_cov = val_key, len(foreground - missing)
-        for k in tiff_keys:
-            if k == val_key or len(tiff_buckets[k]) > max_val:
-                continue
-            cov = len(foreground & classes_in(tiff_buckets[k]))
-            if cov > best_cov:
-                best_cov, best_key = cov, k
-        if best_key != val_key:
-            print(f"  [INFO] Swapped val TIFF: '{val_key}' → '{best_key}'", flush=True)
-            val_key    = best_key
-            val_meta   = tiff_buckets[val_key]
-            train_meta = [t for k in tiff_keys if k != val_key for t in tiff_buckets[k]]
-        else:
-            print(
-                "  [WARN] No single TIFF covers all foreground classes — "
-                "keeping best size match. Some val class IoU values will be 0.",
-                flush=True,
-            )
-
-    val_frac    = len(val_meta) / max(total, 1)
-    train_tiffs = sorted(k for k in tiff_keys if k != val_key)
+    val_frac = len(val_meta) / max(len(tiles), 1)
     print(
-        f"  TIFF-level split ({n_tiffs} TIFFs): "
-        f"train={len(train_tiffs)} TIFFs / {len(train_meta)} tiles  "
-        f"val=1 TIFF / {len(val_meta)} tiles  ({val_frac*100:.1f}% val)",
+        f" Stratified split across {n_tiffs} TIFFs: "
+        f"train={len(train_meta)} tiles  val={len(val_meta)} tiles "
+        f"({val_frac * 100:.1f}% val)",
         flush=True,
     )
-    print(f"  Val TIFF   : {val_key}",    flush=True)
-    print(f"  Train TIFFs: {train_tiffs}", flush=True)
+    print(f" TIFFs contributing to val: {tiff_keys}", flush=True)
     return train_meta, val_meta
-
 
 # ── DataLoaders ───────────────────────────────────────────────────────────────
 
@@ -263,21 +231,21 @@ def build_dataloaders(proc_dir=None):
     val_ids   = [t["id"] for t in val_meta]
     print(f"  Train: {len(train_ids)}  Val: {len(val_ids)}", flush=True)
 
-    # ── Val class distribution check ─────────────────────────────────────────
+    # ── Val class distribution check ─────────────────────────────────────
     from collections import Counter
     val_cls = Counter(cid for t in val_meta for cid in t.get("class_ids", [0]))
-    print("  Val class coverage:", flush=True)
+    print(" Val class coverage:", flush=True)
     for cid in range(len(CLASS_LABELS)):
-        print(f"    {CLASS_LABELS[cid]:12s}: {val_cls.get(cid,0)} tiles", flush=True)
+        print(f"   {CLASS_LABELS[cid]:12s}: {val_cls.get(cid, 0)} tiles", flush=True)
 
-    # ── Replay tiles from previous shards ────────────────────────────────────
+    # ── Replay tiles from previous shards ────────────────────────────────
     from replay_buffer import load_all_replay, replay_exists
     replay_tiles, replay_img_map, replay_msk_map = [], {}, {}
     if replay_exists():
         replay_tiles, replay_img_map, replay_msk_map = load_all_replay()
 
     train_transform = get_train_transforms() if AUGMENT_TRAIN else None
-    current_ds      = GeoSegDataset(train_ids, proc_dir, transform=train_transform)
+    current_ds = GeoSegDataset(train_ids, proc_dir, transform=train_transform)
 
     if replay_tiles:
         replay_ids = [t["id"] for t in replay_tiles]
@@ -286,13 +254,13 @@ def build_dataloaders(proc_dir=None):
             img_map=replay_img_map, msk_map=replay_msk_map,
         )
 
-        n_current     = len(train_ids)
-        n_replay      = len(replay_ids)
-        replay_scale  = min(
+        n_current    = len(train_ids)
+        n_replay     = len(replay_ids)
+        replay_scale = min(
             (n_current * REPLAY_RATIO) / max(n_replay * (1 - REPLAY_RATIO), 1),
             5.0,
         )
-        print(f"  Replay: {n_replay} tiles  scale={replay_scale:.2f}×  "
+        print(f" Replay: {n_replay} tiles scale={replay_scale:.2f}× "
               f"(target {REPLAY_RATIO*100:.0f}% of batches from replay)", flush=True)
 
         current_weights = compute_sample_weights(train_meta)
@@ -302,8 +270,8 @@ def build_dataloaders(proc_dir=None):
                     key=lambda c: SAMPLER_CLASS_WEIGHTS.get(c, 0.0)), 1.0)
             for t in replay_tiles
         ]
-        all_weights = current_weights + replay_weights
-        combined_ds = ConcatDataset([current_ds, replay_ds])
+        all_weights  = current_weights + replay_weights
+        combined_ds  = ConcatDataset([current_ds, replay_ds])
 
         sampler = WeightedRandomSampler(
             weights=all_weights, num_samples=len(all_weights), replacement=True
@@ -319,7 +287,7 @@ def build_dataloaders(proc_dir=None):
             weights=compute_sample_weights(train_meta),
             num_samples=len(train_meta), replacement=True,
         )
-        print("  WeightedRandomSampler (no replay yet)", flush=True)
+        print(" WeightedRandomSampler (no replay yet)", flush=True)
         train_loader = DataLoader(
             current_ds, batch_size=BATCH_SIZE, sampler=sampler,
             num_workers=4, pin_memory=True, drop_last=True,
