@@ -1,7 +1,7 @@
 """
 00_inspect.py
 ─────────────
-Run this FIRST to understand your data before preprocessing.
+Run this FIRST to understand your data before preprocessing. (NEW)
 Tells you: band count, CRS, resolution, shapefile classes, class pixel coverage.
 
 Band statistics are computed from a random sample of tiles rather than reading
@@ -189,19 +189,52 @@ def inspect():
             print(f"    {class_name:12s} → {filename:45s} {status}")
 
     # ── Overlap check ─────────────────────────────────────────────────────────
+    # ── Overlap check ─────────────────────────────────────────────────────────
+    # Approach B (multiple SHP dirs with same filenames): show which SHP dir
+    # each TIFF would be matched to — mirrors find_shp_dir_for_tif() in
+    # 01_preprocess.py so inspect() gives an accurate preview of routing.
     print("\n── Shapefile ↔ TIFF overlap check ───────────────────────────────────")
+
+    all_shp_dirs = list(dict.fromkeys(d for d in shp_dir_map.values() if d is not None))
+    multi_shp    = len(all_shp_dirs) > 1
+
+    if multi_shp:
+        print(f"  [Approach B] {len(all_shp_dirs)} SHP dirs — showing per-TIFF spatial match")
+
     for tif_path in all_tifs:
         with rasterio.open(tif_path) as tif:
-            # Use the SHP dir for whichever dataset folder this TIFF belongs to
+            tif_bounds = tif.bounds
+            tif_crs    = tif.crs
+
+        if multi_shp:
+            matched_dir = None
+            for shp_dir in all_shp_dirs:
+                for p in shp_dir.glob("*.shp"):
+                    try:
+                        gdf = gpd.read_file(p)
+                        if gdf.crs and gdf.crs != tif_crs:
+                            gdf = gdf.to_crs(tif_crs)
+                        sb = gdf.total_bounds
+                        if (sb[2] > tif_bounds.left  and sb[0] < tif_bounds.right and
+                                sb[3] > tif_bounds.bottom and sb[1] < tif_bounds.top):
+                            matched_dir = shp_dir
+                            break
+                    except Exception:
+                        pass
+                if matched_dir:
+                    break
+            if matched_dir:
+                print(f"  {tif_path.name[:50]:50s}  ✓ matched → {matched_dir.name}")
+            else:
+                print(f"  {tif_path.name[:50]:50s}  ✗ NO SHP dir overlaps — will be skipped")
+        else:
             dataset_dir = next(
                 (rd for rd in raw_dirs if str(tif_path).startswith(str(rd))),
                 list(raw_dirs)[0] if raw_dirs else None,
             )
             shp_dir  = shp_dir_map.get(dataset_dir)
             chk_shps = list(shp_dir.glob("**/*.shp")) if shp_dir else all_shps
-            tif_bounds = tif.bounds
-            tif_crs    = tif.crs
-            overlaps   = []
+            overlaps = []
             for shp_path in chk_shps:
                 try:
                     gdf = gpd.read_file(shp_path)

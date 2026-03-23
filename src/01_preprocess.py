@@ -70,27 +70,61 @@ _MAX_TILES      = _BUDGET_BYTES // _BYTES_PER_TILE
 
 # ── Shapefile helpers ─────────────────────────────────────────────────────────
 
-def find_shapefiles(shp_dirs) -> dict:
+def find_shapefiles(shp_dir) -> dict:
     """
-    shp_dirs: Path or list of Paths — supports multiple SHP folders (Approach B).
-    Searches all directories; later directories take precedence for the same
-    class name, but in practice all dirs should have the same filenames.
+    Build a {class_name: Path} map from a single SHP directory.
+    Call this once per TIFF after spatial matching has determined
+    which SHP dir belongs to that TIFF.
     """
-    if isinstance(shp_dirs, Path):
-        shp_dirs = [shp_dirs]
-
+    shp_dir = Path(shp_dir)
     shp_map = {}
-    for shp_dir in shp_dirs:
-        print(f"\nShapefiles: {shp_dir}", flush=True)
-        for class_name, filename in SHAPEFILE_MAP.items():
-            shp_path = shp_dir / filename
-            if shp_path.exists():
-                shp_map[class_name] = shp_path
-                print(f"  ✓ {class_name} → {shp_path}", flush=True)
-            else:
-                if class_name not in shp_map:
-                    print(f"  ✗ Not found: {shp_path}", flush=True)
+    print(f"\nShapefiles: {shp_dir}", flush=True)
+    for class_name, filename in SHAPEFILE_MAP.items():
+        shp_path = shp_dir / filename
+        if shp_path.exists():
+            shp_map[class_name] = shp_path
+            print(f"  ✓ {class_name} → {shp_path}", flush=True)
+        else:
+            print(f"  ✗ Not found: {shp_path}", flush=True)
     return shp_map
+
+
+def find_shp_dir_for_tif(tif_path: Path, shp_dirs: list) -> Path:
+    """
+    Approach B spatial matching: when multiple SHP directories contain
+    identically-named files (e.g. both have Road.shp), use geographic
+    overlap to match each TIFF to its correct SHP directory.
+
+    For each candidate directory, reads the bounding box of the first
+    available shapefile and checks whether it intersects the TIFF extent.
+    Returns the first matching directory, or shp_dirs[0] as a fallback.
+
+    This replaces the old "merge-and-override" approach, so you never need
+    to rename Road.shp → road_1.shp or do any manual path overrides.
+    """
+    with rasterio.open(tif_path) as tif:
+        tif_bounds = tif.bounds
+        tif_crs    = tif.crs
+
+    for shp_dir in shp_dirs:
+        shp_dir = Path(shp_dir)
+        for filename in SHAPEFILE_MAP.values():
+            shp_path = shp_dir / filename
+            if not shp_path.exists():
+                continue
+            try:
+                gdf = gpd.read_file(shp_path)
+                if gdf.crs is not None and gdf.crs != tif_crs:
+                    gdf = gdf.to_crs(tif_crs)
+                sb = gdf.total_bounds  # (minx, miny, maxx, maxy)
+                if (sb[2] > tif_bounds.left  and sb[0] < tif_bounds.right and
+                        sb[3] > tif_bounds.bottom and sb[1] < tif_bounds.top):
+                    return shp_dir
+            except Exception:
+                continue
+
+    print(f"  [WARN] No SHP dir overlaps {tif_path.name} — using {shp_dirs[0]}", flush=True)
+    return Path(shp_dirs[0])
 
 
 def load_gdfs(shp_map: dict, tif_crs) -> dict:
@@ -365,18 +399,21 @@ def preprocess():
 
     # ── SHP directories ────────────────────────────────────────────────────────
     # SHP_DIRS_LIST env var: colon-separated list of SHP directories.
-    # Used by Approach B where multiple SHP folders cover the same TIFF set.
-    # Falls back to single SHP_DIR if not set.
+    # Single dir  → Approach A behaviour (unchanged).
+    # Multiple dirs → Approach B: each TIFF is spatially matched to exactly
+    #                 one SHP dir, so identically-named files (Road.shp in
+    #                 both SHP1/ and SHP2/) are never confused.
     shp_dirs_env = os.environ.get("SHP_DIRS_LIST", "")
     if shp_dirs_env:
         shp_dirs = [Path(p.strip()) for p in shp_dirs_env.split(":") if p.strip()]
     else:
         shp_dirs = [Path(SHP_DIR)]
 
-    shp_map = find_shapefiles(shp_dirs)
-    if not shp_map:
-        print("[ERROR] No shapefiles found.")
-        sys.exit(1)
+    # Validate all SHP dirs exist
+    for d in shp_dirs:
+        if not d.exists():
+            print(f"[ERROR] SHP directory not found: {d}")
+            sys.exit(1)
 
     # ── TIFF file list ─────────────────────────────────────────────────────────
     # TIFF_FILES env var: colon-separated list of specific TIFF paths to process.
@@ -394,6 +431,26 @@ def preprocess():
     if not tif_files:
         print(f"[ERROR] No .tif files found.")
         sys.exit(1)
+
+    # ── Per-TIFF SHP mapping ───────────────────────────────────────────────────
+    # Single SHP dir → same map for every TIFF (Approach A, unchanged behaviour).
+    # Multiple SHP dirs → spatially match each TIFF to its correct SHP dir so
+    # identically-named files in different dirs are never merged or overridden.
+    if len(shp_dirs) > 1:
+        print(f"\nMultiple SHP dirs detected ({len(shp_dirs)}) — "
+              f"matching each TIFF by spatial overlap...", flush=True)
+        tif_shp_maps: dict = {}
+        for tif_path in tif_files:
+            matched = find_shp_dir_for_tif(tif_path, shp_dirs)
+            tif_shp_maps[tif_path] = find_shapefiles(matched)
+            print(f"  {tif_path.name:50s} → {matched.name}", flush=True)
+    else:
+        # Single SHP dir — build once and reuse (original Approach A path)
+        single_map = find_shapefiles(shp_dirs[0])
+        if not single_map:
+            print("[ERROR] No shapefiles found.")
+            sys.exit(1)
+        tif_shp_maps = {tif_path: single_map for tif_path in tif_files}
 
     print(f"\nShard       : {shard_label}", flush=True)
     print(f"Workers     : {NUM_WORKERS}", flush=True)
@@ -415,8 +472,12 @@ def preprocess():
     total_saved   = 0
 
     for tif_path in tif_files:
+        tif_shp_map = tif_shp_maps[tif_path]
+        if not tif_shp_map:
+            print(f"[SKIP] {tif_path.name} — no shapefiles matched", flush=True)
+            continue
         try:
-            n, meta = process_tif_parallel(tif_path, shp_map, proc_dir,
+            n, meta = process_tif_parallel(tif_path, tif_shp_map, proc_dir,
                                            token_buckets, bytes_written)
             total_saved += n
             all_meta    += meta
