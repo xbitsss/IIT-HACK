@@ -71,11 +71,23 @@ else:
 SHP_DIR = os.environ.get("SHP_DIR", "/raw_data/CG/CG_SHP")
 
 # ─── Exact shapefile filenames → class name ───────────────────────────────────
+# Each class maps to a LIST of filenames — all are merged before rasterization.
+# Geometry types are handled automatically:
+#   polygon → rasterized directly
+#   line    → buffered by LINE_BUFFER_M metres then rasterized
+#   point   → buffered by POINT_BUFFER_M metres then rasterized
 SHAPEFILE_MAP = {
-    "builtup":   "Built_Up_Area_type.shp",
-    "road":      "Road.shp",
-    "waterbody": "Water_Body.shp",
+    "builtup":   ["Built_Up_Area_type.shp"],
+    "road":      ["Road.shp", "Road_Centre_Line.shp"],
+    "waterbody": ["Water_Body.shp", "Water_Body_Line.shp", "Waterbody_Point.shp"],
+    "bridge":    ["Bridge.shp"],
+    "railway":   ["Railway.shp"],
+    "utility":   ["Utility_Poly.shp", "Utility_Poly_.shp", "Utility.shp"],
 }
+
+# Buffer sizes for non-polygon geometries (in metres, converted to CRS units at runtime)
+POINT_BUFFER_M = 8.0   # point features → 8 m radius disc
+LINE_BUFFER_M  = 3.0   # line features  → 3 m half-width strip
 
 # ─── Class Definitions ────────────────────────────────────────────────────────
 CLASSES = {
@@ -83,21 +95,31 @@ CLASSES = {
     "builtup":    1,
     "road":       2,
     "waterbody":  3,
+    "bridge":     4,
+    "railway":    5,
+    "utility":    6,
 }
 NUM_CLASSES  = len(CLASSES)
-CLASS_LABELS = ["Background", "Built-up", "Road", "Water Body"]
+CLASS_LABELS = ["Background", "Built-up", "Road", "Water Body", "Bridge", "Railway", "Utility"]
 
 CLASS_COLORS = {
-    0: (50,  50,  50),
-    1: (210, 140,  80),
-    2: (255, 220,  80),
-    3: (80,  160, 230),
+    0: (50,  50,  50),   # dark grey  — background
+    1: (210, 140,  80),  # orange     — built-up
+    2: (255, 220,  80),  # yellow     — road
+    3: (80,  160, 230),  # blue       — water body
+    4: (180,  80,  80),  # red        — bridge
+    5: (140,  80, 200),  # purple     — railway
+    6: (80,  200, 120),  # green      — utility
 }
 
 CLASS_PRIORITY = {
-    "builtup":   1,
-    "waterbody": 2,
-    "road":      3,
+    # Higher priority = painted last (wins over lower priority)
+    "bridge":    1,   # bridges sit on top of roads/water
+    "railway":   2,
+    "builtup":   3,
+    "waterbody": 4,
+    "utility":   5,
+    "road":      6,   # road painted last → road lines visible over builtup
 }
 
 # ─── Band Configuration ───────────────────────────────────────────────────────
@@ -126,21 +148,21 @@ REPLAY_TILES_PER_SHARD = int(os.environ.get("REPLAY_TILES_PER_SHARD", "300"))
 REPLAY_RATIO           = 0.25   # fraction of each batch from replay
 
 # ─── Training ─────────────────────────────────────────────────────────────────
-MODEL_NAME   = "nvidia/mit-b3"
+MODEL_NAME   = "nvidia/mit-b5"
 BATCH_SIZE   = 2
-NUM_EPOCHS   = 60
-LR           = 5e-5
-WEIGHT_DECAY = 0.01
+NUM_EPOCHS   = 150
+LR           = 3e-5
+WEIGHT_DECAY = 0.05
 VAL_SPLIT    = 0.2
 RANDOM_SEED  = 42
 
-CLASS_WEIGHTS = [0.4, 1.2, 4.0, 2.0]
-PATIENCE      = 12
+CLASS_WEIGHTS = [0.3, 1.2, 5.0, 2.0, 4.0, 6.0, 3.0]
+PATIENCE      = 30
 
 # ─── Advanced training ────────────────────────────────────────────────────────
 USE_AMP          = True
-GRAD_ACCUM_STEPS = 8
-WARMUP_EPOCHS    = 5
+GRAD_ACCUM_STEPS = 16
+WARMUP_EPOCHS    = 8
 USE_EMA          = False
 EMA_DECAY        = 0.9998
 
@@ -155,10 +177,13 @@ AUGMENT_TRAIN = True
 # ─── Class-balanced sampling ──────────────────────────────────────────────────
 USE_WEIGHTED_SAMPLER  = True
 SAMPLER_CLASS_WEIGHTS = {
-    0: 0.3,
-    1: 1.5,
-    2: 5.0,
-    3: 3.0,
+    0: 0.2,   # background  — abundant, down-weight strongly
+    1: 1.5,   # built-up
+    2: 5.0,   # road        — thin linear feature, boost
+    3: 2.0,   # water body
+    4: 6.0,   # bridge      — rare, thin
+    5: 7.0,   # railway     — rare, very thin linear
+    6: 4.0,   # utility     — mix of points and small polygons
 }
 
 # ─── Inference ────────────────────────────────────────────────────────────────

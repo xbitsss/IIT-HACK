@@ -31,6 +31,7 @@ import json
 import shutil
 import traceback
 import numpy as np
+import pandas as pd
 import rasterio
 import rasterio.windows
 import geopandas as gpd
@@ -50,6 +51,7 @@ from config import (
     MIN_VALID_RATIO, MIN_COVERAGE_RATIO,
     MAX_PROCESSED_GB, RANDOM_SEED,
     SAMPLER_CLASS_WEIGHTS,
+    POINT_BUFFER_M, LINE_BUFFER_M,
 )
 
 # Worker count: use up to 16 processes, always leaving at least 2 cores free
@@ -70,37 +72,41 @@ _MAX_TILES      = _BUDGET_BYTES // _BYTES_PER_TILE
 
 # ── Shapefile helpers ─────────────────────────────────────────────────────────
 
-def find_shapefiles(shp_dir) -> dict:
+def find_shapefiles(shp_dirs) -> dict:
     """
-    Build a {class_name: Path} map from a single SHP directory.
-    Call this once per TIFF after spatial matching has determined
-    which SHP dir belongs to that TIFF.
+    Build {class_name: [Path, ...]} from one or more SHP directories.
+    SHAPEFILE_MAP values are now lists of filenames — all found files are
+    collected so multiple shapefiles per class are all loaded and merged.
     """
-    shp_dir = Path(shp_dir)
-    shp_map = {}
-    print(f"\nShapefiles: {shp_dir}", flush=True)
-    for class_name, filename in SHAPEFILE_MAP.items():
-        shp_path = shp_dir / filename
-        if shp_path.exists():
-            shp_map[class_name] = shp_path
-            print(f"  ✓ {class_name} → {shp_path}", flush=True)
-        else:
-            print(f"  ✗ Not found: {shp_path}", flush=True)
+    if isinstance(shp_dirs, (str, Path)):
+        shp_dirs = [shp_dirs]
+
+    shp_map = {}   # class_name → list of Paths
+    for shp_dir in shp_dirs:
+        shp_dir = Path(shp_dir)
+        print(f"\nShapefiles: {shp_dir}", flush=True)
+        for class_name, filenames in SHAPEFILE_MAP.items():
+            # SHAPEFILE_MAP values may be a list or a legacy string
+            if isinstance(filenames, str):
+                filenames = [filenames]
+            for filename in filenames:
+                shp_path = shp_dir / filename
+                if shp_path.exists():
+                    shp_map.setdefault(class_name, []).append(shp_path)
+                    print(f"  ✓ {class_name} → {shp_path.name}", flush=True)
+                else:
+                    # Only warn for the first SHP dir to avoid noise when a
+                    # class is intentionally absent from a dataset
+                    if shp_dir == Path(shp_dirs[0]):
+                        print(f"  ✗ Not found: {shp_path}", flush=True)
     return shp_map
 
 
 def find_shp_dir_for_tif(tif_path: Path, shp_dirs: list) -> Path:
     """
-    Approach B spatial matching: when multiple SHP directories contain
-    identically-named files (e.g. both have Road.shp), use geographic
-    overlap to match each TIFF to its correct SHP directory.
-
-    For each candidate directory, reads the bounding box of the first
-    available shapefile and checks whether it intersects the TIFF extent.
-    Returns the first matching directory, or shp_dirs[0] as a fallback.
-
-    This replaces the old "merge-and-override" approach, so you never need
-    to rename Road.shp → road_1.shp or do any manual path overrides.
+    Approach B spatial matching: match each TIFF to the SHP dir whose
+    shapefiles geographically overlap the TIFF extent.
+    Returns the best-matching dir, or shp_dirs[0] as fallback.
     """
     with rasterio.open(tif_path) as tif:
         tif_bounds = tif.bounds
@@ -108,71 +114,97 @@ def find_shp_dir_for_tif(tif_path: Path, shp_dirs: list) -> Path:
 
     for shp_dir in shp_dirs:
         shp_dir = Path(shp_dir)
-        for filename in SHAPEFILE_MAP.values():
-            shp_path = shp_dir / filename
-            if not shp_path.exists():
-                continue
-            try:
-                gdf = gpd.read_file(shp_path)
-                if gdf.crs is not None and gdf.crs != tif_crs:
-                    gdf = gdf.to_crs(tif_crs)
-                sb = gdf.total_bounds  # (minx, miny, maxx, maxy)
-                if (sb[2] > tif_bounds.left  and sb[0] < tif_bounds.right and
-                        sb[3] > tif_bounds.bottom and sb[1] < tif_bounds.top):
-                    return shp_dir
-            except Exception:
-                continue
+        for filenames in SHAPEFILE_MAP.values():
+            if isinstance(filenames, str):
+                filenames = [filenames]
+            for filename in filenames:
+                shp_path = shp_dir / filename
+                if not shp_path.exists():
+                    continue
+                try:
+                    gdf = gpd.read_file(shp_path)
+                    if gdf.crs is not None and gdf.crs != tif_crs:
+                        gdf = gdf.to_crs(tif_crs)
+                    sb = gdf.total_bounds
+                    if (sb[2] > tif_bounds.left  and sb[0] < tif_bounds.right and
+                            sb[3] > tif_bounds.bottom and sb[1] < tif_bounds.top):
+                        return shp_dir
+                except Exception:
+                    continue
 
     print(f"  [WARN] No SHP dir overlaps {tif_path.name} — using {shp_dirs[0]}", flush=True)
     return Path(shp_dirs[0])
 
 
 def _clean_gdf(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    """
-    Remove or repair degenerate geometries before rasterization.
-
-    Rasterio silently skips invalid geometries with a ShapeSkipWarning.
-    The typical culprit is a collapsed polygon (<=2 distinct vertices,
-    zero area, or a bowtie/self-intersection) produced by digitization
-    errors or coordinate precision loss during CRS reprojection.
-
-    Strategy:
-      1. Drop null geometries.
-      2. Apply buffer(0) to repair self-intersections and near-invalid rings
-         (this is the standard shapely fix; it returns an empty geometry for
-         truly degenerate shapes, which step 3 then removes).
-      3. Drop any geometry that is still empty or invalid after the repair.
-
-    A summary is printed so you know how many features were removed and why.
-    """
+    """Remove or repair degenerate geometries before rasterization."""
     import warnings
     n_before = len(gdf)
-
-    # Step 1: drop nulls
     gdf = gdf[~gdf.geometry.isna()].copy()
-
-    # Step 2: buffer(0) repair -- suppresses shapely GEOS warnings during repair
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         gdf["geometry"] = gdf.geometry.buffer(0)
-
-    # Step 3: drop still-empty or still-invalid
     gdf = gdf[~gdf.geometry.is_empty & gdf.geometry.is_valid].copy()
-
     n_dropped = n_before - len(gdf)
     if n_dropped:
-        print(f"  [GEOM] Cleaned {n_dropped} invalid/degenerate geometries "
-              f"({n_before} -> {len(gdf)})", flush=True)
+        print(f"  [GEOM] Cleaned {n_dropped} invalid geometries "
+              f"({n_before} → {len(gdf)})", flush=True)
     return gdf
 
 
-def load_gdfs(shp_map: dict, tif_crs) -> dict:
+def _geom_type(gdf: gpd.GeoDataFrame) -> str:
+    """Return dominant geometry type: 'polygon', 'line', or 'point'."""
+    types = gdf.geometry.geom_type.str.lower().unique()
+    if any("polygon" in t for t in types):
+        return "polygon"
+    if any("line" in t for t in types):
+        return "line"
+    return "point"
+
+
+def load_gdfs(shp_map: dict, tif_crs, res_m: float = 1.0) -> dict:
+    """
+    Load and merge all shapefiles for each class.
+    Lines are buffered to LINE_BUFFER_M metres wide.
+    Points are buffered to POINT_BUFFER_M metres radius.
+    All geometries are converted to the TIFF CRS before buffering.
+    res_m: pixel resolution in metres (used to convert buffer from metres to CRS units).
+    """
     gdfs = {}
-    for class_name, shp_path in shp_map.items():
-        gdf = gpd.read_file(shp_path)
-        if gdf.crs is not None and gdf.crs != tif_crs:
-            gdf = gdf.to_crs(tif_crs)
-        gdfs[class_name] = _clean_gdf(gdf)
+    for class_name, paths in shp_map.items():
+        frames = []
+        for shp_path in paths:
+            try:
+                gdf = gpd.read_file(shp_path)
+                if gdf.empty:
+                    continue
+                if gdf.crs is not None and gdf.crs != tif_crs:
+                    gdf = gdf.to_crs(tif_crs)
+                gdf = _clean_gdf(gdf)
+                if gdf.empty:
+                    continue
+
+                geom_t = _geom_type(gdf)
+                if geom_t == "point":
+                    buf = POINT_BUFFER_M
+                    gdf["geometry"] = gdf.geometry.buffer(buf)
+                    print(f"  [GEOM] {shp_path.name}: buffered points by {buf}m", flush=True)
+                elif geom_t == "line":
+                    buf = LINE_BUFFER_M
+                    gdf["geometry"] = gdf.geometry.buffer(buf)
+                    print(f"  [GEOM] {shp_path.name}: buffered lines by {buf}m", flush=True)
+
+                frames.append(gdf[["geometry"]])
+            except Exception as e:
+                print(f"  [WARN] Could not load {shp_path.name}: {e}", flush=True)
+
+        if frames:
+            merged = gpd.GeoDataFrame(
+                pd.concat(frames, ignore_index=True),
+                crs=tif_crs,
+            )
+            gdfs[class_name] = merged
+
     return gdfs
 
 
@@ -182,7 +214,7 @@ def rasterize_labels(gdfs, win_transform, h, w):
     label = np.zeros((h, w), dtype=np.uint8)
     for class_name in sorted(gdfs.keys(), key=lambda c: CLASS_PRIORITY.get(c, 0)):
         gdf    = gdfs[class_name]
-        shapes = [(g.__geo_interface__, 1) for g in gdf.geometry if g is not None]
+        shapes = [(g.__geo_interface__, 1) for g in gdf.geometry if g is not None and not g.is_empty]
         if not shapes:
             continue
         binary = rasterize(shapes=shapes, out_shape=(h, w), transform=win_transform,
@@ -194,7 +226,7 @@ def rasterize_labels(gdfs, win_transform, h, w):
 def rasterize_coverage(gdfs, win_transform, h, w):
     coverage = np.zeros((h, w), dtype=np.uint8)
     for gdf in gdfs.values():
-        shapes = [(g.__geo_interface__, 1) for g in gdf.geometry if g is not None]
+        shapes = [(g.__geo_interface__, 1) for g in gdf.geometry if g is not None and not g.is_empty]
         if not shapes:
             continue
         binary = rasterize(shapes=shapes, out_shape=(h, w), transform=win_transform,
@@ -264,14 +296,16 @@ def process_chunk(args):
         with rasterio.open(tif_path_str) as tif:
             window        = Window(col_off, row_off, chunk_w, chunk_h)
             win_transform = rasterio.windows.transform(window, tif.transform)
+            # Pixel resolution in metres (used for point/line buffer conversion)
+            res_m = abs(tif.transform.a)
 
-            # Load and reproject GDFs inside worker
-            gdfs = {}
-            for class_name, shp_path in shp_map_paths.items():
-                gdf = gpd.read_file(shp_path)
-                if gdf.crs is not None and gdf.crs != tif.crs:
-                    gdf = gdf.to_crs(tif.crs)
-                gdfs[class_name] = _clean_gdf(gdf)
+            # shp_map_paths: {class_name: [path_str, ...]}
+            # Rebuild as {class_name: [Path, ...]} and call the unified loader
+            shp_map_repaths = {
+                cls: [Path(p) for p in paths]
+                for cls, paths in shp_map_paths.items()
+            }
+            gdfs = load_gdfs(shp_map_repaths, tif.crs, res_m=res_m)
 
             raw      = tif.read(BAND_INDICES, window=window)
             valid    = ~np.all(raw == 0, axis=0)
@@ -337,14 +371,19 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
     meta   = []
 
     # Pass shapefile paths (strings) to workers — GeoDataFrames aren't picklable
-    shp_map_paths = {k: str(v) for k, v in shp_map.items()}
+    # shp_map: {class_name: [Path, ...]} → serialise as {class_name: [str, ...]}
+    shp_map_paths = {
+        k: [str(p) for p in v] if isinstance(v, list) else [str(v)]
+        for k, v in shp_map.items()
+    }
 
     with rasterio.open(tif_path) as tif:
-        W, H = tif.width, tif.height
+        W, H  = tif.width, tif.height
+        res_m = abs(tif.transform.a)
         print(f"\n  Processing {tif_path.name}  {W:,}×{H:,}  {tif.count} bands  "
               f"workers={NUM_WORKERS}", flush=True)
 
-        gdfs = load_gdfs(shp_map, tif.crs)
+        gdfs = load_gdfs(shp_map, tif.crs, res_m=res_m)
         if not any(not gdf.empty for gdf in gdfs.values()):
             print(f"  [SKIP] No shapefile features overlap this TIFF", flush=True)
             return 0, []

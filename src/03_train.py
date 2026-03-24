@@ -162,33 +162,28 @@ class ModelEMA:
 
 class FocalLoss(nn.Module):
     """
-    Focal loss down-weights easy (well-classified) pixels so the model focuses
-    training gradient on hard examples — boundaries, thin roads, small water bodies.
+    Focal loss with label smoothing.
+    Smoothing (ε=0.1) handles the fact that shapefile boundaries are 2–5px
+    imprecise — the model shouldn't be penalised for being uncertain exactly
+    at the boundary of a road or building polygon.
     """
-    def __init__(self, gamma: float = 2.0, class_weights=None):
+    def __init__(self, gamma: float = 2.0, class_weights=None, label_smoothing: float = 0.1):
         super().__init__()
-        self.gamma = gamma
+        self.gamma           = gamma
+        self.label_smoothing = label_smoothing
         self.w = (torch.tensor(class_weights, dtype=torch.float32).to(DEVICE)
                   if class_weights else None)
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         ce  = F.cross_entropy(logits, targets, weight=self.w,
-                              reduction="none", ignore_index=255)
+                              reduction="none", ignore_index=255,
+                              label_smoothing=self.label_smoothing)
         pt  = torch.exp(-ce)
         return ((1.0 - pt) ** self.gamma * ce).mean()
 
 
 class DiceLoss(nn.Module):
-    """
-    Soft Dice loss: directly optimises pixel-overlap, combats class imbalance.
-    Averaged over foreground classes only (classes 1+).
-
-    FIX (Bug 4): background (class 0) is ~95% of all pixels.  Including it in
-    the Dice mean caused the loss to be dominated by how well the model predicts
-    background, swamping the gradient signal for rare foreground classes (road,
-    water, built-up).  FocalLoss already down-weights background via CLASS_WEIGHTS
-    [0]=0.4; Dice now mirrors that by skipping class 0 entirely.
-    """
+    """Soft Dice over foreground classes only (skips background class 0)."""
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         probs  = F.softmax(logits, dim=1)
         oh     = F.one_hot(targets.clamp(0, NUM_CLASSES - 1), NUM_CLASSES) \
@@ -196,16 +191,17 @@ class DiceLoss(nn.Module):
         inter  = (probs * oh).sum(dim=(2, 3))
         union  = probs.sum(dim=(2, 3)) + oh.sum(dim=(2, 3))
         dice   = 1.0 - (2.0 * inter + 1e-6) / (union + 1e-6)
-        return dice[:, 1:].mean()  # skip class 0 (background)
+        return dice[:, 1:].mean()
 
 
 class FocalDiceLoss(nn.Module):
     def __init__(self, class_weights=None,
                  focal_weight: float = FOCAL_WEIGHT,
                  dice_weight:  float = DICE_WEIGHT,
-                 gamma:        float = FOCAL_GAMMA):
+                 gamma:        float = FOCAL_GAMMA,
+                 label_smoothing: float = 0.1):
         super().__init__()
-        self.focal        = FocalLoss(gamma, class_weights)
+        self.focal        = FocalLoss(gamma, class_weights, label_smoothing)
         self.dice         = DiceLoss()
         self.focal_weight = focal_weight
         self.dice_weight  = dice_weight
