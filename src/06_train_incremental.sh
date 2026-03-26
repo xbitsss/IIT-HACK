@@ -47,20 +47,23 @@ SHP_DIRS_B=""
 PRETRAINED_CKPT=""
 INIT_WEIGHTS=""
 START_FROM=1
+SKIP_SPECIALIST=0
 
 # ── Parse arguments ───────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --from)         START_FROM="$2";     shift 2 ;;
-        --pretrained)   PRETRAINED_CKPT="$2"; shift 2 ;;
-        --init-weights) INIT_WEIGHTS="$2";   shift 2 ;;
-        --approach)     APPROACH="$2";       shift 2 ;;
-        --data-dir)     DATA_DIR_B="$2";     shift 2 ;;
-        --shp-dirs)     SHP_DIRS_B="$2";     shift 2 ;;
+        --from)            START_FROM="$2";     shift 2 ;;
+        --pretrained)      PRETRAINED_CKPT="$2"; shift 2 ;;
+        --init-weights)    INIT_WEIGHTS="$2";   shift 2 ;;
+        --approach)        APPROACH="$2";       shift 2 ;;
+        --data-dir)        DATA_DIR_B="$2";     shift 2 ;;
+        --shp-dirs)        SHP_DIRS_B="$2";     shift 2 ;;
+        --skip-specialist) SKIP_SPECIALIST=1;   shift   ;;
         *)
             echo "Unknown argument: $1"
             echo "Usage: $0 [--from N] [--pretrained /path.pth] [--init-weights /path.pth]"
             echo "          [--approach a|b] [--data-dir /path] [--shp-dirs dir1:dir2]"
+            echo "          [--skip-specialist]"
             exit 1
             ;;
     esac
@@ -409,6 +412,101 @@ done
 
 echo ""
 echo "========================================"
-echo " All $TOTAL shards complete!"
-echo " Final checkpoint: checkpoints/best_model.pt"
+echo " All $TOTAL generalist shards complete!"
+echo " Generalist checkpoint: checkpoints/best_model.pt"
 echo "========================================"
+
+# ── Specialist pipeline ───────────────────────────────────────────────────────
+if [ "$SKIP_SPECIALIST" -eq 0 ]; then
+
+    CURRENT_FOLDER="specialist"
+    CURRENT_STEP="$TOTAL"
+
+    echo ""
+    echo "========================================"
+    echo " Specialist Pipeline"
+    echo " Training specialist for Bridge / Railway / Utility"
+    echo " Disk ceiling: ${MAX_DISK_GB} GB"
+    echo "========================================"
+
+    # ── S1: Build specialist dataset metadata ─────────────────────────────────
+    echo "[$(date +%H:%M:%S)] Building specialist dataset metadata..."
+    if ! python specialist/01_build_specialist_meta.py 2>&1 | tee /tmp/specialist_meta_log.txt; then
+        echo "[ERROR] Specialist metadata build failed"
+        python src/07_notify.py --error \
+            --folder "specialist/01_build_specialist_meta" --step "$TOTAL" --total "$TOTAL" \
+            --error-msg "$(tail -40 /tmp/specialist_meta_log.txt | head -c 2000)" || true
+        exit 1
+    fi
+    echo "[$(date +%H:%M:%S)] Specialist metadata built."
+
+    # ── S2: Train specialist model ────────────────────────────────────────────
+    # MAX_DISK_GB is passed explicitly so the specialist respects the same
+    # disk budget as the generalist shards (already exported but made explicit
+    # here to mirror the PREPROCESS_ENV pattern used above).
+    echo "[$(date +%H:%M:%S)] Training specialist model..."
+    if ! env MAX_DISK_GB="$MAX_DISK_GB" \
+            python specialist/03_train_specialist.py \
+            2>&1 | tee /tmp/specialist_train_log.txt; then
+        SPEC_TRAIN_EXIT=${PIPESTATUS[0]}
+        echo "[ERROR] Specialist training failed (exit $SPEC_TRAIN_EXIT)"
+        python src/07_notify.py --error \
+            --folder "specialist" --step "$TOTAL" --total "$TOTAL" \
+            --error-msg "$(tail -40 /tmp/specialist_train_log.txt | head -c 2000)" || true
+        exit 1
+    fi
+
+    # ── Parse metrics (same grep pattern as generalist loop) ─────────────────
+    SPEC_TRAIN_LOSS=$(grep "tr_loss="  /tmp/specialist_train_log.txt | tail -1 | grep -oP "tr_loss=\K[0-9.]+"  || echo "0")
+    SPEC_VAL_LOSS=$(  grep "val_loss=" /tmp/specialist_train_log.txt | tail -1 | grep -oP "val_loss=\K[0-9.]+" || echo "0")
+    SPEC_TRAIN_MIOU=$(grep "tr_mIoU="  /tmp/specialist_train_log.txt | tail -1 | grep -oP "tr_mIoU=\K[0-9.]+"  || echo "0")
+    SPEC_VAL_MIOU=$(  grep "val_mIoU=" /tmp/specialist_train_log.txt | tail -1 | grep -oP "val_mIoU=\K[0-9.]+" || echo "0")
+    SPEC_EPOCHS=$(grep -c "^Epoch " /tmp/specialist_train_log.txt 2>/dev/null | tr -d '[:space:]' || echo "0")
+
+    # Read per-class IoU for Bridge (4), Railway (5), Utility (6) from checkpoint.
+    # These keys may not exist if the specialist was built against a 4-class config;
+    # the python snippet handles that gracefully.
+    SPEC_PER_CLASS=$(python3 -c "
+import torch, sys
+try:
+    ckpt = torch.load('specialist/checkpoints/best_model.pt', map_location='cpu', weights_only=False)
+    pc   = ckpt.get('per_class_iou', {})
+    def g(k): return float(pc.get(k, pc.get(str(k), 0.0)))
+    print(f'Bridge={g(4):.4f}  Railway={g(5):.4f}  Utility={g(6):.4f}')
+except Exception as e:
+    print(f'(per-class read failed: {e})')
+" 2>/dev/null || echo "(per-class unavailable)")
+
+    echo "[$(date +%H:%M:%S)] Specialist done — val_mIoU=$SPEC_VAL_MIOU  $SPEC_PER_CLASS"
+
+    # ── S3: Notify specialist completion ──────────────────────────────────────
+    # Minor-class per-class IoU is embedded in --folder so it appears in the
+    # email subject and body without requiring changes to 07_notify.py.
+    SPEC_FOLDER_LABEL="Specialist [${SPEC_PER_CLASS}]"
+    python src/07_notify.py \
+        --folder "$SPEC_FOLDER_LABEL" --step "$TOTAL" --total "$TOTAL" \
+        --train-loss "${SPEC_TRAIN_LOSS:-0}" --val-loss "${SPEC_VAL_LOSS:-0}" \
+        --train-miou "${SPEC_TRAIN_MIOU:-0}" --val-miou "${SPEC_VAL_MIOU:-0}" \
+        --epochs "${SPEC_EPOCHS:-0}" --checkpoint "specialist/checkpoints/best_model.pt" || true
+
+    echo "[$(date +%H:%M:%S)] ✓ Specialist pipeline complete"
+    echo ""
+    echo "========================================"
+    echo " Pipeline complete (generalist + specialist)"
+    echo " Generalist : checkpoints/best_model.pt"
+    echo " Specialist : specialist/checkpoints/best_model.pt"
+    echo " Combined inference:"
+    echo "   python specialist/04_inference_combined.py \\"
+    echo "       --input /raw_data/image.tif --output outputs/combined_mask.tif"
+    echo "========================================"
+
+else
+    echo ""
+    echo "[SKIP] --skip-specialist set — specialist stage bypassed"
+    echo ""
+    echo "========================================"
+    echo " Pipeline complete (generalist only)"
+    echo " Generalist : checkpoints/best_model.pt"
+    echo " Inference  : python src/04_inference.py"
+    echo "========================================"
+fi
