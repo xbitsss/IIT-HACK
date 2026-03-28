@@ -327,16 +327,10 @@ def process_chunk(args):
 
 def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
                           token_buckets: dict, bytes_written: list) -> tuple:
-    """
-    Submits all chunks of a TIFF to the process pool.
-    Collects results as they complete and writes tiles to disk in the main
-    process, enforcing budget and token limits.
-    """
     stride = TILE_SIZE - TILE_OVERLAP
     saved  = 0
     meta   = []
 
-    # Pass shapefile paths (strings) to workers — GeoDataFrames aren't picklable
     shp_map_paths = {k: str(v) for k, v in shp_map.items()}
 
     with rasterio.open(tif_path) as tif:
@@ -351,7 +345,6 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
 
         stem = tif_path.stem
 
-        # Build chunk list
         chunk_args = []
         for row_off in range(0, H - TILE_SIZE + 1, CHUNK_SIZE):
             for col_off in range(0, W - TILE_SIZE + 1, CHUNK_SIZE):
@@ -364,14 +357,19 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
                     row_off, col_off, chunk_h, chunk_w, stem
                 ))
 
-    n_chunks   = len(chunk_args)
-    done       = 0
+    n_chunks = len(chunk_args)
+    done     = 0
     print(f"  Submitting {n_chunks} chunks to {NUM_WORKERS} workers...", flush=True)
+
+    # ── CHUNK_TIMEOUT: max seconds to wait for a single chunk ────────────────
+    # A 8192×8192 chunk over 4 bands with complex shapefiles takes ~60-120s.
+    # 300s (5 min) is generous — if it exceeds this the worker is deadlocked.
+    CHUNK_TIMEOUT = 300
 
     with ProcessPoolExecutor(max_workers=NUM_WORKERS) as pool:
         futures = {pool.submit(process_chunk, args): args for args in chunk_args}
 
-        for future in as_completed(futures):
+        for future in as_completed(futures, timeout=CHUNK_TIMEOUT * n_chunks):
             done += 1
             if done % 20 == 0 or done == n_chunks:
                 gb = bytes_written[0] / 1024**3
@@ -380,22 +378,25 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
                       f"disk={gb:.2f}/{MAX_PROCESSED_GB:.1f} GB",
                       flush=True)
 
-            # Budget check before processing this result
             if bytes_written[0] >= _BUDGET_BYTES:
-                # Cancel pending futures
                 for f in futures:
                     f.cancel()
                 print(f"  [BUDGET] Disk budget reached at chunk {done}/{n_chunks}",
                       flush=True)
                 break
 
+            # ── per-future timeout ────────────────────────────────────────────
             try:
-                tile_results = future.result()
+                tile_results = future.result(timeout=CHUNK_TIMEOUT)
+            except TimeoutError:
+                args = futures[future]
+                print(f"  [WARN] Chunk timed out after {CHUNK_TIMEOUT}s "
+                      f"(row={args[2]} col={args[3]}) — skipping", flush=True)
+                continue
             except Exception as e:
                 print(f"  [WARN] Chunk result failed: {e}", flush=True)
                 continue
 
-            # Write tiles — serial in main process (safe for budget + tokens)
             for img_arr, msk_arr, tile_meta in tile_results:
                 if bytes_written[0] >= _BUDGET_BYTES:
                     break
