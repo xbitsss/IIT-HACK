@@ -9,22 +9,29 @@ x-base: &base
     - RAW_DATA_DIR=/raw_data
     # SHP_DIR is set per-shard by 06_train_incremental.sh via auto-detection.
     # This default is only used when running preprocess/inspect standalone.
-    - SHP_DIR=/raw_data/CG/CG_SHP
+    - SHP_DIR=/raw_data/SHP
     - PROCESSED_DIR=data/processed
     - CHECKPOINT_DIR=checkpoints
     - OUTPUT_DIR=outputs
     - HF_TOKEN=${HF_TOKEN}
     - REPLAY_DIR=data/replay
   volumes:
-    # RAW_DATA_DIR in .env = parent folder containing CG/, PB/, etc. on the host.
-    # Example .env:  RAW_DATA_DIR=C:/Users/name/Documents/QGIS_DATASETS/CG_EXTRACT
+    # RAW_DATA_DIR in .env = parent folder containing your TIFFs on the host.
+    # Example .env:  RAW_DATA_DIR=C:/Users/name/Documents/QGIS_DATASETS/ALL
     # Docker reads this from .env on the HOST before starting the container.
-    # The container's own RAW_DATA_DIR=/raw_data env var is separate and set below.
+    # The container's own RAW_DATA_DIR=/raw_data env var is set above.
     - ${RAW_DATA_DIR:-./data/raw}:/raw_data:ro
     - ./data/processed:/app/data/processed
     - ./data/replay:/app/data/replay
     - ./outputs:/app/outputs
     - ./checkpoints:/app/checkpoints
+    # BUG FIX: mount specialist dir so dev-time code changes are reflected
+    # immediately without a rebuild. The Dockerfile also COPYs specialist/
+    # so it exists in production images without this mount.
+    - ./specialist:/app/specialist
+    # BUG FIX: mount the shell script at the project root so edits are
+    # reflected immediately. The Dockerfile COPYs it too for production.
+    - ./06_train_incremental.sh:/app/06_train_incremental.sh
 
 services:
 
@@ -56,15 +63,24 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # Full pipeline:
-  #   docker compose run --rm train-all
+  # ── Incremental pipeline (entry points 1 & 2) ──────────────────────────
+  #
+  # Full run (shard 1 + shard 2 + specialist):
+  #   docker compose run --rm train-all --data-dir /raw_data/ALL
+  #
   # Resume from shard 2:
-  #   docker compose run --rm train-all --from 2
-  # Fine-tune from pretrained:
-  #   docker compose run --rm train-all --pretrained /raw_data/model.pth
+  #   docker compose run --rm train-all --data-dir /raw_data/ALL --from 2
+  #
+  # Fine-tune from pretrained checkpoint:
+  #   docker compose run --rm train-all --data-dir /raw_data/ALL \
+  #       --pretrained /raw_data/model.pth
+  #
+  # Skip specialist (generalist only):
+  #   docker compose run --rm train-all --data-dir /raw_data/ALL --skip-specialist
   train-all:
     <<: *base
-    entrypoint: ["bash", "src/06_train_incremental.sh"]
+    # BUG FIX: was "src/06_train_incremental.sh" — script is at project root
+    entrypoint: ["bash", "06_train_incremental.sh"]
     shm_size: "4gb"
     deploy:
       resources:
@@ -74,11 +90,16 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # Inference on a GeoTIFF:
-  #   docker compose run --rm predict --input /raw_data/image.tif --output /app/outputs/mask.tif
-  predict:
+  # ── Specialist only (entry point 3) ────────────────────────────────────
+  #
+  # Run after both generalist shards are complete.
+  # Requires: checkpoints/best_model.pt  +  data/replay/
+  #
+  #   docker compose run --rm specialist
+  specialist:
     <<: *base
-    entrypoint: ["python", "src/predict.py"]
+    entrypoint: ["bash", "06_train_incremental.sh", "--specialist-only"]
+    shm_size: "4gb"
     deploy:
       resources:
         reservations:
@@ -87,11 +108,31 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # Full inference with TTA (04_inference.py):
-  #   docker compose run --rm infer --input /raw_data/image.tif --output /app/outputs/mask.tif
+  # ── Generalist inference (04_inference.py) ─────────────────────────────
+  #
+  #   docker compose run --rm infer \
+  #       --input /raw_data/image.tif --output /app/outputs/mask.tif
   infer:
     <<: *base
     entrypoint: ["python", "src/04_inference.py"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # ── Combined inference: generalist + specialist overlay ─────────────────
+  #
+  # Runs both models; specialist overwrites minor-class pixels (Bridge /
+  # Railway / Utility) where its confidence exceeds the threshold.
+  #
+  #   docker compose run --rm combined-infer \
+  #       --input /raw_data/image.tif --output /app/outputs/combined_mask.tif
+  combined-infer:
+    <<: *base
+    entrypoint: ["python", "specialist/04_inference_combined.py"]
     deploy:
       resources:
         reservations:

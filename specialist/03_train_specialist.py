@@ -36,20 +36,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config_specialist import (
-    MODEL_NAME, NUMCLASSES, CLASSLABELS, CLASS_WEIGHTS,
-    NUMEPOCHS, LR, WEIGHTDECAY, PATIENCE,
-    CHECKPOINT_DIR, DATAPROCESSEDDIR, RANDOMSEED,
-    USEAMP, GRADACCUMSTEPS, WARMUPEPOCHS,
-    USEEMA, EMADECAY,
-    FOCALGAMMA, FOCALWEIGHT, DICEWEIGHT,
-    NOTIFYINTERVALHOURS, BANDINDICES,
+    MODEL_NAME, NUM_CLASSES, CLASS_LABELS, CLASS_WEIGHTS,
+    NUM_EPOCHS, LR, WEIGHT_DECAY, PATIENCE,
+    CHECKPOINT_DIR, DATA_PROCESSED_DIR, RANDOM_SEED,
+    USE_AMP, GRAD_ACCUM_STEPS, WARMUP_EPOCHS,
+    USE_EMA, EMA_DECAY,
+    FOCAL_GAMMA, FOCAL_WEIGHT, DICE_WEIGHT,
+    NOTIFY_INTERVAL_HOURS, BAND_INDICES,
 )
 
 dataset           = importlib.import_module("02_dataset_specialist")
 build_dataloaders = dataset.build_dataloaders
 
-torch.manual_seed(RANDOMSEED)
-np.random.seed(RANDOMSEED)
+torch.manual_seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {DEVICE}", flush=True)
 
@@ -58,9 +58,9 @@ print(f"Device: {DEVICE}", flush=True)
 def build_model(num_input_bands, checkpoint_path=None, init_weights_path=None):
     print(f"Loading {MODEL_NAME} with {num_input_bands} bands...", flush=True)
     cfg             = SegformerConfig.from_pretrained(MODEL_NAME)
-    cfg.num_labels  = NUMCLASSES
-    cfg.id2label    = {i: l for i, l in enumerate(CLASSLABELS)}
-    cfg.label2id    = {l: i for i, l in enumerate(CLASSLABELS)}
+    cfg.num_labels  = NUM_CLASSES
+    cfg.id2label    = {i: l for i, l in enumerate(CLASS_LABELS)}
+    cfg.label2id    = {l: i for i, l in enumerate(CLASS_LABELS)}
     cfg.num_channels = num_input_bands
 
     if checkpoint_path and Path(checkpoint_path).exists():
@@ -148,7 +148,7 @@ class FocalLoss(nn.Module):
 class DiceLoss(nn.Module):
     def forward(self, logits, targets):
         probs = F.softmax(logits, dim=1)
-        oh    = F.one_hot(targets.clamp(0, NUMCLASSES - 1), NUMCLASSES) \
+        oh    = F.one_hot(targets.clamp(0, NUM_CLASSES - 1), NUM_CLASSES) \
                   .permute(0, 3, 1, 2).float()
         inter = (probs * oh).sum(dim=(2, 3))
         union = probs.sum(dim=(2, 3)) + oh.sum(dim=(2, 3))
@@ -159,12 +159,12 @@ class DiceLoss(nn.Module):
 class FocalDiceLoss(nn.Module):
     def __init__(self, class_weights=None):
         super().__init__()
-        self.focal = FocalLoss(FOCALGAMMA, class_weights)
+        self.focal = FocalLoss(FOCAL_GAMMA, class_weights)
         self.dice  = DiceLoss()
 
     def forward(self, logits, targets):
-        return FOCALWEIGHT * self.focal(logits, targets) \
-             + DICEWEIGHT  * self.dice(logits, targets)
+        return FOCAL_WEIGHT * self.focal(logits, targets) \
+             + DICE_WEIGHT  * self.dice(logits, targets)
 
 
 # ── scheduler ──────────────────────────────────────────────────────────────
@@ -254,7 +254,7 @@ def run_epoch(model, loader, criterion, optimizer=None, scaler=None,
             images, masks = images.to(DEVICE), masks.to(DEVICE)
             with torch.autocast(
                 device_type=DEVICE.type, dtype=torch.float16,
-                enabled=USEAMP and DEVICE.type == "cuda"
+                enabled=USE_AMP and DEVICE.type == "cuda"
             ):
                 logits_up = F.interpolate(
                     model(pixel_values=images).logits,
@@ -286,7 +286,7 @@ def run_epoch(model, loader, criterion, optimizer=None, scaler=None,
 
     preds_cat   = torch.cat(all_preds)
     targets_cat = torch.cat(all_targets)
-    mean_miou, per_class = compute_miou(preds_cat, targets_cat, NUMCLASSES)
+    mean_miou, per_class = compute_miou(preds_cat, targets_cat, NUM_CLASSES)
     return total_loss / n, mean_miou, per_class
 
 
@@ -307,11 +307,11 @@ def train(resume=False, init_weights=None):
         checkpoint_path=ckpt_path   if resume else None,
         init_weights_path=init_weights if (init_weights and not resume) else None,
     )
-    ema       = ModelEMA(model, decay=EMADECAY) if USEEMA else None
+    ema       = ModelEMA(model, decay=EMA_DECAY) if USE_EMA else None
     criterion = FocalDiceLoss(class_weights=CLASS_WEIGHTS)
-    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=WEIGHTDECAY)
-    scheduler = build_scheduler(optimizer, NUMEPOCHS, WARMUPEPOCHS)
-    scaler    = torch.amp.GradScaler("cuda", enabled=USEAMP and DEVICE.type == "cuda")
+    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
+    scheduler = build_scheduler(optimizer, NUM_EPOCHS, WARMUP_EPOCHS)
+    scaler    = torch.amp.GradScaler("cuda", enabled=USE_AMP and DEVICE.type == "cuda")
 
     best_miou   = 0.0
     patience_cnt = 0
@@ -319,16 +319,16 @@ def train(resume=False, init_weights=None):
 
     mode = "RESUME" if resume else ("INIT-WEIGHTS" if init_weights else "FRESH")
     print("=" * 55, flush=True)
-    print(f"[SPECIALIST] Mode={mode}  lr={lr:.2e}  epochs={NUMEPOCHS}  device={DEVICE}", flush=True)
-    print(f"  AMP={USEAMP}  GradAccum={GRADACCUMSTEPS}  EMA={USEEMA}", flush=True)
-    print(f"  Warmup={WARMUPEPOCHS} epochs  Focal+Dice loss", flush=True)
+    print(f"[SPECIALIST] Mode={mode}  lr={lr:.2e}  epochs={NUM_EPOCHS}  device={DEVICE}", flush=True)
+    print(f"  AMP={USE_AMP}  GradAccum={GRAD_ACCUM_STEPS}  EMA={USE_EMA}", flush=True)
+    print(f"  Warmup={WARMUP_EPOCHS} epochs  Focal+Dice loss", flush=True)
     print("=" * 55, flush=True)
 
-    for epoch in range(1, NUMEPOCHS + 1):
+    for epoch in range(1, NUM_EPOCHS + 1):
         t0 = time.time()
         train_loss, train_miou, _ = run_epoch(
             model, train_loader, criterion, optimizer,
-            scaler=scaler, phase="train", grad_accum=GRADACCUMSTEPS,
+            scaler=scaler, phase="train", grad_accum=GRAD_ACCUM_STEPS,
         )
         if ema:
             ema.update(model)
@@ -340,11 +340,11 @@ def train(resume=False, init_weights=None):
         scheduler.step()
 
         pc_str = "  ".join(
-            f"{CLASSLABELS[c][:4]}={per_class_iou.get(c, 0):.3f}"
-            for c in range(NUMCLASSES)
+            f"{CLASS_LABELS[c][:4]}={per_class_iou.get(c, 0):.3f}"
+            for c in range(NUM_CLASSES)
         )
         print(
-            f"Epoch {epoch:03d}/{NUMEPOCHS}  "
+            f"Epoch {epoch:03d}/{NUM_EPOCHS}  "
             f"tr_loss={train_loss:.4f}  tr_mIoU={train_miou:.4f}  "
             f"val_loss={val_loss:.4f}  val_mIoU={val_miou:.4f}  "
             f"lr={scheduler.get_last_lr()[0]:.2e}  [{time.time()-t0:.0f}s]",

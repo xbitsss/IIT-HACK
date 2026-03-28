@@ -43,6 +43,10 @@ def _worker_init_fn(worker_id):
     import random as _random
     _random.seed(seed)
 
+# Public alias — specialist/02_dataset_specialist.py imports this name.
+# The leading-underscore version stays for internal use inside this module.
+worker_init_fn = _worker_init_fn
+
 from config import (
     DATA_PROCESSED_DIR, DATA_RAW_DIR, VAL_SPLIT,
     RANDOM_SEED, AUGMENT_TRAIN, BATCH_SIZE,

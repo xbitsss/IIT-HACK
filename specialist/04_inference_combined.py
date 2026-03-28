@@ -32,17 +32,17 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config_specialist import (
-    NUMCLASSES, CLASSLABELS, CLASSCOLORS, CLASSES,
-    TILESIZE, INFERENCEOVERLAP, INFERENCEBATCH,
-    BANDINDICES, USETTA,
+    NUM_CLASSES, CLASS_LABELS, CLASS_COLORS, CLASSES,
+    TILE_SIZE, INFERENCE_OVERLAP, INFERENCE_BATCH,
+    BAND_INDICES, USE_TTA,
     MINOR_CLASSES, CLASS_THRESHOLDS,
-    CHECKPOINTDIR as SPECIALIST_CKPT_DIR,
+    CHECKPOINT_DIR as SPECIALIST_CKPT_DIR,
 )
 # generalist checkpoint dir comes from the main config
 import importlib as _il
 _main_cfg = _il.import_module("config")
-GENERALIST_CKPT_DIR = _main_cfg.CHECKPOINTDIR
-GENERALIST_MODEL    = _main_cfg.MODELNAME     # "nvidia/mit-b5"
+GENERALIST_CKPT_DIR = _main_cfg.CHECKPOINT_DIR
+GENERALIST_MODEL    = _main_cfg.MODEL_NAME     # "nvidia/mit-b5"
 SPECIALIST_MODEL    = "nvidia/mit-b2"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -68,10 +68,15 @@ def load_model(ckpt_path: Path, backbone_name: str):
     ckpt      = torch.load(ckpt_path, map_location=DEVICE, weights_only=False)
     num_bands = ckpt["num_bands"]
 
+    # BUG FIX: 03_train_specialist.py saves "model_name" in the checkpoint.
+    # Prefer that over the caller-supplied name so the correct SegFormer
+    # variant is always reconstructed, even if MODEL_NAME config changes.
+    backbone_name = ckpt.get("model_name", backbone_name)
+
     cfg              = SegformerConfig.from_pretrained(backbone_name)
-    cfg.num_labels   = NUMCLASSES
-    cfg.id2label     = {i: l for i, l in enumerate(CLASSLABELS)}
-    cfg.label2id     = {l: i for i, l in enumerate(CLASSLABELS)}
+    cfg.num_labels   = NUM_CLASSES
+    cfg.id2label     = {i: l for i, l in enumerate(CLASS_LABELS)}
+    cfg.label2id     = {l: i for i, l in enumerate(CLASS_LABELS)}
     cfg.num_channels = num_bands
 
     model = SegformerForSemanticSegmentation(cfg)
@@ -123,7 +128,7 @@ def batch_infer(model, tiles: list) -> np.ndarray:
     with torch.no_grad():
         out    = model(pixel_values=tensor)
         logits = F.interpolate(
-            out.logits, size=(TILESIZE, TILESIZE),
+            out.logits, size=(TILE_SIZE, TILE_SIZE),
             mode="bilinear", align_corners=False,
         )
     return torch.softmax(logits, dim=1).cpu().numpy()   # [B, C, H, W]
@@ -136,16 +141,16 @@ def sliding_window_probs(model, image: np.ndarray, use_tta: bool = True) -> np.n
     This is what both models expose so the overlay can compare confidences.
     """
     C, H, W  = image.shape
-    stride   = TILESIZE - INFERENCEOVERLAP
-    win      = gaussian_window(TILESIZE)
-    logit_sum  = np.zeros((NUMCLASSES, H, W), dtype=np.float32)
+    stride   = TILE_SIZE - INFERENCE_OVERLAP
+    win      = gaussian_window(TILE_SIZE)
+    logit_sum  = np.zeros((NUM_CLASSES, H, W), dtype=np.float32)
     weight_sum = np.zeros((H, W),             dtype=np.float32)
 
     tiles, positions = [], []
-    for r in range(0, max(H - TILESIZE + 1, 1), stride):
-        for c in range(0, max(W - TILESIZE + 1, 1), stride):
-            r2 = min(r + TILESIZE, H); r1 = r2 - TILESIZE
-            c2 = min(c + TILESIZE, W); c1 = c2 - TILESIZE
+    for r in range(0, max(H - TILE_SIZE + 1, 1), stride):
+        for c in range(0, max(W - TILE_SIZE + 1, 1), stride):
+            r2 = min(r + TILE_SIZE, H); r1 = r2 - TILE_SIZE
+            c2 = min(c + TILE_SIZE, W); c1 = c2 - TILE_SIZE
             tiles.append(image[:, r1:r2, c1:c2])
             positions.append((r1, r2, c1, c2))
 
@@ -153,9 +158,9 @@ def sliding_window_probs(model, image: np.ndarray, use_tta: bool = True) -> np.n
 
     for aug_fn, deaug_fn in tqdm(tta_ops, desc=f"  TTA {len(tta_ops)} variants", disable=not use_tta):
         aug_tiles = [aug_fn(t) for t in tiles]
-        for i in tqdm(range(0, len(aug_tiles), INFERENCEBATCH), desc="  Batches", leave=False):
-            batch_tiles = aug_tiles[i: i + INFERENCEBATCH]
-            batch_pos   = positions[i: i + INFERENCEBATCH]
+        for i in tqdm(range(0, len(aug_tiles), INFERENCE_BATCH), desc="  Batches", leave=False):
+            batch_tiles = aug_tiles[i: i + INFERENCE_BATCH]
+            batch_pos   = positions[i: i + INFERENCE_BATCH]
             probs       = batch_infer(model, batch_tiles)       # [B, C, H, W]
             for j, (r1, r2, c1, c2) in enumerate(batch_pos):
                 dp = deaug_fn(probs[j])                         # [C, H, W]
@@ -170,7 +175,7 @@ def sliding_window_probs(model, image: np.ndarray, use_tta: bool = True) -> np.n
 def save_visualization(mask, rgb_image, output_path, title="Combined Prediction"):
     H, W      = mask.shape
     color_mask = np.zeros((H, W, 3), dtype=np.uint8)
-    for cls_id, bgr in CLASSCOLORS.items():
+    for cls_id, bgr in CLASS_COLORS.items():
         color_mask[mask == cls_id] = bgr[::-1]   # BGR → RGB
 
     if rgb_image.shape[0] >= 3:
@@ -183,8 +188,8 @@ def save_visualization(mask, rgb_image, output_path, title="Combined Prediction"
     ax1.imshow(rgb_disp);    ax1.set_title("Input RGB");   ax1.axis("off")
     ax2.imshow(color_mask);  ax2.set_title(title);         ax2.axis("off")
     legend = [
-        Patch(facecolor=np.array(CLASSCOLORS[i][::-1]) / 255, label=CLASSLABELS[i])
-        for i in range(NUMCLASSES)
+        Patch(facecolor=np.array(CLASS_COLORS[i][::-1]) / 255, label=CLASS_LABELS[i])
+        for i in range(NUM_CLASSES)
     ]
     ax2.legend(handles=legend, loc="lower right", fontsize=9)
     plt.tight_layout()
@@ -226,11 +231,11 @@ def predict_combined(
     with rasterio.open(input_path) as tif:
         print(f"Input: {input_path.name}  {tif.width}×{tif.height}  "
               f"bands={tif.count}  CRS={tif.crs}", flush=True)
-        band_idx = BANDINDICES if BANDINDICES else list(range(1, tif.count + 1))
+        band_idx = BAND_INDICES if BAND_INDICES else list(range(1, tif.count + 1))
         bands    = normalize_bands(tif.read(band_idx).astype(np.float32))
         profile  = tif.profile.copy()
 
-    print(f"Sliding window  tile={TILESIZE}  overlap={INFERENCEOVERLAP}  TTA={use_tta}", flush=True)
+    print(f"Sliding window  tile={TILE_SIZE}  overlap={INFERENCE_OVERLAP}  TTA={use_tta}", flush=True)
 
     # ── generalist pass ────────────────────────────────────────────────────
     print("\n[1/2] Generalist inference...", flush=True)
@@ -257,20 +262,20 @@ def predict_combined(
           f"({n_overrides / total_px * 100:.2f}% of image)", flush=True)
     for cls in MINOR_CLASSES:
         n = int((final_mask == cls).sum())
-        print(f"  {CLASSLABELS[cls]:12s}  {n:>8,} px  ({n/total_px*100:.2f}%)", flush=True)
+        print(f"  {CLASS_LABELS[cls]:12s}  {n:>8,} px  ({n/total_px*100:.2f}%)", flush=True)
 
     # ── class distribution ─────────────────────────────────────────────────
     print("\nFinal class distribution:", flush=True)
     unique, counts = np.unique(final_mask, return_counts=True)
     for u, c in zip(unique, counts):
-        lbl = CLASSLABELS[int(u)] if int(u) < len(CLASSLABELS) else "unknown"
+        lbl = CLASS_LABELS[int(u)] if int(u) < len(CLASS_LABELS) else "unknown"
         print(f"  {lbl:12s}  {c/total_px*100:.1f}%", flush=True)
 
     # ── save GeoTIFF ───────────────────────────────────────────────────────
     profile.update(count=1, dtype=rasterio.uint8, nodata=255, compress="lzw")
     with rasterio.open(output_path, "w", **profile) as dst:
         dst.write(final_mask[np.newaxis], 1)
-        dst.update_tags(1, **{f"class{i}": l for i, l in enumerate(CLASSLABELS)})
+        dst.update_tags(1, **{f"class{i}": l for i, l in enumerate(CLASS_LABELS)})
     print(f"\n[OK] Mask saved → {output_path}", flush=True)
 
     if visualize:
