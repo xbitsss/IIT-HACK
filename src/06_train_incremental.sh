@@ -16,19 +16,19 @@
 # ─────────────────────────────────────────────────────────────────────────────
 #
 #  Full pipeline (shard 1 → shard 2 → specialist):
-#    ./06_train_incremental.sh --data-dir /raw_data/ALL
+#    ./src/06_train_incremental.sh --data-dir /raw_data/ALL
 #
 #  Resume from shard 2 (shard 1 already done):
-#    ./06_train_incremental.sh --data-dir /raw_data/ALL --from 2
+#    ./src/06_train_incremental.sh --data-dir /raw_data/ALL --from 2
 #
 #  Specialist only (tiles must exist in processed/ or replay/):
-#    ./06_train_incremental.sh --specialist-only
+#    ./src/06_train_incremental.sh --specialist-only
 #
 #  Specialist only, NO tiles yet (bootstraps preprocessing from scratch):
-#    ./06_train_incremental.sh --specialist-only --data-dir /raw_data/ALL
+#    ./src/06_train_incremental.sh --specialist-only --data-dir /raw_data/ALL
 #
 #  Generalist only, skip specialist:
-#    ./06_train_incremental.sh --data-dir /raw_data/ALL --skip-specialist
+#    ./src/06_train_incremental.sh --data-dir /raw_data/ALL --skip-specialist
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # FLAGS
@@ -189,10 +189,10 @@ print('1' if replay_exists() else '0')
             echo "  You need to provide the raw data folder so we can preprocess it."
             echo "  Options:"
             echo "    A) Run with --data-dir pointing to your TIFFs:"
-            echo "         ./06_train_incremental.sh --specialist-only --data-dir /raw_data/ALL"
+            echo "         ./src/06_train_incremental.sh --specialist-only --data-dir /raw_data/ALL"
             echo ""
             echo "    B) Run generalist shards first (creates replay tiles as a side-effect):"
-            echo "         ./06_train_incremental.sh --data-dir /raw_data/ALL"
+            echo "         ./src/06_train_incremental.sh --data-dir /raw_data/ALL"
             echo ""
             echo "    C) Copy an existing data/replay/ from another machine."
             echo ""
@@ -236,7 +236,7 @@ print('1' if replay_exists() else '0')
                 --error-msg "$(tail -40 /tmp/specialist_bootstrap_preprocess_log.txt | head -c 2000)" \
                 --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
             echo ""
-            echo "  To retry: ./06_train_incremental.sh --specialist-only --data-dir $DATA_DIR_B"
+            echo "  To retry: ./src/06_train_incremental.sh --specialist-only --data-dir $DATA_DIR_B"
             echo "  Check: config_specialist.py → SHAPEFILE_MAP has Bridge/Railway/Utility entries"
             exit 1
         fi
@@ -270,7 +270,7 @@ except: print('0')
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
         echo ""
         echo "  Fix: Check that Bridge/Railway/Utility tiles exist in data/processed/ or data/replay/"
-        echo "  Then retry: ./06_train_incremental.sh --specialist-only"
+        echo "  Then retry: ./src/06_train_incremental.sh --specialist-only"
         exit 1
     fi
 
@@ -298,7 +298,7 @@ except: print('?')
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
         echo ""
         echo "  To resume specialist training:"
-        echo "    ./06_train_incremental.sh --specialist-only --message 'resume'"
+        echo "    ./src/06_train_incremental.sh --specialist-only --message 'resume'"
         echo "    python specialist/03_train_specialist.py --resume"
         exit 1
     fi
@@ -456,13 +456,13 @@ CURRENT_STEP=0
 _shell_crash() {
     local EXIT_CODE=${1:-$?}
     log "[CRASH] Pipeline error at $CURRENT_FOLDER (exit $EXIT_CODE)"
-    log "  Resume: ./06_train_incremental.sh --from $CURRENT_STEP --data-dir $DATA_DIR_B"
-    log "  Or specialist only: ./06_train_incremental.sh --specialist-only"
+    log "  Resume: ./src/06_train_incremental.sh --from $CURRENT_STEP --data-dir $DATA_DIR_B"
+    log "  Or specialist only: ./src/06_train_incremental.sh --specialist-only"
     python3 src/07_notify.py --error \
         --folder "$CURRENT_FOLDER" --step "$CURRENT_STEP" --total "$TOTAL" \
         --error-msg "Pipeline crashed (exit $EXIT_CODE) at $CURRENT_FOLDER.
-Resume: ./06_train_incremental.sh --from $CURRENT_STEP --data-dir $DATA_DIR_B
-Or specialist only: ./06_train_incremental.sh --specialist-only" \
+Resume: ./src/06_train_incremental.sh --from $CURRENT_STEP --data-dir $DATA_DIR_B
+Or specialist only: ./src/06_train_incremental.sh --specialist-only" \
         --version "$GEN_VERSION" --run-message "$RUN_MESSAGE" || true
 }
 trap '_shell_crash $?' ERR
@@ -526,7 +526,7 @@ assert budget >= 1.0,       f'[ERROR] Budget < 1 GB — increase MAX_DISK_GB'
             --folder "$FOLDER_NAME" --step "$STEP" --total "$TOTAL" \
             --error-msg "$(tail -40 /tmp/preprocess_log.txt | head -c 2000)" \
             --version "$GEN_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To retry this shard: ./06_train_incremental.sh --from $STEP --data-dir $DATA_DIR_B"
+        echo "  To retry this shard: ../src/06_train_incremental.sh --from $STEP --data-dir $DATA_DIR_B"
         exit 1
     fi
 
@@ -594,7 +594,7 @@ save_replay_from_shard('$FOLDER_NAME')
             --folder "$FOLDER_NAME" --step "$STEP" --total "$TOTAL" \
             --error-msg "$(tail -40 /tmp/train_log.txt | head -c 2000)" \
             --version "$GEN_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To resume: ./06_train_incremental.sh --from $STEP --data-dir $DATA_DIR_B"
+        echo "  To resume: ./src/06_train_incremental.sh --from $STEP --data-dir $DATA_DIR_B"
         exit 1
     fi
 
@@ -672,7 +672,7 @@ if [ "$SKIP_SPECIALIST" -eq 0 ]; then
             --folder "specialist-meta" --step "$TOTAL" --total "$TOTAL" \
             --error-msg "$(tail -40 /tmp/specialist_meta_log.txt | head -c 2000)" \
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To retry specialist: ./06_train_incremental.sh --specialist-only"
+        echo "  To retry specialist: ./src/06_train_incremental.sh --specialist-only"
         exit 1
     fi
     notify_shell_milestone "specialist" "preprocess_done" "Specialist meta built."
@@ -689,7 +689,7 @@ if [ "$SKIP_SPECIALIST" -eq 0 ]; then
             --folder "specialist" --step "$TOTAL" --total "$TOTAL" \
             --error-msg "$(tail -40 /tmp/specialist_train_log.txt | head -c 2000)" \
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To retry: ./06_train_incremental.sh --specialist-only"
+        echo "  To retry: ./src/06_train_incremental.sh --specialist-only"
         exit 1
     fi
 

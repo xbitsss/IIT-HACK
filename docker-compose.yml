@@ -31,7 +31,7 @@ x-base: &base
     - ./specialist:/app/specialist
     # BUG FIX: mount the shell script at the project root so edits are
     # reflected immediately. The Dockerfile COPYs it too for production.
-    - ./06_train_incremental.sh:/app/06_train_incremental.sh
+    - ./src/06_train_incremental.sh:/app/src/06_train_incremental.sh
 
 services:
 
@@ -80,7 +80,7 @@ services:
   train-all:
     <<: *base
     # BUG FIX: was "src/06_train_incremental.sh" — script is at project root
-    entrypoint: ["bash", "06_train_incremental.sh"]
+    entrypoint: ["bash", "src/06_train_incremental.sh"]
     shm_size: "4gb"
     deploy:
       resources:
@@ -98,7 +98,7 @@ services:
   #   docker compose run --rm specialist
   specialist:
     <<: *base
-    entrypoint: ["bash", "06_train_incremental.sh", "--specialist-only"]
+    entrypoint: ["bash", "src/06_train_incremental.sh", "--specialist-only"]
     shm_size: "4gb"
     deploy:
       resources:
