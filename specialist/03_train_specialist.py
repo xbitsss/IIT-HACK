@@ -1,13 +1,22 @@
 """
-Train the specialist model (Bridge / Railway / Utility).
+specialist/03_train_specialist.py — Train the specialist model.
 
-Identical logic to src/03_train.py.  Only differences:
-  - imports from config_specialist  (mit-b2, specialist CHECKPOINT_DIR, etc.)
-  - loads data via 02_dataset_specialist  (tiles_meta_specialist.json)
+Trains SegFormer (mit-b2) to classify Bridge / Railway / Utility pixels.
+
+Fully independent — no generalist checkpoint required:
+  • Uses HuggingFace pretrained weights if no checkpoint exists.
+  • Sources tiles from data/processed/ and/or data/replay/.
+  • Can be bootstrapped from raw TIFFs if neither source exists
+    (the shell script handles that with SPECIALIST_PREPROCESS=1).
+
+Milestone emails at 25% / 50% / 75% / 100% of total epochs.
+2-hour background progress emails via NOTIFY_INTERVAL_HOURS in config.
 
 Usage:
     python specialist/03_train_specialist.py
     python specialist/03_train_specialist.py --resume
+    python specialist/03_train_specialist.py --run-message "Lowering railway threshold"
+    python specialist/03_train_specialist.py --init-weights checkpoints/best_model.pt
 """
 
 import sys
@@ -15,6 +24,7 @@ import json
 import time
 import signal
 import copy
+import shutil
 import threading
 import argparse
 import importlib
@@ -31,8 +41,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from transformers import SegformerForSemanticSegmentation, SegformerConfig
 
-# ── paths ──────────────────────────────────────────────────────────────────
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+_SRC = Path(__file__).parent.parent / "src"
+sys.path.insert(0, str(_SRC))
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config_specialist import (
@@ -53,26 +63,46 @@ np.random.seed(RANDOM_SEED)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {DEVICE}", flush=True)
 
+_MILESTONE_PCTS = [25, 50, 75]
+
+
+def _milestone_epoch_for_pct(pct: int, total: int) -> int:
+    return max(1, round(total * pct / 100))
+
+
+def _is_milestone(epoch: int, total_epochs: int):
+    for pct in _MILESTONE_PCTS:
+        if epoch == _milestone_epoch_for_pct(pct, total_epochs):
+            return pct
+    return None
+
 
 # ── model ──────────────────────────────────────────────────────────────────
 def build_model(num_input_bands, checkpoint_path=None, init_weights_path=None):
+    """
+    Three modes:
+      checkpoint_path  : full resume from specialist checkpoint
+      init_weights_path: weights only (e.g. warm-start from generalist)
+      neither          : fresh from HuggingFace pretrained — fully independent
+    """
     print(f"Loading {MODEL_NAME} with {num_input_bands} bands...", flush=True)
-    cfg             = SegformerConfig.from_pretrained(MODEL_NAME)
-    cfg.num_labels  = NUM_CLASSES
-    cfg.id2label    = {i: l for i, l in enumerate(CLASS_LABELS)}
-    cfg.label2id    = {l: i for i, l in enumerate(CLASS_LABELS)}
+    cfg              = SegformerConfig.from_pretrained(MODEL_NAME)
+    cfg.num_labels   = NUM_CLASSES
+    cfg.id2label     = {i: l for i, l in enumerate(CLASS_LABELS)}
+    cfg.label2id     = {l: i for i, l in enumerate(CLASS_LABELS)}
     cfg.num_channels = num_input_bands
 
     if checkpoint_path and Path(checkpoint_path).exists():
-        print(f"Resuming from {checkpoint_path}", flush=True)
+        print(f"  Resuming from {checkpoint_path}", flush=True)
         model = SegformerForSemanticSegmentation(cfg)
         if num_input_bands != 3:
             _patch_embedding(model, num_input_bands)
         ckpt = torch.load(checkpoint_path, map_location=DEVICE, weights_only=False)
         model.load_state_dict(ckpt["model_state"])
-        print(f"Loaded epoch={ckpt['epoch']}  val_mIoU={ckpt['val_miou']:.4f}", flush=True)
+        print(f"  Loaded epoch={ckpt['epoch']}  val_mIoU={ckpt['val_miou']:.4f}", flush=True)
+
     elif init_weights_path and Path(init_weights_path).exists():
-        print(f"Init weights from {init_weights_path} — fresh training state", flush=True)
+        print(f"  Init weights from {init_weights_path} — fresh training state", flush=True)
         model = SegformerForSemanticSegmentation(cfg)
         if num_input_bands != 3:
             _patch_embedding(model, num_input_bands)
@@ -80,8 +110,14 @@ def build_model(num_input_bands, checkpoint_path=None, init_weights_path=None):
         state = ckpt.get("model_state", ckpt)
         missing, unexpected = model.load_state_dict(state, strict=False)
         if missing:
-            print(f"[WARN] Missing keys: {len(missing)}", flush=True)
+            print(f"  [WARN] Missing keys: {len(missing)} "
+                  f"(expected if generalist has fewer classes)", flush=True)
+        if unexpected:
+            print(f"  [WARN] Unexpected keys: {len(unexpected)}", flush=True)
+
     else:
+        # Fully independent — no generalist needed
+        print(f"  Fresh from HuggingFace pretrained ({MODEL_NAME})", flush=True)
         model = SegformerForSemanticSegmentation.from_pretrained(
             MODEL_NAME, config=cfg, ignore_mismatched_sizes=True
         )
@@ -103,7 +139,7 @@ def _patch_embedding(model, num_input_bands):
         n = min(3, num_input_bands)
         new.weight[:, :n] = old.weight[:, :n]
     model.segformer.encoder.patch_embeddings[0].proj = new
-    print(f"Patched input embedding → {num_input_bands} channels", flush=True)
+    print(f"  Patched input embedding → {num_input_bands} channels", flush=True)
 
 
 # ── EMA ────────────────────────────────────────────────────────────────────
@@ -130,7 +166,7 @@ class ModelEMA:
 class FocalLoss(nn.Module):
     def __init__(self, gamma=2.0, class_weights=None, label_smoothing=0.1):
         super().__init__()
-        self.gamma          = gamma
+        self.gamma           = gamma
         self.label_smoothing = label_smoothing
         self.w = torch.tensor(class_weights, dtype=torch.float32).to(DEVICE) \
                  if class_weights else None
@@ -153,7 +189,7 @@ class DiceLoss(nn.Module):
         inter = (probs * oh).sum(dim=(2, 3))
         union = probs.sum(dim=(2, 3)) + oh.sum(dim=(2, 3))
         dice  = 1.0 - (2.0 * inter + 1e-6) / (union + 1e-6)
-        return dice[:, 1:].mean()   # skip background
+        return dice[:, 1:].mean()
 
 
 class FocalDiceLoss(nn.Module):
@@ -190,8 +226,8 @@ def compute_miou(preds, targets, num_classes):
     return mean_iou, ious
 
 
-# ── shared state for notification thread ───────────────────────────────────
-class TrainingState:
+# ── shared state ───────────────────────────────────────────────────────────
+class _TrainingState:
     def __init__(self):
         self.lock        = threading.Lock()
         self.epoch       = 0
@@ -200,10 +236,9 @@ class TrainingState:
         self.train_miou  = 0.0
         self.val_miou    = 0.0
         self.best_miou   = 0.0
-        self.folder_name = "specialist"
-        self.folder_step = 1
-        self.folder_total = 1
         self.done        = False
+        self.run_version = None
+        self.run_message = ""
 
     def update(self, **kwargs):
         with self.lock:
@@ -212,30 +247,63 @@ class TrainingState:
 
     def snapshot(self):
         with self.lock:
-            return {k: v for k, v in self.__dict__.items() if not k.startswith("lock")}
+            return {k: getattr(self, k) for k in vars(self) if k != "lock"}
 
 
-state = TrainingState()
-
+_state       = _TrainingState()
 _crash_fired = False
 
 
-def crash_handler(signum, frame):
+def _crash_handler(signum, frame):
     global _crash_fired
     if _crash_fired:
         sys.exit(1)
     _crash_fired = True
     signal.signal(signal.SIGINT,  signal.SIG_DFL)
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
-    state.update(done=True)
-    snap = state.snapshot()
+    _state.update(done=True)
+    snap = _state.snapshot()
     print(
         f"\n[SPECIALIST] Signal {signum} at epoch {snap['epoch']}. "
         f"Best val_mIoU={snap['best_miou']:.4f}  "
         f"Checkpoint safe at {CHECKPOINT_DIR}/best_model.pt",
         flush=True,
     )
+    try:
+        notify = importlib.import_module("07_notify")
+        notify.notify_error(
+            "specialist", 2, 2,
+            f"Specialist training interrupted (signal {signum}) at epoch {snap['epoch']}. "
+            f"Best val_mIoU={snap['best_miou']:.4f}. "
+            f"Resume: ./06_train_incremental.sh --specialist-only --message 'resume'",
+            version=snap["run_version"], run_message=snap["run_message"],
+        )
+    except Exception:
+        pass
     sys.exit(0 if signum == signal.SIGINT else 1)
+
+
+def _notification_worker(interval_secs: int):
+    time.sleep(interval_secs)
+    while True:
+        snap = _state.snapshot()
+        if snap["done"]:
+            break
+        if snap["epoch"] > 0:
+            try:
+                notify = importlib.import_module("07_notify")
+                notify.notify_training_progress(
+                    folder_name="specialist", step=2, total=2,
+                    epoch=snap["epoch"], total_epochs=NUM_EPOCHS,
+                    train_loss=snap["train_loss"], val_loss=snap["val_loss"],
+                    train_miou=snap["train_miou"], val_miou=snap["val_miou"],
+                    best_miou=snap["best_miou"],
+                    checkpoint_path=str(Path(CHECKPOINT_DIR) / "best_model.pt"),
+                    version=snap["run_version"], run_message=snap["run_message"],
+                )
+            except Exception as e:
+                print(f"[NOTIFY] Progress email failed: {e}", flush=True)
+        time.sleep(interval_secs)
 
 
 # ── epoch ──────────────────────────────────────────────────────────────────
@@ -246,6 +314,7 @@ def run_epoch(model, loader, criterion, optimizer=None, scaler=None,
     total_loss = 0.0
     all_preds, all_targets = [], []
     n = 0
+
     if is_train and optimizer:
         optimizer.zero_grad()
 
@@ -290,22 +359,58 @@ def run_epoch(model, loader, criterion, optimizer=None, scaler=None,
     return total_loss / n, mean_miou, per_class
 
 
+def _save_curves(history, ckpt_dir):
+    try:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+        e = range(1, len(history["train_loss"]) + 1)
+        ax1.plot(e, history["train_loss"], label="Train")
+        ax1.plot(e, history["val_loss"],   label="Val")
+        ax1.set_title("Loss"); ax1.legend()
+        ax2.plot(e, history["train_miou"], label="Train")
+        ax2.plot(e, history["val_miou"],   label="Val")
+        ax2.set_title("mIoU"); ax2.legend()
+        plt.tight_layout()
+        plt.savefig(ckpt_dir / "training_curves.png", dpi=120)
+        plt.close()
+    except Exception:
+        pass
+
+
 # ── train ──────────────────────────────────────────────────────────────────
-def train(resume=False, init_weights=None):
-    ckpt_dir = Path(CHECKPOINT_DIR)
+def train(resume=False, init_weights=None, run_version=None, run_message=""):
+    ckpt_dir  = Path(CHECKPOINT_DIR)
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     ckpt_path = ckpt_dir / "best_model.pt"
 
-    signal.signal(signal.SIGTERM, crash_handler)
-    signal.signal(signal.SIGINT,  crash_handler)
+    # ── Versioning ─────────────────────────────────────────────────────────
+    if run_version is None:
+        try:
+            from run_version import bump_version
+            run_version = bump_version("specialist")
+            print(f"[VERSION] Auto-bumped to specialist v{run_version}", flush=True)
+        except Exception as e:
+            print(f"[VERSION] Could not auto-bump: {e}", flush=True)
+            run_version = 0
+
+    _state.update(run_version=run_version, run_message=run_message)
+    signal.signal(signal.SIGTERM, _crash_handler)
+    signal.signal(signal.SIGINT,  _crash_handler)
+
+    if NOTIFY_INTERVAL_HOURS > 0:
+        threading.Thread(
+            target=_notification_worker,
+            args=(int(NOTIFY_INTERVAL_HOURS * 3600),),
+            daemon=True,
+        ).start()
+        print(f"[NOTIFY] 2-hour progress emails enabled", flush=True)
 
     train_loader, val_loader, num_bands = build_dataloaders()
 
     lr    = LR * 0.3 if (resume and ckpt_path.exists()) else LR
     model = build_model(
         num_bands,
-        checkpoint_path=ckpt_path   if resume else None,
-        init_weights_path=init_weights if (init_weights and not resume) else None,
+        checkpoint_path   = ckpt_path if resume else None,
+        init_weights_path = init_weights if (init_weights and not resume) else None,
     )
     ema       = ModelEMA(model, decay=EMA_DECAY) if USE_EMA else None
     criterion = FocalDiceLoss(class_weights=CLASS_WEIGHTS)
@@ -313,16 +418,46 @@ def train(resume=False, init_weights=None):
     scheduler = build_scheduler(optimizer, NUM_EPOCHS, WARMUP_EPOCHS)
     scaler    = torch.amp.GradScaler("cuda", enabled=USE_AMP and DEVICE.type == "cuda")
 
-    best_miou   = 0.0
+    best_miou    = 0.0
     patience_cnt = 0
-    history     = {"train_loss": [], "val_loss": [], "train_miou": [], "val_miou": []}
+    history      = {"train_loss": [], "val_loss": [], "train_miou": [], "val_miou": []}
+    per_class_iou = {}
 
-    mode = "RESUME" if resume else ("INIT-WEIGHTS" if init_weights else "FRESH")
-    print("=" * 55, flush=True)
-    print(f"[SPECIALIST] Mode={mode}  lr={lr:.2e}  epochs={NUM_EPOCHS}  device={DEVICE}", flush=True)
-    print(f"  AMP={USE_AMP}  GradAccum={GRAD_ACCUM_STEPS}  EMA={USE_EMA}", flush=True)
-    print(f"  Warmup={WARMUP_EPOCHS} epochs  Focal+Dice loss", flush=True)
-    print("=" * 55, flush=True)
+    mode = "RESUME" if (resume and ckpt_path.exists()) else \
+           ("INIT-WEIGHTS" if init_weights else "FRESH")
+
+    config_summary = (
+        f"model={MODEL_NAME}  bands={num_bands}  epochs={NUM_EPOCHS}  "
+        f"lr={lr:.2e}  AMP={USE_AMP}  EMA={USE_EMA}  device={DEVICE}"
+    )
+
+    milestone_epochs = {
+        pct: _milestone_epoch_for_pct(pct, NUM_EPOCHS)
+        for pct in _MILESTONE_PCTS
+    }
+
+    print("=" * 60, flush=True)
+    print(f"  [SPECIALIST] v{run_version}  |  Mode: {mode}", flush=True)
+    if run_message:
+        print(f"  Message: {run_message}", flush=True)
+    print(f"  {config_summary}", flush=True)
+    print(f"  Classes: {NUM_CLASSES}  ({', '.join(CLASS_LABELS)})", flush=True)
+    print(f"  Milestone emails at epochs: "
+          + "  ".join(f"{pct}%→ep{ep}" for pct, ep in milestone_epochs.items()),
+          flush=True)
+    print("=" * 60, flush=True)
+
+    # Notify start
+    try:
+        notify = importlib.import_module("07_notify")
+        notify.notify_run_start(
+            model_type="specialist", version=run_version,
+            run_message=run_message, mode=mode,
+            folder_name="specialist", step=2, total=2,
+            config_summary=config_summary,
+        )
+    except Exception as e:
+        print(f"[NOTIFY] Run-start email failed: {e}", flush=True)
 
     for epoch in range(1, NUM_EPOCHS + 1):
         t0 = time.time()
@@ -352,13 +487,12 @@ def train(resume=False, init_weights=None):
         )
         print(f"  per-class IoU: {pc_str}", flush=True)
 
-        for k, v in zip(
-            ["train_loss", "val_loss", "train_miou", "val_miou"],
-            [train_loss, val_loss, train_miou, val_miou],
-        ):
-            history[k].append(v)
+        history["train_loss"].append(train_loss)
+        history["val_loss"].append(val_loss)
+        history["train_miou"].append(train_miou)
+        history["val_miou"].append(val_miou)
 
-        state.update(
+        _state.update(
             epoch=epoch, train_loss=train_loss, val_loss=val_loss,
             train_miou=train_miou, val_miou=val_miou,
         )
@@ -366,52 +500,127 @@ def train(resume=False, init_weights=None):
         if val_miou > best_miou:
             best_miou    = val_miou
             patience_cnt = 0
-            state.update(best_miou=best_miou)
-            torch.save(
-                {
-                    "epoch":         epoch,
-                    "model_state":   ema.state_dict() if ema else model.state_dict(),
-                    "optimizer_state": optimizer.state_dict(),
-                    "val_miou":      val_miou,
-                    "num_bands":     num_bands,
-                    "per_class_iou": per_class_iou,
-                    "model_name":    MODEL_NAME,     # ← store backbone name
-                },
-                ckpt_path,
-            )
+            _state.update(best_miou=best_miou)
+            ckpt_data = {
+                "epoch":           epoch,
+                "model_state":     ema.state_dict() if ema else model.state_dict(),
+                "optimizer_state": optimizer.state_dict(),
+                "val_miou":        val_miou,
+                "num_bands":       num_bands,
+                "per_class_iou":   per_class_iou,
+                "model_name":      MODEL_NAME,
+                "run_version":     run_version,
+                "run_message":     run_message,
+            }
+            torch.save(ckpt_data, ckpt_path)
             print(f"  ✓ Saved best checkpoint (val_mIoU={best_miou:.4f})", flush=True)
+            if run_version:
+                try:
+                    from run_version import versioned_ckpt_name
+                    shutil.copy2(ckpt_path, ckpt_dir / versioned_ckpt_name("specialist", run_version))
+                except Exception:
+                    pass
         else:
             patience_cnt += 1
             if patience_cnt >= PATIENCE:
                 print(f"[SPECIALIST] Early stopping at epoch {epoch}", flush=True)
+                _save_curves(history, ckpt_dir)
+                try:
+                    notify = importlib.import_module("07_notify")
+                    notify.notify_milestone(
+                        stage="specialist", milestone_name="early_stopping",
+                        version=run_version, run_message=run_message,
+                        val_miou=val_miou, best_miou=best_miou,
+                        epoch=epoch, total_epochs=NUM_EPOCHS,
+                        details=f"No improvement for {PATIENCE} epochs. Best={best_miou:.4f}",
+                        checkpoint_path=str(ckpt_path),
+                        attachment_path=str(ckpt_dir / "training_curves.png"),
+                    )
+                except Exception:
+                    pass
                 break
 
-    # ── save curves ────────────────────────────────────────────────────────
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-    e = range(1, len(history["train_loss"]) + 1)
-    ax1.plot(e, history["train_loss"], label="Train")
-    ax1.plot(e, history["val_loss"],   label="Val")
-    ax1.set_title("Loss"); ax1.legend()
-    ax2.plot(e, history["train_miou"], label="Train")
-    ax2.plot(e, history["val_miou"],   label="Val")
-    ax2.set_title("mIoU"); ax2.legend()
-    plt.tight_layout()
-    plt.savefig(ckpt_dir / "training_curves.png", dpi=120)
-    plt.close()
+        # ── Milestone email at 25% / 50% / 75% ───────────────────────────────
+        matched_pct = _is_milestone(epoch, NUM_EPOCHS)
+        if matched_pct is not None:
+            _save_curves(history, ckpt_dir)
+            minor_iou_str = "  ".join(
+                f"{CLASS_LABELS[c]}={per_class_iou.get(c, 0):.4f}"
+                for c in [4, 5, 6]
+            )
+            try:
+                notify = importlib.import_module("07_notify")
+                notify.notify_milestone(
+                    stage="specialist",
+                    milestone_name=f"{matched_pct}pct_done",
+                    version=run_version, run_message=run_message,
+                    val_miou=val_miou, best_miou=best_miou,
+                    epoch=epoch, total_epochs=NUM_EPOCHS,
+                    details=f"{matched_pct}% of training complete. "
+                            f"Minor-class IoU: {minor_iou_str}",
+                    checkpoint_path=str(ckpt_path),
+                    attachment_path=str(ckpt_dir / "training_curves.png"),
+                )
+            except Exception as e:
+                print(f"[NOTIFY] Milestone email failed: {e}", flush=True)
 
+    # ── Final: 100% done ──────────────────────────────────────────────────
+    _save_curves(history, ckpt_dir)
     with open(ckpt_dir / "history.json", "w") as f:
         json.dump(history, f, indent=2)
 
-    state.update(done=True)
+    minor_iou_str = "  ".join(
+        f"{CLASS_LABELS[c]}={per_class_iou.get(c, 0):.4f}" for c in [4, 5, 6]
+    )
+    try:
+        notify = importlib.import_module("07_notify")
+        notify.notify_milestone(
+            stage="specialist", milestone_name="training_complete",
+            version=run_version, run_message=run_message,
+            val_miou=val_miou, best_miou=best_miou,
+            epoch=len(history["train_loss"]), total_epochs=NUM_EPOCHS,
+            details=f"Training finished. Best={best_miou:.4f}. Minor-class: {minor_iou_str}",
+            checkpoint_path=str(ckpt_path),
+            attachment_path=str(ckpt_dir / "training_curves.png"),
+        )
+    except Exception:
+        pass
+
+    # ── Register run ──────────────────────────────────────────────────────
+    try:
+        from run_version import register_run
+        register_run(
+            model_type="specialist", version=run_version,
+            message=run_message, best_val_miou=best_miou,
+            checkpoint=str(ckpt_path),
+            extra={
+                "per_class_iou": {str(k): round(v, 6) for k, v in per_class_iou.items()},
+                "epochs_trained": len(history["train_loss"]),
+            },
+        )
+    except Exception as e:
+        print(f"[VERSION] Could not register run: {e}", flush=True)
+
+    _state.update(done=True)
     print(f"[SPECIALIST] Done. Best val_mIoU={best_miou:.4f}  →  {ckpt_path}", flush=True)
+    print(f"  Versioned copy: specialist/checkpoints/specialist_v{run_version}_best.pt",
+          flush=True)
     return best_miou
 
 
+# ── CLI ────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train specialist model")
-    parser.add_argument("--resume", action="store_true",
-                        help="Resume from specialist/checkpoints/best_model.pt")
+    parser = argparse.ArgumentParser(description="Train GeoSeg specialist model")
+    parser.add_argument("--resume",       action="store_true")
     parser.add_argument("--init-weights", type=str, default=None,
-                        help="Load weights (e.g. from generalist) but start training fresh")
+                        help="Warm-start from any checkpoint (e.g. generalist). "
+                             "Only weights loaded — epoch resets to 0.")
+    parser.add_argument("--run-version",  type=int, default=None)
+    parser.add_argument("--run-message",  type=str, default="")
     args = parser.parse_args()
-    train(resume=args.resume, init_weights=args.init_weights)
+    train(
+        resume      = args.resume,
+        init_weights= args.init_weights,
+        run_version = args.run_version,
+        run_message = args.run_message,
+    )
