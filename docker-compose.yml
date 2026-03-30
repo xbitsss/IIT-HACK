@@ -16,24 +16,29 @@ x-base: &base
     - HF_TOKEN=${HF_TOKEN}
     - REPLAY_DIR=data/replay
   volumes:
-    # RAW_DATA_DIR in .env = parent folder containing your TIFFs on the host.
-    # Example .env:  RAW_DATA_DIR=C:/Users/name/Documents/QGIS_DATASETS/ALL
-    # Docker reads this from .env on the HOST before starting the container.
-    # The container's own RAW_DATA_DIR=/raw_data env var is set above.
+    # ── Raw data (read-only) ─────────────────────────────────────────────────
+    # Set RAW_DATA_DIR in .env on your host, e.g.:
+    #   RAW_DATA_DIR=C:/Users/name/Documents/QGIS_DATASETS/ALL
+    # Inside the container it is always mounted at /raw_data.
     - ${RAW_DATA_DIR:-./data/raw}:/raw_data:ro
+
+    # ── Pipeline-generated data (read-write) ─────────────────────────────────
     - ./data/processed:/app/data/processed
-    - ./data/replay:/app/data/replay
+    - ./data/replay:/app/data/relay
     - ./outputs:/app/outputs
     - ./checkpoints:/app/checkpoints
-    # BUG FIX: mount specialist dir so dev-time code changes are reflected
-    # immediately without a rebuild. The Dockerfile also COPYs specialist/
-    # so it exists in production images without this mount.
+
+    # ── Source code (mounted so edits are reflected without a rebuild) ───────
+    # Mount the entire src/ directory — changes to any .py file are live.
+    - ./src:/app/src
+
+    # ── Specialist code ───────────────────────────────────────────────────────
     - ./specialist:/app/specialist
-    # BUG FIX: mount the shell script at the project root so edits are
-    # reflected immediately. The Dockerfile COPYs it too for production.
-    - ./src/06_train_incremental.sh:/app/src/06_train_incremental.sh
+
 
 services:
+
+  # ── Utilities ──────────────────────────────────────────────────────────────
 
   inspect:
     <<: *base
@@ -51,6 +56,7 @@ services:
     <<: *base
     entrypoint: ["python", "src/07_notify.py", "--test"]
 
+  # ── Single-shard training (no replay, no specialist) ──────────────────────
   train:
     <<: *base
     entrypoint: ["python", "src/03_train.py"]
@@ -63,23 +69,15 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # ── Incremental pipeline (entry points 1 & 2) ──────────────────────────
+  # ── Full incremental pipeline: shard 1 → shard 2 → specialist ─────────────
   #
-  # Full run (shard 1 + shard 2 + specialist):
   #   docker compose run --rm train-all --data-dir /raw_data/ALL
-  #
-  # Resume from shard 2:
   #   docker compose run --rm train-all --data-dir /raw_data/ALL --from 2
-  #
-  # Fine-tune from pretrained checkpoint:
-  #   docker compose run --rm train-all --data-dir /raw_data/ALL \
-  #       --pretrained /raw_data/model.pth
-  #
-  # Skip specialist (generalist only):
+  #   docker compose run --rm train-all --data-dir /raw_data/ALL --message "NIR test"
   #   docker compose run --rm train-all --data-dir /raw_data/ALL --skip-specialist
+  #   docker compose run --rm train-all --data-dir /raw_data/ALL --pretrained /raw_data/model.pth
   train-all:
     <<: *base
-    # BUG FIX: was "src/06_train_incremental.sh" — script is at project root
     entrypoint: ["bash", "src/06_train_incremental.sh"]
     shm_size: "4gb"
     deploy:
@@ -90,12 +88,18 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # ── Specialist only (entry point 3) ────────────────────────────────────
+  # ── Specialist only ────────────────────────────────────────────────────────
   #
-  # Run after both generalist shards are complete.
-  # Requires: checkpoints/best_model.pt  +  data/replay/
-  #
+  # If tiles exist (data/processed/ or data/replay/):
   #   docker compose run --rm specialist
+  #   docker compose run --rm specialist --message "Lowering railway threshold"
+  #
+  # If NO tiles exist yet (bootstraps preprocessing from raw data):
+  #   docker compose run --rm specialist --data-dir /raw_data/ALL
+  #
+  # Warm-start from generalist weights:
+  #   docker compose run --rm shell
+  #   python specialist/03_train_specialist.py --init-weights checkpoints/best_model.pt
   specialist:
     <<: *base
     entrypoint: ["bash", "src/06_train_incremental.sh", "--specialist-only"]
@@ -108,10 +112,12 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # ── Generalist inference (04_inference.py) ─────────────────────────────
+  # ── Generalist inference (4-class mask) ────────────────────────────────────
   #
   #   docker compose run --rm infer \
   #       --input /raw_data/image.tif --output /app/outputs/mask.tif
+  #   docker compose run --rm infer \
+  #       --input /raw_data/image.tif --output /app/outputs/mask.tif --no-tta
   infer:
     <<: *base
     entrypoint: ["python", "src/04_inference.py"]
@@ -123,13 +129,15 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # ── Combined inference: generalist + specialist overlay ─────────────────
+  # ── Combined inference: generalist + specialist overlay (7-class) ──────────
   #
-  # Runs both models; specialist overwrites minor-class pixels (Bridge /
-  # Railway / Utility) where its confidence exceeds the threshold.
+  # Specialist overwrites Bridge/Railway/Utility pixels where its confidence
+  # exceeds the per-class threshold in config_specialist.py.
   #
   #   docker compose run --rm combined-infer \
   #       --input /raw_data/image.tif --output /app/outputs/combined_mask.tif
+  #   docker compose run --rm combined-infer \
+  #       --input /raw_data/image.tif --output /app/outputs/mask.tif --visualize
   combined-infer:
     <<: *base
     entrypoint: ["python", "specialist/04_inference_combined.py"]
@@ -141,6 +149,7 @@ services:
               count: 1
               capabilities: [gpu]
 
+  # ── Interactive shell ──────────────────────────────────────────────────────
   shell:
     <<: *base
     entrypoint: ["/bin/bash"]
