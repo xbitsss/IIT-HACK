@@ -1,57 +1,68 @@
 #!/bin/bash
-# 06_train_incremental.sh — Incremental GeoSeg training pipeline
+# src/06_train_incremental.sh — Incremental GeoSeg training pipeline
 #
-# Process B (only approach): TIFFs and SHP dirs live together;
-# each TIFF is spatially matched to its correct SHP directory automatically.
+# Memory management
+# ─────────────────
+# Exit 137 = Linux OOM killer. Root cause: 16 preprocess workers × ~2 GB each
+# ≈ 32 GB, plus OS page cache from the previous shard, can exceed the container
+# memory limit. This script guards against that with three mechanisms:
 #
-# Data layout:
-#   /raw_data/ALL/
-#       image_001.tif
-#       image_002.tif
-#       SHP1/  *.shp      ← shapefile group 1 (generalist + specialist classes)
-#       SHP2/  *.shp      ← shapefile group 2 (or just one SHP dir)
+#   1. check_ram_before_phase() — refuses to start a phase if < MIN_RAM_GB free.
+#   2. Dynamic MAX_PREPROCESS_WORKERS — workers = floor((available_gb - 8) / 2).
+#      Passed as env var to 01_preprocess.py so workers scale with real RAM.
+#   3. free_memory_between_phases() — sync + drop_caches (if root) + gc.collect()
+#      + explicit CUDA cache clear. Called after every major phase.
+#
+# This script lives in src/ and is always called from the project root (/app):
+#   bash src/06_train_incremental.sh [flags]
 #
 # ─────────────────────────────────────────────────────────────────────────────
-# ENTRY POINTS — start from wherever you need
+# ENTRY POINTS
 # ─────────────────────────────────────────────────────────────────────────────
 #
-#  Full pipeline (shard 1 → shard 2 → specialist):
-#    ./src/06_train_incremental.sh --data-dir /raw_data/ALL
+#  Full pipeline:
+#    docker compose run --rm train-all --data-dir /raw_data/ALL
 #
-#  Resume from shard 2 (shard 1 already done):
-#    ./src/06_train_incremental.sh --data-dir /raw_data/ALL --from 2
+#  Resume from shard 2:
+#    docker compose run --rm train-all --data-dir /raw_data/ALL --from 2
 #
-#  Specialist only (tiles must exist in processed/ or replay/):
-#    ./src/06_train_incremental.sh --specialist-only
+#  Specialist only (tiles in processed/ or replay/ must exist):
+#    docker compose run --rm specialist
 #
-#  Specialist only, NO tiles yet (bootstraps preprocessing from scratch):
-#    ./src/06_train_incremental.sh --specialist-only --data-dir /raw_data/ALL
+#  Specialist only, NO tiles yet (bootstrap from raw TIFFs):
+#    docker compose run --rm specialist --data-dir /raw_data/ALL
 #
-#  Generalist only, skip specialist:
-#    ./src/06_train_incremental.sh --data-dir /raw_data/ALL --skip-specialist
+#  Generalist only:
+#    docker compose run --rm train-all --data-dir /raw_data/ALL --skip-specialist
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # FLAGS
 # ─────────────────────────────────────────────────────────────────────────────
-#   --data-dir /path      Root folder (TIFFs + SHP subdirs) (default: /raw_data/ALL)
+#   --data-dir /path      Root folder (TIFFs + SHP subdirs) [default: /raw_data/ALL]
 #   --shp-dirs d1:d2      Colon-separated SHP dirs (default: auto-detect)
 #   --from N              Resume from shard N (1 or 2)
 #   --pretrained /f.pth   Fine-tune from existing checkpoint
 #   --init-weights /f.pth Load weights only — epoch 0, full LR
 #   --specialist-only     Skip all generalist shards
 #   --skip-specialist     Run generalist shards only
-#   --message "text"      Description of this run (stored in checkpoint + emails)
+#   --skip-preprocess     Skip preprocessing for all shards in this run.
+#                         Use when preprocessing already finished but training
+#                         was OOM-killed before it could start.
+#   --message "text"      Description of this run
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # ENVIRONMENT OVERRIDES
 # ─────────────────────────────────────────────────────────────────────────────
-#   MAX_DISK_GB            Hard disk ceiling in GB       (default: 50)
-#   REPLAY_TILES_PER_SHARD Tiles kept per shard          (default: 300)
+#   MAX_DISK_GB              Hard disk ceiling GB       (default: 50)
+#   REPLAY_TILES_PER_SHARD   Tiles kept per shard       (default: 300)
+#   MIN_RAM_GB               Minimum RAM before a phase (default: 12)
 
 set -euo pipefail
+SCRIPT_SELF="${BASH_SOURCE[0]}"
 
 export MAX_DISK_GB="${MAX_DISK_GB:-50}"
 export REPLAY_TILES_PER_SHARD="${REPLAY_TILES_PER_SHARD:-300}"
+MIN_RAM_GB="${MIN_RAM_GB:-12}"
 
 DATA_DIR_B="/raw_data/ALL"
 SHP_DIRS_B=""
@@ -60,6 +71,7 @@ INIT_WEIGHTS=""
 START_FROM=1
 SKIP_SPECIALIST=0
 SPECIALIST_ONLY=0
+SKIP_PREPROCESS=0
 RUN_MESSAGE=""
 
 # ── Parse arguments ───────────────────────────────────────────────────────────
@@ -72,25 +84,21 @@ while [[ $# -gt 0 ]]; do
         --shp-dirs)        SHP_DIRS_B="$2";      shift 2 ;;
         --skip-specialist) SKIP_SPECIALIST=1;    shift   ;;
         --specialist-only) SPECIALIST_ONLY=1;    shift   ;;
+        --skip-preprocess) SKIP_PREPROCESS=1;    shift   ;;
         --message|-m)      RUN_MESSAGE="$2";     shift 2 ;;
         --help|-h)
-            head -65 "$0" | tail -60
+            head -70 "$0" | tail -65
             exit 0
             ;;
         *)
             echo "[ERROR] Unknown argument: $1"
-            echo "Usage: $0 [--data-dir /path] [--from N] [--message \"desc\"]"
-            echo "          [--specialist-only] [--skip-specialist]"
-            echo "          [--pretrained /path] [--init-weights /path]"
-            echo "          [--shp-dirs dir1:dir2]"
-            echo ""
-            echo "See PIPELINE_GUIDE.md for full documentation."
+            echo "Usage: $SCRIPT_SELF [--data-dir /path] [--from N] [--message \"desc\"]"
+            echo "  See PIPELINE_GUIDE.md for full documentation."
             exit 1
             ;;
     esac
 done
 
-# ── Mutual exclusion ─────────────────────────────────────────────────────────
 if [ "$SPECIALIST_ONLY" -eq 1 ] && [ "$SKIP_SPECIALIST" -eq 1 ]; then
     echo "[ERROR] --specialist-only and --skip-specialist are mutually exclusive."
     exit 1
@@ -122,14 +130,86 @@ compute_processed_budget_gb() {
     python3 -c "print(f'{${budget_bytes} / 1024**3:.3f}')"
 }
 
-notify_shell_milestone() {
-    # $1=stage  $2=milestone-name  $3=details
-    python3 src/07_notify.py --milestone \
-        --folder "$1" --milestone-name "$2" --details "$3" \
-        --version "${GEN_VERSION:-0}" --run-message "$RUN_MESSAGE" || true
+# ── Memory management helpers ─────────────────────────────────────────────────
+
+# Returns available RAM in GB (integer-truncated for shell arithmetic)
+available_ram_gb() {
+    awk '/MemAvailable/ {printf "%.1f", $2/1024/1024}' /proc/meminfo 2>/dev/null || echo "99"
 }
 
-# ── Auto-detect SHP dirs from a data directory ────────────────────────────────
+# Computes safe worker count: floor((available_gb - 8) / 2), clamped to [2,16]
+safe_preprocess_workers() {
+    local avail_gb="$1"
+    python3 -c "
+avail = float('$avail_gb')
+# Reserve 8 GB for OS + main process + safety buffer
+usable = max(0.0, avail - 8.0)
+# Each worker needs ~2 GB (TIFF chunk + shapefile GDFs + overhead)
+workers = max(2, min(16, int(usable / 2.0)))
+print(workers)
+" 2>/dev/null || echo "4"
+}
+
+# Checks available RAM and exits with an actionable error if below threshold
+check_ram_before_phase() {
+    local phase_name="$1"
+    local required_gb="${2:-$MIN_RAM_GB}"
+    local avail
+    avail=$(available_ram_gb)
+    log "RAM check before ${phase_name}: ${avail} GB available (need ${required_gb} GB)"
+    python3 -c "
+avail = float('$avail')
+needed = float('$required_gb')
+if avail < needed:
+    print('[ERROR] Not enough RAM to safely start $phase_name.')
+    print(f'  Available: {avail:.1f} GB  Required: {needed:.1f} GB')
+    print('  Options:')
+    print('    - Reduce MAX_PREPROCESS_WORKERS (currently auto-calculated)')
+    print('    - Increase container memory limit in docker-compose.yml (shm_size + mem_limit)')
+    print('    - Reduce TILE_SIZE in config.py (default 512 — try 384)')
+    import sys; sys.exit(1)
+else:
+    print(f'  OK: {avail:.1f} GB >= {needed:.1f} GB')
+"
+}
+
+# Frees OS page cache + GPU memory between pipeline phases
+free_memory_between_phases() {
+    log "Freeing memory between phases..."
+    sync
+    # Drop OS page cache, dentries, inodes (root only — safe to skip if not root)
+    if [ "$(id -u)" = "0" ]; then
+        echo 3 > /proc/sys/vm/drop_caches 2>/dev/null && log "  OS page cache dropped" || true
+    else
+        log "  (Not root — skipping drop_caches; sync done)"
+    fi
+    # Python gc.collect + CUDA cache clear
+    python3 -c "
+import gc, torch
+gc.collect()
+if torch.cuda.is_available():
+    torch.cuda.empty_cache()
+    torch.cuda.synchronize()
+    alloc  = torch.cuda.memory_allocated() / 1024**3
+    reserv = torch.cuda.memory_reserved()  / 1024**3
+    print(f'  GPU: allocated={alloc:.2f} GB  reserved={reserv:.2f} GB')
+else:
+    print('  No CUDA device — GPU cleanup skipped')
+" 2>/dev/null || true
+    local avail
+    avail=$(available_ram_gb)
+    log "  RAM after cleanup: ${avail} GB available"
+}
+
+notify_shell_milestone() {
+    python3 src/07_notify.py --milestone \
+        --folder "$1" \
+        --milestone-name "$2" \
+        --details "$3" \
+        --version "${GEN_VERSION:-0}" \
+        --run-message "$RUN_MESSAGE" || true
+}
+
 detect_shp_dirs() {
     local data_dir="$1"
     local found=""
@@ -142,7 +222,7 @@ detect_shp_dirs() {
     echo "$found"
 }
 
-# ── Version management ────────────────────────────────────────────────────────
+# ── Version tracking ──────────────────────────────────────────────────────────
 GEN_VERSION=0
 SPEC_VERSION=0
 
@@ -160,7 +240,6 @@ if [ "$SPECIALIST_ONLY" -eq 1 ]; then
         --message "$RUN_MESSAGE" 2>/dev/null || echo "0")
     log "Specialist version: v${SPEC_VERSION}"
 
-    # ── Check for available tiles ─────────────────────────────────────────────
     HAS_PROCESSED=$(python3 -c "
 import json; from pathlib import Path
 p = Path('data/processed/tiles_meta.json')
@@ -176,70 +255,54 @@ print('1' if replay_exists() else '0')
     # ── Bootstrap: preprocess if no tiles exist ───────────────────────────────
     if [ "$HAS_PROCESSED" = "0" ] && [ "$HAS_REPLAY" = "0" ]; then
         echo ""
-        echo "──────────────────────────────────────────────────────────────"
+        echo "──────────────────────────────────────────────────────"
         echo " [BOOTSTRAP] No tiles found — preprocessing from raw data"
-        echo " This finds all minor-class tiles (Bridge/Railway/Utility)"
-        echo " and creates the specialist tile set from scratch."
-        echo "──────────────────────────────────────────────────────────────"
+        echo "──────────────────────────────────────────────────────"
 
         if [ ! -d "$DATA_DIR_B" ]; then
             echo ""
-            echo "[ERROR] No tiles found AND --data-dir '$DATA_DIR_B' does not exist."
-            echo ""
-            echo "  You need to provide the raw data folder so we can preprocess it."
-            echo "  Options:"
-            echo "    A) Run with --data-dir pointing to your TIFFs:"
-            echo "         ./src/06_train_incremental.sh --specialist-only --data-dir /raw_data/ALL"
-            echo ""
-            echo "    B) Run generalist shards first (creates replay tiles as a side-effect):"
-            echo "         ./src/06_train_incremental.sh --data-dir /raw_data/ALL"
-            echo ""
-            echo "    C) Copy an existing data/replay/ from another machine."
-            echo ""
+            echo "[ERROR] No tiles AND --data-dir '$DATA_DIR_B' does not exist."
+            echo "  A) docker compose run --rm specialist --data-dir /raw_data/ALL"
+            echo "  B) docker compose run --rm train-all --data-dir /raw_data/ALL"
+            echo "  C) Copy an existing data/replay/ from another machine."
             python3 src/07_notify.py --error \
                 --folder "specialist-bootstrap" --step 0 --total 2 \
-                --error-msg "No tiles and no --data-dir provided for specialist bootstrap." \
+                --error-msg "No tiles and no --data-dir for specialist bootstrap." \
                 --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
             exit 1
         fi
 
-        # Auto-detect SHP dirs
         if [ -z "$SHP_DIRS_B" ]; then
             SHP_DIRS_B=$(detect_shp_dirs "$DATA_DIR_B")
         fi
         if [ -z "$SHP_DIRS_B" ]; then
             echo "[ERROR] No SHP subdirectories found in $DATA_DIR_B"
-            echo "  Check that your SHP files are in subdirectories with .shp extension."
-            echo "  Or specify: --shp-dirs /path/to/SHP1:/path/to/SHP2"
             exit 1
         fi
 
-        log "Bootstrap preprocessing with specialist config (Bridge/Railway/Utility included)..."
-        log "  Data dir : $DATA_DIR_B"
-        log "  SHP dirs : $SHP_DIRS_B"
+        check_ram_before_phase "specialist-bootstrap-preprocess" "16"
+        RAM_AVAIL=$(available_ram_gb)
+        BOOT_WORKERS=$(safe_preprocess_workers "$RAM_AVAIL")
+        log "Bootstrap: ${BOOT_WORKERS} workers (${RAM_AVAIL} GB available)"
 
         PROCESSED_BUDGET_GB=$(compute_processed_budget_gb)
-
-        # Run preprocessing with SPECIALIST_PREPROCESS=1 so config_specialist's
-        # SHAPEFILE_MAP (which includes Bridge/Railway/Utility) is used
         if ! env \
             RAW_DATA_DIR="$DATA_DIR_B" \
             SHP_DIR="$(echo "$SHP_DIRS_B" | cut -d: -f1)" \
             SHP_DIRS_LIST="$SHP_DIRS_B" \
             MAX_PROCESSED_GB="$PROCESSED_BUDGET_GB" \
+            MAX_PREPROCESS_WORKERS="$BOOT_WORKERS" \
             SPECIALIST_PREPROCESS="1" \
-            python3 src/01_preprocess.py 2>&1 | tee /tmp/specialist_bootstrap_preprocess_log.txt; then
+            python3 src/01_preprocess.py 2>&1 | tee /tmp/specialist_bootstrap_log.txt; then
 
             log "[ERROR] Bootstrap preprocessing failed"
             python3 src/07_notify.py --error \
                 --folder "specialist-bootstrap" --step 0 --total 2 \
-                --error-msg "$(tail -40 /tmp/specialist_bootstrap_preprocess_log.txt | head -c 2000)" \
+                --error-msg "Bootstrap preprocessing failed. Check SHP dirs and config_specialist.py SHAPEFILE_MAP." \
                 --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
-            echo ""
-            echo "  To retry: ./src/06_train_incremental.sh --specialist-only --data-dir $DATA_DIR_B"
-            echo "  Check: config_specialist.py → SHAPEFILE_MAP has Bridge/Railway/Utility entries"
             exit 1
         fi
+        free_memory_between_phases
 
         TILE_COUNT=$(python3 -c "
 import json
@@ -247,46 +310,42 @@ try:
     d = json.load(open('data/processed/tiles_meta.json'))
     tiles = d['tiles']
     minor = sum(1 for t in tiles if {4,5,6} & set(t.get('class_ids',[])))
-    print(f'{len(tiles)} total  {minor} minor-class')
+    print(str(len(tiles)) + ' total  ' + str(minor) + ' minor-class')
 except: print('0')
 " 2>/dev/null || echo "0")
-        log "Bootstrap preprocessing complete: ${TILE_COUNT} tiles"
+        log "Bootstrap complete: ${TILE_COUNT} tiles"
         notify_shell_milestone "specialist-bootstrap" "preprocess_done" \
             "Bootstrap preprocessing complete: ${TILE_COUNT} tiles."
-
         HAS_PROCESSED="1"
     fi
 
-    log "Tile source: processed=${HAS_PROCESSED} replay=${HAS_REPLAY}"
+    log "Tile source: processed=${HAS_PROCESSED}  replay=${HAS_REPLAY}"
 
-    # ── S1: Build specialist metadata (50% minor / 50% major split) ───────────
-    log "Building specialist dataset metadata (50/50 minor/major split)..."
+    log "Building specialist metadata (50/50 minor/major split)..."
     if ! python3 specialist/01_build_specialist_meta.py \
             2>&1 | tee /tmp/specialist_meta_log.txt; then
         log "[ERROR] Specialist metadata build failed"
         python3 src/07_notify.py --error \
             --folder "specialist-meta" --step 0 --total 2 \
-            --error-msg "$(tail -40 /tmp/specialist_meta_log.txt | head -c 2000)" \
+            --error-msg "Specialist metadata build failed. Check Bridge/Railway/Utility tiles." \
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo ""
-        echo "  Fix: Check that Bridge/Railway/Utility tiles exist in data/processed/ or data/replay/"
-        echo "  Then retry: ./src/06_train_incremental.sh --specialist-only"
         exit 1
     fi
-
     META_SUMMARY=$(python3 -c "
 import json
 try:
     d = json.load(open('data/processed/tiles_meta_specialist.json'))
-    print(f\"{d.get('total_tiles','?')} tiles  minor={d.get('n_minor_tiles','?')}  major={d.get('n_major_tiles','?')}\")
+    print(str(d.get('total_tiles','?')) + ' tiles  minor=' + str(d.get('n_minor_tiles','?')) + '  major=' + str(d.get('n_major_tiles','?')))
 except: print('?')
 " 2>/dev/null || echo "?")
-    log "Specialist metadata built: ${META_SUMMARY}"
+    log "Specialist metadata: ${META_SUMMARY}"
     notify_shell_milestone "specialist" "preprocess_done" \
-        "Specialist meta built (${META_SUMMARY})."
+        "Specialist meta built: ${META_SUMMARY}."
 
-    # ── S2: Train specialist ───────────────────────────────────────────────────
-    log "Training specialist model (v${SPEC_VERSION})..."
+    check_ram_before_phase "specialist-training" "$MIN_RAM_GB"
+    free_memory_between_phases
+
+    log "Training specialist (v${SPEC_VERSION})..."
     if ! python3 specialist/03_train_specialist.py \
             --run-version "$SPEC_VERSION" \
             --run-message "$RUN_MESSAGE" \
@@ -294,14 +353,12 @@ except: print('?')
         log "[ERROR] Specialist training failed"
         python3 src/07_notify.py --error \
             --folder "specialist" --step 2 --total 2 \
-            --error-msg "$(tail -40 /tmp/specialist_train_log.txt | head -c 2000)" \
+            --error-msg "Specialist training failed. See logs." \
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo ""
-        echo "  To resume specialist training:"
-        echo "    ./src/06_train_incremental.sh --specialist-only --message 'resume'"
-        echo "    python specialist/03_train_specialist.py --resume"
+        echo "  Resume: $SCRIPT_SELF --specialist-only --message 'resume'"
         exit 1
     fi
+    free_memory_between_phases
 
     SPEC_VAL_MIOU=$(  grep "val_mIoU=" /tmp/specialist_train_log.txt | tail -1 | grep -oP "val_mIoU=\K[0-9.]+"  || echo "0")
     SPEC_TRAIN_LOSS=$(grep "tr_loss="  /tmp/specialist_train_log.txt | tail -1 | grep -oP "tr_loss=\K[0-9.]+"   || echo "0")
@@ -315,13 +372,12 @@ try:
     ckpt = torch.load('specialist/checkpoints/best_model.pt', map_location='cpu', weights_only=False)
     pc   = ckpt.get('per_class_iou', {})
     def g(k): return float(pc.get(k, pc.get(str(k), 0.0)))
-    print(f'Bridge={g(4):.4f}  Railway={g(5):.4f}  Utility={g(6):.4f}')
+    print('Bridge=' + f'{g(4):.4f}' + '  Railway=' + f'{g(5):.4f}' + '  Utility=' + f'{g(6):.4f}')
 except Exception as e:
-    print(f'(per-class: {e})')
+    print('(per-class: ' + str(e) + ')')
 " 2>/dev/null || echo "(unavailable)")
 
     log "Specialist done — val_mIoU=${SPEC_VAL_MIOU}  ${SPEC_PER_CLASS}"
-
     python3 src/07_notify.py \
         --folder "Specialist v${SPEC_VERSION} [${SPEC_PER_CLASS}]" \
         --step 2 --total 2 \
@@ -336,10 +392,11 @@ except Exception as e:
     echo " Specialist-only run complete"
     echo " Specialist v${SPEC_VERSION}: specialist/checkpoints/best_model.pt"
     echo " Versioned  : specialist/checkpoints/specialist_v${SPEC_VERSION}_best.pt"
+    echo " Minor-class: ${SPEC_PER_CLASS}"
     echo ""
     echo " Combined inference:"
-    echo "   python specialist/04_inference_combined.py \\"
-    echo "       --input /path/to/image.tif --output outputs/mask.tif"
+    echo "   docker compose run --rm combined-infer \\"
+    echo "       --input /raw_data/image.tif --output /app/outputs/mask.tif"
     echo "========================================"
     exit 0
 fi
@@ -348,10 +405,8 @@ fi
 # ENTRY POINTS 1 & 2: Generalist shards (+ optional specialist)
 # =============================================================================
 
-# ── Discover TIFFs ────────────────────────────────────────────────────────────
 if [ ! -d "$DATA_DIR_B" ]; then
     echo "[ERROR] --data-dir '$DATA_DIR_B' does not exist."
-    echo "  Set the correct path:  --data-dir /path/to/your/data"
     exit 1
 fi
 
@@ -368,7 +423,6 @@ print('\n'.join(lines))
 N_TIFS=${#ALL_TIFS[@]}
 if [ "$N_TIFS" -eq 0 ]; then
     echo "[ERROR] No TIFF files found in $DATA_DIR_B"
-    echo "  Check: ls -la $DATA_DIR_B"
     exit 1
 fi
 
@@ -376,27 +430,22 @@ HALF=$(( N_TIFS / 2 ))
 SHARD1_FILES=$(IFS=:; echo "${ALL_TIFS[*]:0:$HALF}")
 SHARD2_FILES=$(IFS=:; echo "${ALL_TIFS[*]:$HALF}")
 
-# ── Auto-detect SHP dirs ──────────────────────────────────────────────────────
 if [ -z "$SHP_DIRS_B" ]; then
     SHP_DIRS_B=$(detect_shp_dirs "$DATA_DIR_B")
 fi
-
 if [ -z "$SHP_DIRS_B" ]; then
     echo "[ERROR] No SHP subdirectories found in $DATA_DIR_B"
     echo "  Expected: $DATA_DIR_B/SHP1/*.shp"
-    echo "  Or specify: --shp-dirs dir1:dir2"
+    echo "  Or: --shp-dirs /path/SHP1:/path/SHP2"
     exit 1
 fi
 
 TOTAL=2
-
-# ── Validate --from ───────────────────────────────────────────────────────────
 if [ "$START_FROM" -lt 1 ] || [ "$START_FROM" -gt "$TOTAL" ]; then
     echo "[ERROR] --from must be 1 or 2 (got $START_FROM)"
     exit 1
 fi
 
-# ── Bump generalist version ────────────────────────────────────────────────────
 if [ "$START_FROM" -eq 1 ]; then
     GEN_VERSION=$(python3 src/run_version.py --bump generalist \
         --message "$RUN_MESSAGE" 2>/dev/null || echo "0")
@@ -422,7 +471,7 @@ echo "========================================"
 # ── Fresh start wipe ──────────────────────────────────────────────────────────
 if [ "$START_FROM" -eq 1 ]; then
     log "Fresh start — wiping stale data..."
-    [ -d "data/replay" ]    && find data/replay -mindepth 1 -delete && log "  Cleared data/replay/"
+    [ -d "data/replay" ]    && find data/replay    -mindepth 1 -delete && log "  Cleared data/replay/"
     [ -d "data/processed" ] && find data/processed -mindepth 1 -delete && log "  Cleared data/processed/"
 
     if [ -n "$INIT_WEIGHTS" ]; then
@@ -433,7 +482,7 @@ if [ "$START_FROM" -eq 1 ]; then
         [ ! -f "$PRETRAINED_CKPT" ] && echo "[ERROR] --pretrained not found: $PRETRAINED_CKPT" && exit 1
         mkdir -p checkpoints
         cp "$PRETRAINED_CKPT" checkpoints/best_model.pt
-        log "  Installed pretrained checkpoint → checkpoints/best_model.pt"
+        log "  Installed pretrained → checkpoints/best_model.pt"
     else
         rm -f checkpoints/best_model.pt checkpoints/training_curves.png checkpoints/history.json
     fi
@@ -447,6 +496,8 @@ json.dump({
     'specialist_done': False,
 }, open('pipeline_state.json', 'w'), indent=2)
 " 2>/dev/null || true
+
+    free_memory_between_phases
 fi
 
 # ── Crash / ERR trap ──────────────────────────────────────────────────────────
@@ -456,14 +507,15 @@ CURRENT_STEP=0
 _shell_crash() {
     local EXIT_CODE=${1:-$?}
     log "[CRASH] Pipeline error at $CURRENT_FOLDER (exit $EXIT_CODE)"
-    log "  Resume: ./src/06_train_incremental.sh --from $CURRENT_STEP --data-dir $DATA_DIR_B"
-    log "  Or specialist only: ./src/06_train_incremental.sh --specialist-only"
+    log "  Resume: $SCRIPT_SELF --from $CURRENT_STEP --data-dir $DATA_DIR_B"
+    log "  Or specialist only: $SCRIPT_SELF --specialist-only"
     python3 src/07_notify.py --error \
-        --folder "$CURRENT_FOLDER" --step "$CURRENT_STEP" --total "$TOTAL" \
-        --error-msg "Pipeline crashed (exit $EXIT_CODE) at $CURRENT_FOLDER.
-Resume: ./src/06_train_incremental.sh --from $CURRENT_STEP --data-dir $DATA_DIR_B
-Or specialist only: ./src/06_train_incremental.sh --specialist-only" \
-        --version "$GEN_VERSION" --run-message "$RUN_MESSAGE" || true
+        --folder "$CURRENT_FOLDER" \
+        --step "$CURRENT_STEP" \
+        --total "$TOTAL" \
+        --error-msg "Pipeline crashed (exit $EXIT_CODE) at $CURRENT_FOLDER. Resume: $SCRIPT_SELF --from $CURRENT_STEP --data-dir $DATA_DIR_B" \
+        --version "$GEN_VERSION" \
+        --run-message "$RUN_MESSAGE" || true
 }
 trap '_shell_crash $?' ERR
 
@@ -497,74 +549,153 @@ for i in 0 1; do
     echo " Generalist v${GEN_VERSION}"
     [ -n "$RUN_MESSAGE" ] && echo " Message: $RUN_MESSAGE"
     [ "$IS_LAST_FOR_SPECIALIST" -eq 1 ] && \
-        echo " [NOTE] Tiles kept alive after this shard for specialist"
+        echo " [NOTE] Tiles kept for specialist after this shard"
     echo "========================================"
 
-    # ── Disk accounting ───────────────────────────────────────────────────────
-    REPLAY_BYTES=$(dir_bytes "data/replay")
-    REPLAY_GB=$(python3 -c "print(f'{${REPLAY_BYTES}/1024**3:.3f}')")
-    PROCESSED_BUDGET_GB=$(compute_processed_budget_gb)
-    log "Disk: replay=${REPLAY_GB} GB  budget=${PROCESSED_BUDGET_GB} GB  ceiling=${MAX_DISK_GB} GB"
-    python3 -c "
-replay_gb=${REPLAY_GB}; ceiling=${MAX_DISK_GB}; budget=${PROCESSED_BUDGET_GB}
-assert replay_gb < ceiling, f'[ERROR] Replay exceeds ceiling! {replay_gb:.2f} >= {ceiling}'
-assert budget >= 1.0,       f'[ERROR] Budget < 1 GB — increase MAX_DISK_GB'
-"
-
-    # ── Preprocess ────────────────────────────────────────────────────────────
-    log "Preprocessing $FOLDER_NAME..."
-    if ! env \
-        RAW_DATA_DIR="$DATA_DIR_B" \
-        SHP_DIR="$(echo "$SHP_DIRS_B" | cut -d: -f1)" \
-        SHP_DIRS_LIST="$SHP_DIRS_B" \
-        MAX_PROCESSED_GB="$PROCESSED_BUDGET_GB" \
-        TIFF_FILES="${TIFF_FILES_PER_SHARD[$i]}" \
-        python3 src/01_preprocess.py 2>&1 | tee /tmp/preprocess_log.txt; then
-
-        log "[ERROR] Preprocessing failed for $FOLDER_NAME"
-        python3 src/07_notify.py --error \
-            --folder "$FOLDER_NAME" --step "$STEP" --total "$TOTAL" \
-            --error-msg "$(tail -40 /tmp/preprocess_log.txt | head -c 2000)" \
-            --version "$GEN_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To retry this shard: ../src/06_train_incremental.sh --from $STEP --data-dir $DATA_DIR_B"
-        exit 1
+    # ── Skip detection: has this shard already been preprocessed? ────────────
+    # tiles_meta.json must exist, have tiles, AND carry the matching shard_name
+    # stamp written by 01_preprocess.py.  A stale file from a different shard
+    # (or a partial write) won't match and preprocessing will re-run normally.
+    PREPROCESS_DONE=0
+    if [ "$SKIP_PREPROCESS" -eq 1 ]; then
+        # Explicit flag always wins — no file inspection needed.
+        # Use this when you know preprocessing finished on a previous run
+        # (e.g. the container was OOM-killed before training started).
+        # WARNING: if data/processed/ is genuinely empty or stale you will
+        # get a "no tiles" error at training time.  Remove the flag and re-run
+        # to regenerate tiles in that case.
+        log "[SKIP-PREPROCESS] --skip-preprocess flag set — skipping preprocessing for $FOLDER_NAME"
+        log "  Tiles expected in data/processed/  (remove flag + re-run to regenerate)"
+        PREPROCESS_DONE=1
+    elif python3 -c "
+import json, sys
+from pathlib import Path
+p = Path('data/processed/tiles_meta.json')
+if not p.exists():
+    sys.exit(1)
+try:
+    d    = json.load(open(p))
+    ok   = len(d.get('tiles', [])) > 0 and d.get('shard_name', '') == '$FOLDER_NAME'
+    sys.exit(0 if ok else 1)
+except Exception:
+    sys.exit(1)
+" 2>/dev/null; then
+        TILE_COUNT=$(python3 -c "
+import json
+d = json.load(open('data/processed/tiles_meta.json'))
+print(len(d['tiles']))
+" 2>/dev/null || echo "0")
+        log "[SKIP-PREPROCESS] Already done for $FOLDER_NAME — ${TILE_COUNT} tiles found in data/processed/"
+        log "  (Remove data/processed/ and re-run to force re-preprocessing)"
+        PREPROCESS_DONE=1
     fi
 
-    TILE_COUNT=$(python3 -c "
+    if [ "$PREPROCESS_DONE" -eq 0 ]; then
+
+        # ── Pre-phase RAM check + dynamic worker count ────────────────────────
+        check_ram_before_phase "preprocess-${FOLDER_NAME}" "16"
+        RAM_AVAIL=$(available_ram_gb)
+        MAX_WORKERS=$(safe_preprocess_workers "$RAM_AVAIL")
+        log "RAM: ${RAM_AVAIL} GB available → MAX_PREPROCESS_WORKERS=${MAX_WORKERS}"
+
+        # ── Disk accounting ───────────────────────────────────────────────────
+        REPLAY_BYTES=$(dir_bytes "data/replay")
+        REPLAY_GB=$(python3 -c "print(f'{${REPLAY_BYTES}/1024**3:.3f}')")
+        PROCESSED_BUDGET_GB=$(compute_processed_budget_gb)
+        log "Disk: replay=${REPLAY_GB} GB  budget=${PROCESSED_BUDGET_GB} GB  ceiling=${MAX_DISK_GB} GB"
+        python3 -c "
+replay_gb=${REPLAY_GB}; ceiling=${MAX_DISK_GB}; budget=${PROCESSED_BUDGET_GB}
+assert replay_gb < ceiling, f'[ERROR] Replay exceeds ceiling! {replay_gb:.2f} >= {ceiling}'
+assert budget >= 1.0, f'[ERROR] Budget < 1 GB — increase MAX_DISK_GB'
+"
+
+        # ── Preprocess ────────────────────────────────────────────────────────
+        log "Preprocessing $FOLDER_NAME (workers=${MAX_WORKERS})..."
+        if ! env \
+            RAW_DATA_DIR="$DATA_DIR_B" \
+            SHP_DIR="$(echo "$SHP_DIRS_B" | cut -d: -f1)" \
+            SHP_DIRS_LIST="$SHP_DIRS_B" \
+            MAX_PROCESSED_GB="$PROCESSED_BUDGET_GB" \
+            MAX_PREPROCESS_WORKERS="$MAX_WORKERS" \
+            TIFF_FILES="${TIFF_FILES_PER_SHARD[$i]}" \
+            SHARD_NAME="$FOLDER_NAME" \
+            python3 src/01_preprocess.py 2>&1 | tee /tmp/preprocess_log.txt; then
+
+            log "[ERROR] Preprocessing failed for $FOLDER_NAME"
+            python3 src/07_notify.py --error \
+                --folder "$FOLDER_NAME" --step "$STEP" --total "$TOTAL" \
+                --error-msg "Preprocessing failed for $FOLDER_NAME. Check shapefile coverage." \
+                --version "$GEN_VERSION" --run-message "$RUN_MESSAGE" || true
+            echo "  Inspect: docker compose run --rm inspect"
+            echo "  Retry: $SCRIPT_SELF --from $STEP --data-dir $DATA_DIR_B"
+            exit 1
+        fi
+
+        TILE_COUNT=$(python3 -c "
 import json
 try:
     d = json.load(open('data/processed/tiles_meta.json'))
     print(len(d['tiles']))
 except: print(0)
 " 2>/dev/null || echo "0")
-    log "Preprocessed ${TILE_COUNT} tiles"
-    notify_shell_milestone "$FOLDER_NAME" "preprocess_done" \
-        "Preprocessed ${TILE_COUNT} tiles. Budget: ${PROCESSED_BUDGET_GB} GB."
+        log "Preprocessed ${TILE_COUNT} tiles"
+        notify_shell_milestone "$FOLDER_NAME" "preprocess_done" \
+            "Preprocessed ${TILE_COUNT} tiles. Budget: ${PROCESSED_BUDGET_GB} GB."
 
-    PROC_BYTES=$(dir_bytes "data/processed")
-    TOTAL_BYTES=$(( PROC_BYTES + REPLAY_BYTES ))
-    python3 -c "
+        PROC_BYTES=$(dir_bytes "data/processed")
+        REPLAY_BYTES=$(dir_bytes "data/replay")
+        TOTAL_BYTES=$(( PROC_BYTES + REPLAY_BYTES ))
+        python3 -c "
 total_gb=${TOTAL_BYTES}/1024**3; ceiling=${MAX_DISK_GB}
 proc_gb=${PROC_BYTES}/1024**3; replay_gb=${REPLAY_BYTES}/1024**3
 print(f'  Disk: processed={proc_gb:.2f} GB  replay={replay_gb:.2f} GB  total={total_gb:.2f}/{ceiling} GB')
 if total_gb > ceiling*1.02:
-    raise SystemExit(f'[ERROR] Disk ceiling exceeded: {total_gb:.2f} GB > {ceiling} GB')
+    raise SystemExit('[ERROR] Disk ceiling exceeded: ' + str(round(total_gb,2)) + ' GB > ' + str(ceiling) + ' GB')
 "
 
-    # ── Save replay ───────────────────────────────────────────────────────────
-    log "Saving replay slice for $FOLDER_NAME..."
-    if python3 -c "
+        # ── Free memory after preprocessing before replay save ────────────────
+        free_memory_between_phases
+
+    fi  # PREPROCESS_DONE
+
+    # ── Skip detection: has replay already been saved for this shard? ─────────
+    # Checks for the manifest written by save_replay_from_shard().
+    # If it exists we know the copy step completed cleanly last time.
+    REPLAY_DONE=0
+    if [ -f "data/replay/${FOLDER_NAME}/manifest.json" ]; then
+        REPLAY_TILES_SAVED=$(python3 -c "
+import json
+try:
+    d = json.load(open('data/replay/$FOLDER_NAME/manifest.json'))
+    print(len(d.get('tiles', [])))
+except: print('?')
+" 2>/dev/null || echo "?")
+        log "[SKIP-REPLAY] Already saved for $FOLDER_NAME — ${REPLAY_TILES_SAVED} tiles in data/replay/${FOLDER_NAME}/"
+        REPLAY_DONE=1
+    fi
+
+    if [ "$REPLAY_DONE" -eq 0 ]; then
+
+        # ── Save replay ───────────────────────────────────────────────────────
+        log "Saving replay slice for $FOLDER_NAME..."
+        if python3 -c "
 import sys; sys.path.insert(0,'src')
 from replay_buffer import save_replay_from_shard
 save_replay_from_shard('$FOLDER_NAME')
 " 2>&1 | tee /tmp/replay_log.txt; then
-        REPLAY_TILES=$(grep -oP "Saved \K[0-9]+" /tmp/replay_log.txt | tail -1 || echo "?")
-        log "Replay saved: ~${REPLAY_TILES} tiles"
-        notify_shell_milestone "$FOLDER_NAME" "replay_saved" \
-            "Replay buffer updated: ~${REPLAY_TILES} tiles from ${FOLDER_NAME}."
-    else
-        log "[WARN] Replay save failed — continuing without replay for this shard"
-    fi
+            REPLAY_TILES=$(grep -oP "Saved \K[0-9]+" /tmp/replay_log.txt | tail -1 || echo "?")
+            log "Replay saved: ~${REPLAY_TILES} tiles"
+            notify_shell_milestone "$FOLDER_NAME" "replay_saved" \
+                "Replay updated: ~${REPLAY_TILES} tiles from ${FOLDER_NAME}."
+        else
+            log "[WARN] Replay save failed — continuing without replay for this shard"
+        fi
+
+    fi  # REPLAY_DONE
+
+    # ── Free memory before training ───────────────────────────────────────────
+    check_ram_before_phase "training-${FOLDER_NAME}" "$MIN_RAM_GB"
+    free_memory_between_phases
 
     # ── Train ─────────────────────────────────────────────────────────────────
     TRAIN_FLAGS=()
@@ -592,9 +723,9 @@ save_replay_from_shard('$FOLDER_NAME')
         log "[ERROR] Training failed (exit $TRAIN_EXIT)"
         python3 src/07_notify.py --error \
             --folder "$FOLDER_NAME" --step "$STEP" --total "$TOTAL" \
-            --error-msg "$(tail -40 /tmp/train_log.txt | head -c 2000)" \
+            --error-msg "Training failed at $FOLDER_NAME (exit $TRAIN_EXIT). Checkpoint is safe." \
             --version "$GEN_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To resume: ./src/06_train_incremental.sh --from $STEP --data-dir $DATA_DIR_B"
+        echo "  Resume: $SCRIPT_SELF --from $STEP --data-dir $DATA_DIR_B"
         exit 1
     fi
 
@@ -623,7 +754,10 @@ state['updated'] = datetime.datetime.now().isoformat()
 json.dump(state, open('pipeline_state.json', 'w'), indent=2)
 " 2>/dev/null || true
 
-    # ── Wipe processed tiles (unless specialist needs them) ───────────────────
+    # ── Free memory after training ────────────────────────────────────────────
+    free_memory_between_phases
+
+    # ── Wipe processed tiles ──────────────────────────────────────────────────
     if [ "$IS_LAST_FOR_SPECIALIST" -eq 0 ]; then
         log "Clearing processed tiles (intermediate shard)..."
         rm -rf data/processed/images data/processed/masks data/processed/tiles_meta.json
@@ -632,6 +766,8 @@ json.dump(state, open('pipeline_state.json', 'w'), indent=2)
 replay_gb=${REPLAY_BYTES_AFTER}/1024**3; ceiling=${MAX_DISK_GB}
 print(f'  Disk after wipe: replay={replay_gb:.2f} GB  (ceiling={ceiling} GB)')
 "
+        # Free page cache now that large .npy files are deleted
+        free_memory_between_phases
     else
         log "Keeping processed tiles alive for specialist pipeline..."
     fi
@@ -661,23 +797,25 @@ if [ "$SKIP_SPECIALIST" -eq 0 ]; then
     echo ""
     echo "========================================"
     echo " Specialist Pipeline (v${SPEC_VERSION})"
-    echo " Training specialist for Bridge / Railway / Utility"
     echo "========================================"
 
-    log "Building specialist dataset metadata (50/50 minor/major split)..."
+    log "Building specialist metadata..."
     if ! python3 specialist/01_build_specialist_meta.py \
             2>&1 | tee /tmp/specialist_meta_log.txt; then
         log "[ERROR] Specialist metadata build failed"
         python3 src/07_notify.py --error \
             --folder "specialist-meta" --step "$TOTAL" --total "$TOTAL" \
-            --error-msg "$(tail -40 /tmp/specialist_meta_log.txt | head -c 2000)" \
+            --error-msg "Specialist metadata build failed." \
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To retry specialist: ./src/06_train_incremental.sh --specialist-only"
+        echo "  Retry: $SCRIPT_SELF --specialist-only"
         exit 1
     fi
-    notify_shell_milestone "specialist" "preprocess_done" "Specialist meta built."
+    notify_shell_milestone "specialist" "preprocess_done" "Specialist metadata built."
 
-    log "Training specialist model (v${SPEC_VERSION})..."
+    check_ram_before_phase "specialist-training" "$MIN_RAM_GB"
+    free_memory_between_phases
+
+    log "Training specialist (v${SPEC_VERSION})..."
     if ! env MAX_DISK_GB="$MAX_DISK_GB" \
             python3 specialist/03_train_specialist.py \
             --run-version "$SPEC_VERSION" \
@@ -687,11 +825,12 @@ if [ "$SKIP_SPECIALIST" -eq 0 ]; then
         log "[ERROR] Specialist training failed (exit $SPEC_TRAIN_EXIT)"
         python3 src/07_notify.py --error \
             --folder "specialist" --step "$TOTAL" --total "$TOTAL" \
-            --error-msg "$(tail -40 /tmp/specialist_train_log.txt | head -c 2000)" \
+            --error-msg "Specialist training failed (exit $SPEC_TRAIN_EXIT)." \
             --version "$SPEC_VERSION" --run-message "$RUN_MESSAGE" || true
-        echo "  To retry: ./src/06_train_incremental.sh --specialist-only"
+        echo "  Retry: $SCRIPT_SELF --specialist-only"
         exit 1
     fi
+    free_memory_between_phases
 
     SPEC_TRAIN_LOSS=$(grep "tr_loss="  /tmp/specialist_train_log.txt | tail -1 | grep -oP "tr_loss=\K[0-9.]+"  || echo "0")
     SPEC_VAL_LOSS=$(  grep "val_loss=" /tmp/specialist_train_log.txt | tail -1 | grep -oP "val_loss=\K[0-9.]+" || echo "0")
@@ -705,9 +844,9 @@ try:
     ckpt = torch.load('specialist/checkpoints/best_model.pt', map_location='cpu', weights_only=False)
     pc   = ckpt.get('per_class_iou', {})
     def g(k): return float(pc.get(k, pc.get(str(k), 0.0)))
-    print(f'Bridge={g(4):.4f}  Railway={g(5):.4f}  Utility={g(6):.4f}')
+    print('Bridge=' + f'{g(4):.4f}' + '  Railway=' + f'{g(5):.4f}' + '  Utility=' + f'{g(6):.4f}')
 except Exception as e:
-    print(f'(per-class: {e})')
+    print('(per-class: ' + str(e) + ')')
 " 2>/dev/null || echo "(unavailable)")
 
     log "Specialist done — val_mIoU=${SPEC_VAL_MIOU}  ${SPEC_PER_CLASS}"
@@ -715,8 +854,9 @@ except Exception as e:
     # Post-specialist wipe
     if [ -d "data/processed/images" ] || [ -d "data/processed/masks" ] || \
        [ -f "data/processed/tiles_meta.json" ]; then
-        log "Clearing last shard's processed tiles (post-specialist)..."
+        log "Clearing last shard processed tiles (post-specialist)..."
         rm -rf data/processed/images data/processed/masks data/processed/tiles_meta.json
+        free_memory_between_phases
     fi
 
     python3 -c "
@@ -747,8 +887,8 @@ json.dump(state, open('pipeline_state.json', 'w'), indent=2)
     echo " Versioned              : specialist/checkpoints/specialist_v${SPEC_VERSION}_best.pt"
     echo ""
     echo " Combined inference:"
-    echo "   python specialist/04_inference_combined.py \\"
-    echo "       --input /raw_data/image.tif --output outputs/combined_mask.tif"
+    echo "   docker compose run --rm combined-infer \\"
+    echo "       --input /raw_data/image.tif --output /app/outputs/combined_mask.tif"
     echo ""
     echo " Version history:  python src/run_version.py --list"
     echo "========================================"
@@ -760,6 +900,5 @@ else
     echo "========================================"
     echo " Pipeline complete (generalist only)"
     echo " Generalist v${GEN_VERSION}: checkpoints/best_model.pt"
-    echo " Versioned         : checkpoints/generalist_v${GEN_VERSION}_best.pt"
     echo "========================================"
 fi

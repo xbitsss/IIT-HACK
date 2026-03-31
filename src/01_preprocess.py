@@ -1,29 +1,15 @@
 """
 01_preprocess.py — Parallel single-pass preprocessing with strict disk budget.
 
-Architecture
-────────────
-Rasterisation is the bottleneck: ~1-2s per 8192² chunk × 435 chunks for a
-large TIFF. On a 20-core machine, parallelising across chunks cuts this by ~16×.
-
-Worker/collector design:
-  • A ProcessPoolExecutor processes chunks in parallel.
-  • The main process (collector) receives results, enforces the disk budget
-    and token buckets, and writes .npy files.
-    All budget/token state lives only in the main process — no shared memory
-    races possible.
-
-Process B (the only approach):
-  Spatial SHP matching — each TIFF is matched to the SHP directory whose
-  shapefiles geographically overlap it. Works with 1 or more SHP dirs.
+Worker count is capped by two mechanisms:
+  1. MAX_PREPROCESS_WORKERS env var — set by the shell script based on available RAM.
+  2. Auto-calculation: min(cpu_count-2, available_ram_gb / RAM_PER_WORKER_GB).
+     Each worker reads a ~8192² TIFF chunk (~1 GB) plus loads shapefile GDFs
+     (~200 MB each), so each worker needs ~1.5-2 GB safely.
+     On a 48 GB machine with 16 workers that's 24-32 GB — close to the limit.
 
 Specialist bootstrap mode (SPECIALIST_PREPROCESS=1):
-  Merges config_specialist.py's SHAPEFILE_MAP (includes Bridge, Railway,
-  Utility) so the specialist can self-bootstrap from raw data on a machine
-  that has never run the generalist pipeline.
-
-RAM per worker: ~1.5 GB. With 16 workers: ~24 GB peak.
-Tune NUM_WORKERS down if RAM is tight.
+  Uses config_specialist.py's SHAPEFILE_MAP (includes Bridge/Railway/Utility).
 """
 
 import os
@@ -53,9 +39,13 @@ from config import (
     MAX_PROCESSED_GB, RANDOM_SEED,
 )
 
+# ── Shard identity — stamped into tiles_meta.json for skip-detection ─────────
+# Set by 06_train_incremental.sh as SHARD_NAME=shard_1 / shard_2.
+# Allows the shell script to verify that tiles_meta.json belongs to the
+# current shard before deciding to skip preprocessing.
+SHARD_NAME = os.environ.get("SHARD_NAME", "")
+
 # ── Specialist bootstrap mode ─────────────────────────────────────────────────
-# When SPECIALIST_PREPROCESS=1, use config_specialist's SHAPEFILE_MAP so
-# Bridge/Railway/Utility tiles are rasterised in the same pass.
 _SPECIALIST_MODE = os.environ.get("SPECIALIST_PREPROCESS", "0") == "1"
 
 if _SPECIALIST_MODE:
@@ -66,9 +56,8 @@ if _SPECIALIST_MODE:
             CLASSES, SHAPEFILE_MAP, CLASS_PRIORITY,
             CLASS_LABELS, SAMPLER_CLASS_WEIGHTS,
         )
-        print(f"[PREPROCESS] Specialist bootstrap mode: "
-              f"using config_specialist SHAPEFILE_MAP ({len(SHAPEFILE_MAP)} classes)",
-              flush=True)
+        print(f"[PREPROCESS] Specialist bootstrap: using config_specialist "
+              f"SHAPEFILE_MAP ({len(SHAPEFILE_MAP)} classes)", flush=True)
     except ImportError:
         print("[WARN] SPECIALIST_PREPROCESS=1 but config_specialist not found — "
               "falling back to standard config.", flush=True)
@@ -77,9 +66,55 @@ else:
     from config import CLASSES, SHAPEFILE_MAP, CLASS_PRIORITY, CLASS_LABELS, SAMPLER_CLASS_WEIGHTS
 
 
-_available_cpus = multiprocessing.cpu_count()
-NUM_WORKERS     = min(16, max(2, _available_cpus - max(2, _available_cpus // 8)))
+# ── Worker count: cap by env var AND available RAM ────────────────────────────
+def _compute_num_workers() -> int:
+    """
+    Determine a safe worker count.
 
+    Priority:
+      1. MAX_PREPROCESS_WORKERS env var (set by shell script based on real available RAM)
+      2. Available RAM / RAM_PER_WORKER_GB  (auto-detect)
+      3. CPU-based fallback
+
+    Each worker needs ~2 GB:
+      - TIFF chunk read: 8192 × 8192 × 4 bands × float32 ≈ 1 GB
+      - Shapefile GDFs + buffers:                          ≈ 0.5 GB
+      - OS overhead + Python interpreter:                  ≈ 0.5 GB
+    """
+    RAM_PER_WORKER_GB = 2.0
+    cpu_max = min(16, max(2, multiprocessing.cpu_count() - max(2, multiprocessing.cpu_count() // 8)))
+
+    # ENV override (highest priority)
+    env_max = os.environ.get("MAX_PREPROCESS_WORKERS", "")
+    if env_max.strip().isdigit():
+        w = int(env_max.strip())
+        print(f"[PREPROCESS] MAX_PREPROCESS_WORKERS={w} (from env)", flush=True)
+        return max(1, min(w, 32))
+
+    # Auto-detect available RAM
+    try:
+        with open("/proc/meminfo") as f:
+            for line in f:
+                if "MemAvailable" in line:
+                    available_kb  = int(line.split()[1])
+                    available_gb  = available_kb / 1024 / 1024
+                    # Reserve 8 GB for OS + main process + safety headroom
+                    usable_gb     = max(0, available_gb - 8.0)
+                    ram_workers   = int(usable_gb / RAM_PER_WORKER_GB)
+                    w             = max(2, min(cpu_max, ram_workers))
+                    print(f"[PREPROCESS] Available RAM: {available_gb:.1f} GB → "
+                          f"usable={usable_gb:.1f} GB → {w} workers "
+                          f"(cpu_max={cpu_max})", flush=True)
+                    return w
+    except Exception:
+        pass
+
+    # Fallback: CPU-based only
+    print(f"[PREPROCESS] Using CPU-based worker count: {cpu_max}", flush=True)
+    return cpu_max
+
+
+NUM_WORKERS     = _compute_num_workers()
 CHUNK_SIZE      = 8192
 _COVERAGE_RATIO = max(float(MIN_COVERAGE_RATIO), 0.05)
 _BYTES_PER_TILE = (len(BAND_INDICES) * TILE_SIZE * TILE_SIZE * 4
@@ -103,16 +138,12 @@ def find_shapefiles(shp_dir) -> dict:
             print(f"  ✗ Not found: {shp_path}", flush=True)
     if not shp_map:
         print(f"  [WARN] No shapefiles matched in {shp_dir}. "
-              f"Check SHAPEFILE_MAP in config.py matches your filenames.", flush=True)
+              f"Check SHAPEFILE_MAP in config.py.", flush=True)
     return shp_map
 
 
 def find_shp_dir_for_tif(tif_path: Path, shp_dirs: list) -> Path:
-    """
-    Process B — spatial matching.
-    Returns the SHP dir whose shapefiles geographically overlap the TIFF.
-    Falls back to shp_dirs[0] with a warning if no match found.
-    """
+    """Process B — return the SHP dir that spatially overlaps the TIFF."""
     with rasterio.open(tif_path) as tif:
         tif_bounds = tif.bounds
         tif_crs    = tif.crs
@@ -192,7 +223,7 @@ def rasterize_coverage(gdfs, win_transform, h, w):
 
 
 def normalize(bands: np.ndarray) -> np.ndarray:
-    """p2/p98 clip to [0,1]. ImageNet normalization applied later in Dataset."""
+    """p2/p98 clip → [0,1]. ImageNet normalization applied later in Dataset."""
     bands = bands.astype(np.float32)
     for i in range(bands.shape[0]):
         b        = bands[i]
@@ -218,19 +249,13 @@ def build_token_buckets(max_tiles: int) -> dict:
     return buckets
 
 
-# ── Worker function (runs in subprocess) ─────────────────────────────────────
+# ── Worker function ───────────────────────────────────────────────────────────
 
 def process_chunk(args):
-    """
-    Runs in a worker process. Reads the TIFF chunk, rasterises labels and
-    coverage, filters tiles, returns (img_arr, msk_arr, meta) tuples.
-    Does NOT write to disk.
-    """
+    """Runs in a worker process. Does rasterisation and tiling. Never writes to disk."""
     (tif_path_str, shp_map_paths, row_off, col_off,
      chunk_h, chunk_w, stem, specialist_mode) = args
 
-    # Re-import correct config inside worker
-    _src = str(Path(tif_path_str).parent)  # unused — just avoiding stale closure
     if specialist_mode:
         _spec_dir = str(Path(__file__).resolve().parent.parent / "specialist")
         sys.path.insert(0, _spec_dir)
@@ -266,7 +291,7 @@ def process_chunk(args):
             if coverage.max() == 0:
                 return []
 
-            # Use worker-local _CLS and _CP for correct class IDs in specialist mode
+            # Build label using the worker-local class map
             label = np.zeros((chunk_h, chunk_w), dtype=np.uint8)
             for class_name in sorted(gdfs.keys(), key=lambda c: _CP.get(c, 0)):
                 gdf    = gdfs[class_name]
@@ -299,14 +324,12 @@ def process_chunk(args):
                     tid        = f"{stem}_r{gr:06d}_c{gc:06d}"
 
                     results.append((
-                        tile_img,
-                        tile_mask,
+                        tile_img, tile_mask,
                         {
                             "id":             tid,
                             "source":         Path(tif_path_str).name,
                             "folder":         str(Path(tif_path_str).parent),
-                            "row":            gr,
-                            "col":            gc,
+                            "row":            gr, "col": gc,
                             "coverage_ratio": float(tc.mean()),
                             "class_ids":      class_ids,
                         }
@@ -323,10 +346,8 @@ def process_chunk(args):
 
 def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
                           token_buckets: dict, bytes_written: list) -> tuple:
-    stride = TILE_SIZE - TILE_OVERLAP
     saved  = 0
     meta   = []
-
     shp_map_paths = {k: str(v) for k, v in shp_map.items()}
 
     with rasterio.open(tif_path) as tif:
@@ -340,7 +361,6 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
             return 0, []
 
         stem = tif_path.stem
-
         chunk_args = []
         for row_off in range(0, H - TILE_SIZE + 1, CHUNK_SIZE):
             for col_off in range(0, W - TILE_SIZE + 1, CHUNK_SIZE):
@@ -373,8 +393,7 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
             if bytes_written[0] >= _BUDGET_BYTES:
                 for f in futures:
                     f.cancel()
-                print(f"  [BUDGET] Disk budget reached at chunk {done}/{n_chunks}",
-                      flush=True)
+                print(f"  [BUDGET] Disk budget reached at chunk {done}/{n_chunks}", flush=True)
                 break
 
             try:
@@ -391,18 +410,13 @@ def process_tif_parallel(tif_path: Path, shp_map: dict, proc_dir: Path,
             for img_arr, msk_arr, tile_meta in tile_results:
                 if bytes_written[0] >= _BUDGET_BYTES:
                     break
-
                 class_ids  = tile_meta["class_ids"]
-                rarest_cls = max(class_ids,
-                                 key=lambda c: SAMPLER_CLASS_WEIGHTS.get(c, 0.0))
-
+                rarest_cls = max(class_ids, key=lambda c: SAMPLER_CLASS_WEIGHTS.get(c, 0.0))
                 if token_buckets.get(rarest_cls, 0) <= 0:
                     continue
-
                 tid = tile_meta["id"]
                 np.save(proc_dir / "images" / f"{tid}.npy", img_arr)
                 np.save(proc_dir / "masks"  / f"{tid}.npy", msk_arr)
-
                 token_buckets[rarest_cls] -= 1
                 bytes_written[0] += _BYTES_PER_TILE
                 saved += 1
@@ -441,16 +455,13 @@ def preprocess():
         print(f"[ERROR] SHP directory/directories not found:", flush=True)
         for m in missing:
             print(f"  {m}", flush=True)
-        if _SPECIALIST_MODE:
-            print("  Tip: Add Bridge/Railway/Utility shapefiles and list them in", flush=True)
-            print("       config_specialist.py → SHAPEFILE_MAP", flush=True)
         sys.exit(1)
 
     # ── TIFF file list ─────────────────────────────────────────────────────────
     tiff_files_env = os.environ.get("TIFF_FILES", "")
     if tiff_files_env:
-        tif_files = [Path(p.strip()) for p in tiff_files_env.split(":") if p.strip()]
-        tif_files = [p for p in tif_files if p.exists()]
+        tif_files   = [Path(p.strip()) for p in tiff_files_env.split(":") if p.strip()]
+        tif_files   = [p for p in tif_files if p.exists()]
         shard_label = f"shard split ({len(tif_files)} TIFFs)"
     else:
         tif_files   = list(raw_dir.glob("**/*.tif")) + list(raw_dir.glob("**/*.tiff"))
@@ -461,11 +472,9 @@ def preprocess():
         print(f"  Check RAW_DATA_DIR={DATA_RAW_DIR} and TIFF_FILES env vars.", flush=True)
         sys.exit(1)
 
-    # ── Process B: spatial SHP matching for every TIFF ─────────────────────────
-    n_shp = len(shp_dirs)
-    print(f"\nProcess B [{mode_str}]: "
-          f"{n_shp} SHP dir(s) — spatially matching each TIFF...", flush=True)
-
+    # ── Process B: spatial SHP matching ──────────────────────────────────────
+    print(f"\nProcess B [{mode_str}]: {len(shp_dirs)} SHP dir(s) — spatially matching...",
+          flush=True)
     tif_shp_maps: dict = {}
     for tif_path in tif_files:
         matched = find_shp_dir_for_tif(tif_path, shp_dirs)
@@ -477,8 +486,7 @@ def preprocess():
     print(f"Budget      : {MAX_PROCESSED_GB:.2f} GB  "
           f"→ max {_MAX_TILES:,} tiles  "
           f"({_BYTES_PER_TILE/1024**2:.2f} MB/tile)", flush=True)
-    print(f"Coverage    : ≥{_COVERAGE_RATIO*100:.0f}% polygon overlap per tile\n",
-          flush=True)
+    print(f"Coverage    : ≥{_COVERAGE_RATIO*100:.0f}% polygon overlap per tile\n", flush=True)
 
     token_buckets = build_token_buckets(_MAX_TILES)
     print("Per-class tile budgets:", flush=True)
@@ -511,13 +519,12 @@ def preprocess():
 
     if not all_meta:
         print("[ERROR] No tiles written.", flush=True)
-        print("  Check:", flush=True)
-        print("    (1) Shapefile filenames match SHAPEFILE_MAP in config.py", flush=True)
-        print("    (2) TIFF and shapefile CRS are compatible", flush=True)
+        print("  Check: (1) Shapefile filenames match SHAPEFILE_MAP in config.py", flush=True)
+        print("         (2) TIFF and shapefile CRS are compatible", flush=True)
         if _SPECIALIST_MODE:
-            print("    (3) Bridge/Railway/Utility shapefiles exist in your SHP folder", flush=True)
-            print("        and their filenames match config_specialist.py → SHAPEFILE_MAP", flush=True)
-        print("    Run: python src/00_inspect.py to diagnose", flush=True)
+            print("         (3) Bridge/Railway/Utility shapefiles listed in "
+                  "config_specialist.py SHAPEFILE_MAP", flush=True)
+        print("  Run: python src/00_inspect.py to diagnose", flush=True)
         sys.exit(1)
 
     _random.Random(RANDOM_SEED).shuffle(all_meta)
@@ -540,18 +547,20 @@ def preprocess():
             "total_tiles":       total_saved,
             "budget_gb":         MAX_PROCESSED_GB,
             "specialist_mode":   _SPECIALIST_MODE,
+            # Shard identity — read by 06_train_incremental.sh to decide
+            # whether to skip preprocessing on a restart/resume.
+            "shard_name":        SHARD_NAME,
         }, f, indent=2)
 
     print(f"\n✓ Done. {total_saved:,} tiles → {proc_dir}", flush=True)
 
     if _SPECIALIST_MODE:
         minor_ids   = {4, 5, 6}
-        minor_count = sum(1 for t in all_meta
-                          if minor_ids & set(t.get("class_ids", [])))
+        minor_count = sum(1 for t in all_meta if minor_ids & set(t.get("class_ids", [])))
         print(f"  Minor-class tiles (Bridge/Railway/Utility): {minor_count}", flush=True)
         if minor_count == 0:
-            print("  [WARN] Zero minor-class tiles found — specialist will train on major classes only.", flush=True)
-            print("         Add Bridge/Railway/Utility shapefiles to config_specialist.py → SHAPEFILE_MAP", flush=True)
+            print("  [WARN] Zero minor-class tiles — check SHAPEFILE_MAP in config_specialist.py",
+                  flush=True)
 
 
 if __name__ == "__main__":

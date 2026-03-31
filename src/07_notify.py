@@ -332,12 +332,16 @@ def notify_folder_complete(folder_name, step, total, train_loss, val_loss,
 
     per_class_html = ""
     if per_class_iou:
-        rows = "".join(
-            f"<tr {'style=\"background:#f0f0f0\"' if i%2 else ''}>"
-            f"<td style='padding:6px'>{label}</td>"
-            f"<td style='padding:6px'>{float(iou):.4f}</td></tr>"
-            for i, (label, iou) in enumerate(per_class_iou.items())
-        )
+        # Move the row generation out to avoid the f-string backslash error in older Python versions
+        row_list = []
+        for i, (label, iou) in enumerate(per_class_iou.items()):
+            row_style = 'style="background:#f0f0f0"' if i % 2 else ""
+            row_list.append(
+                f"<tr {row_style}>"
+                f"<td style='padding:6px'>{label}</td>"
+                f"<td style='padding:6px'>{float(iou):.4f}</td></tr>"
+            )
+        rows = "".join(row_list)
         per_class_html = f"""
         <h4 style="margin:16px 0 6px">Per-class IoU</h4>
         <table style="width:100%;border-collapse:collapse;">{rows}</table>"""

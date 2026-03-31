@@ -10,6 +10,7 @@ Everything you need to run, resume, fix, and extend the pipeline.
 |---|---|
 | Full run from scratch | `docker compose run --rm train-all --data-dir /raw_data/ALL` |
 | Resume from shard 2 | `docker compose run --rm train-all --data-dir /raw_data/ALL --from 2` |
+| Resume shard 2, preprocessing already done | `docker compose run --rm train-all --data-dir /raw_data/ALL --from 2 --skip-preprocess` |
 | Specialist only | `docker compose run --rm specialist` |
 | Generalist only (no specialist) | `docker compose run --rm train-all --data-dir /raw_data/ALL --skip-specialist` |
 | Run with a message | `docker compose run --rm train-all --data-dir /raw_data/ALL --message "Testing NIR"` |
@@ -144,6 +145,39 @@ What this does:
 > **Note:** The TIFF split is re-randomized each run. Shard 2 will be a
 > different set of TIFFs than the previous attempt. This is intentional —
 > you get different training diversity.
+
+#### Resume when preprocessing already finished
+
+If the container was OOM-killed **after** preprocessing completed but
+**before** training started (exit code 137), the tiles in `data/processed/`
+are still valid — you don't need to re-run preprocessing. Use
+`--skip-preprocess` to jump straight to training:
+
+```bash
+docker compose run --rm train-all \
+    --data-dir /raw_data/ALL \
+    --from 2 \
+    --skip-preprocess
+```
+
+What `--skip-preprocess` does:
+- Skips the entire preprocessing phase for every shard in this run
+- Checks if the replay buffer for this shard is already saved; if yes,
+  skips replay save too (independent check — see below)
+- Jumps directly to the RAM check and training
+
+> **Warning:** If `data/processed/` is empty or stale when you use this
+> flag, training will fail with a "no tiles" error. Remove the flag and
+> re-run to regenerate tiles.
+
+#### When to use what
+
+| Situation | Command |
+|---|---|
+| Shard 2 crashed during **training** | `--from 2` (re-preprocess + re-train) |
+| Shard 2 crashed during **preprocessing** | `--from 2` (re-preprocess from scratch) |
+| Shard 2 crashed **after** preprocess, **before** training | `--from 2 --skip-preprocess` |
+| Shard 2 crashed during replay save | `--from 2 --skip-preprocess` (replay re-saves automatically) |
 
 ### 3. Specialist Only
 
@@ -346,14 +380,33 @@ Options:
 The checkpoint is always safe — it's only written when val_mIoU improves.
 You will also receive an email with the exact resume command.
 
-Resume from the last good shard:
-```bash
-# If shard 1 finished, resume shard 2:
-docker compose run --rm train-all --data-dir /raw_data/ALL --from 2
+**Identify where the crash happened first:**
 
-# If both shards finished but specialist crashed:
+| What you see in logs | Where it crashed | Resume command |
+|---|---|---|
+| `Preprocessing shard_N...` still running | During preprocessing | `--from N` (re-preprocess) |
+| `Saving replay slice...` still running | During replay save | `--from N --skip-preprocess` |
+| `Training shard_N...` or `Epoch ...` | During training | `--from N --skip-preprocess` |
+
+```bash
+# Crashed during shard 2 training or replay save (preprocessing was done):
+docker compose run --rm train-all \
+    --data-dir /raw_data/ALL \
+    --from 2 \
+    --skip-preprocess
+
+# Crashed during shard 2 preprocessing (need to redo preprocess):
+docker compose run --rm train-all \
+    --data-dir /raw_data/ALL \
+    --from 2
+
+# Both shards finished but specialist crashed:
 docker compose run --rm specialist
 ```
+
+> **Exit code 137** (OOM-kill) after preprocessing completed is the most
+> common case — always use `--skip-preprocess` here to avoid repeating
+> the expensive preprocessing step.
 
 ### "CUDA out of memory"
 
@@ -528,6 +581,20 @@ Set in `.env` or `docker-compose.yml`:
 | `RESEND_API_KEY` | (optional) | Resend API key for email alerts |
 | `NOTIFY_TO` | (optional) | Email address for notifications |
 | `HF_TOKEN` | (optional) | HuggingFace token (if using private models) |
+
+### Pipeline Flags Reference
+
+| Flag | Description |
+|---|---|
+| `--data-dir /path` | Root folder containing TIFFs and SHP subdirs |
+| `--from N` | Resume from shard N (skips earlier shards) |
+| `--skip-preprocess` | Skip preprocessing for all shards in this run. Use when tiles already exist in `data/processed/` from a previous run |
+| `--skip-specialist` | Run generalist shards only, skip specialist |
+| `--specialist-only` | Skip all generalist shards, run specialist only |
+| `--pretrained /f.pth` | Fine-tune from an existing checkpoint |
+| `--init-weights /f.pth` | Load weights only — resets epoch to 0, full LR |
+| `--shp-dirs d1:d2` | Colon-separated SHP dirs (overrides auto-detection) |
+| `--message "text"` | Human-readable description stored in checkpoint and emails |
 
 ---
 

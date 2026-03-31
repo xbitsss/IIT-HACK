@@ -2,12 +2,12 @@
   "shard": "shard_2",
   "tiles": [
     {
-      "id": "TIMMOWAL_37695_ORI_r019520_c015808",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r020864_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 19520,
-      "col": 15808,
-      "coverage_ratio": 0.8476181030273438,
+      "row": 20864,
+      "col": 14912,
+      "coverage_ratio": 0.9036140441894531,
       "class_ids": [
         0,
         1,
@@ -15,512 +15,23 @@
       ]
     },
     {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089088_c073152",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075968_c108736",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 89088,
-      "col": 73152,
+      "row": 75968,
+      "col": 108736,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r016832_c019968",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 19968,
-      "coverage_ratio": 0.9211273193359375,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019968_c015360",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19968,
-      "col": 15360,
-      "coverage_ratio": 0.8710441589355469,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015808_c009536",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 9536,
-      "coverage_ratio": 0.9311294555664062,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c073152",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88192,
-      "col": 73152,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r017728_c016256",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17728,
-      "col": 16256,
-      "coverage_ratio": 0.760467529296875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c016832",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 16832,
-      "coverage_ratio": 0.8357772827148438,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r016832_c008640",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 8640,
-      "coverage_ratio": 0.9606552124023438,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019072_c004480",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 4480,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r007616_c017280",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7616,
-      "col": 17280,
-      "coverage_ratio": 0.9556312561035156,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c021760",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 21760,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c018176",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 18176,
-      "coverage_ratio": 0.8519935607910156,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018624_c005376",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 5376,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c073600",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88192,
-      "col": 73600,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010880_c010432",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r010880_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 10880,
-      "col": 10432,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c073728",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88640,
-      "col": 73728,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r008192_c012224",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8192,
-      "col": 12224,
-      "coverage_ratio": 0.9203414916992188,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r016384_c005824",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16384,
-      "col": 5824,
-      "coverage_ratio": 0.7888908386230469,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011328_c006720",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 6720,
-      "coverage_ratio": 0.7750015258789062,
-      "class_ids": [
-        0,
-        1,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014016_c025024",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14016,
-      "col": 25024,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r022208_c017280",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 22208,
-      "col": 17280,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011328_c006272",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 6272,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r097280_c092352",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 97280,
-      "col": 92352,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c019520",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 19520,
-      "coverage_ratio": 0.8092231750488281,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009536_c008064",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9536,
-      "col": 8064,
-      "coverage_ratio": 0.8249931335449219,
-      "class_ids": [
-        0,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013568_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13568,
-      "col": 22656,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r151040_c123776",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 151040,
-      "col": 123776,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014464_c017280",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 17280,
-      "coverage_ratio": 0.8810234069824219,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r022208_c017728",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 22208,
-      "col": 17728,
-      "coverage_ratio": 0.9908180236816406,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c089536",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88192,
-      "col": 89536,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r009536_c015808",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9536,
-      "col": 15808,
-      "coverage_ratio": 0.8343429565429688,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r012672_c008064",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 8064,
-      "coverage_ratio": 0.7624702453613281,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014464_c012224",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 12224,
-      "coverage_ratio": 0.9288520812988281,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 22208,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r021760_c018176",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 21760,
-      "col": 18176,
-      "coverage_ratio": 0.770111083984375,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009984_c008192",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9984,
-      "col": 8192,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c007616",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 7616,
-      "coverage_ratio": 0.8475265502929688,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018624_c009536",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 9536,
-      "coverage_ratio": 0.84185791015625,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r012672_c009984",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 9984,
-      "coverage_ratio": 0.9889297485351562,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r096832_c092800",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 96832,
-      "col": 92800,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c074176",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88192,
-      "col": 74176,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014016_c025472",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14016,
-      "col": 25472,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c011328",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
       "col": 11328,
-      "coverage_ratio": 0.9095649719238281,
+      "coverage_ratio": 0.9691200256347656,
       "class_ids": [
         0,
         1,
@@ -528,130 +39,12 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r014016_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14016,
-      "col": 22208,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r017728_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17728,
-      "col": 22208,
-      "coverage_ratio": 0.8567314147949219,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 22208,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r013120_c010880",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 10880,
-      "coverage_ratio": 0.7884788513183594,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c074176",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88640,
-      "col": 74176,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019520_c010880",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r019520_c022656",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 19520,
-      "col": 10880,
-      "coverage_ratio": 0.9585685729980469,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016384_c017280",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16384,
-      "col": 17280,
-      "coverage_ratio": 0.9888076782226562,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
       "col": 22656,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r017280_c008064",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17280,
-      "col": 8064,
-      "coverage_ratio": 0.9518318176269531,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c021760",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 21760,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r008192_c009536",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8192,
-      "col": 9536,
-      "coverage_ratio": 0.8423652648925781,
+      "coverage_ratio": 0.9193649291992188,
       "class_ids": [
         0,
         1,
@@ -659,12 +52,12 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r006720_c014016",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r016832_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 6720,
-      "col": 14016,
-      "coverage_ratio": 0.8206214904785156,
+      "row": 16832,
+      "col": 12672,
+      "coverage_ratio": 0.9699058532714844,
       "class_ids": [
         0,
         1,
@@ -672,212 +65,11 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r015360_c008064",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r070912_c105472",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 8064,
-      "coverage_ratio": 0.7925300598144531,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018624_c013120",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 13120,
-      "coverage_ratio": 0.8487052917480469,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c005376",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 5376,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r009984_c014912",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9984,
-      "col": 14912,
-      "coverage_ratio": 0.7627220153808594,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r017728_c005824",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17728,
-      "col": 5824,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c073728",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88192,
-      "col": 73728,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r021312_c020864",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 21312,
-      "col": 20864,
-      "coverage_ratio": 0.9032173156738281,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014464_c025024",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 25024,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r097728_c064960",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 97728,
-      "col": 64960,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019072_c004928",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 4928,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013120_c021760",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 21760,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r011328_c014912",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 14912,
-      "coverage_ratio": 0.8254585266113281,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r017728_c013568",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17728,
-      "col": 13568,
-      "coverage_ratio": 0.9243888854980469,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c073600",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88640,
-      "col": 73600,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r010432_c015808",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 15808,
-      "coverage_ratio": 0.9146881103515625,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014464_c016832",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 16832,
-      "coverage_ratio": 0.8255500793457031,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c089088",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88192,
-      "col": 89088,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r087744_c073152",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 87744,
-      "col": 73152,
+      "row": 70912,
+      "col": 105472,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
@@ -895,98 +87,74 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r011776_c013120",
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r067328_c159680",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 67328,
+      "col": 159680,
+      "coverage_ratio": 0.8985214233398438,
+      "class_ids": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019072_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 19072,
+      "col": 9536,
+      "coverage_ratio": 0.9832801818847656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073600_c109632",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73600,
+      "col": 109632,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 13120,
+      "coverage_ratio": 0.9794044494628906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r006272_c016384",
       "source": "37774_bagga ortho_3857.tif",
       "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 13120,
-      "coverage_ratio": 0.9771499633789062,
+      "row": 6272,
+      "col": 16384,
+      "coverage_ratio": 0.8790512084960938,
       "class_ids": [
         0,
         1
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r017280_c023104",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17280,
-      "col": 23104,
-      "coverage_ratio": 0.824920654296875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r015360_c012672",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 12672,
-      "coverage_ratio": 0.8599090576171875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089088_c089536",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 89088,
-      "col": 89536,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r008640_c014912",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8640,
-      "col": 14912,
-      "coverage_ratio": 0.7908668518066406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010432_c010880",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 10880,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r017280_c013120",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17280,
-      "col": 13120,
-      "coverage_ratio": 0.7940292358398438,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r017728_c016384",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r017728_c006272",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 17728,
-      "col": 16384,
-      "coverage_ratio": 0.7890739440917969,
+      "col": 6272,
+      "coverage_ratio": 0.9068145751953125,
       "class_ids": [
         0,
         1,
@@ -994,23 +162,58 @@
       ]
     },
     {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r087744_c073728",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r074176_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 87744,
-      "col": 73728,
+      "row": 74176,
+      "col": 108288,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r014464_c009984",
+      "id": "37458_fattu_bhila_ortho_3857_r008192_c016832",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8192,
+      "col": 16832,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r023552_c005824",
       "source": "37774_bagga ortho_3857.tif",
       "folder": "/raw_data/ALL",
+      "row": 23552,
+      "col": 5824,
+      "coverage_ratio": 0.8783798217773438,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019520_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 19520,
+      "col": 6720,
+      "coverage_ratio": 0.8929824829101562,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
       "row": 14464,
-      "col": 9984,
-      "coverage_ratio": 0.8041343688964844,
+      "col": 15808,
+      "coverage_ratio": 0.9654502868652344,
       "class_ids": [
         0,
         1,
@@ -1018,11 +221,285 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r010432_c010432",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075072_c106496",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 10432,
+      "row": 75072,
+      "col": 106496,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075072_c106944",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 75072,
+      "col": 106944,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r078208_c163840",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78208,
+      "col": 163840,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019072_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 19072,
+      "col": 9984,
+      "coverage_ratio": 0.9984931945800781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r008192_c017280",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8192,
+      "col": 17280,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r008064_c017280",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8064,
+      "col": 17280,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012224_c019072",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 12224,
+      "col": 19072,
+      "coverage_ratio": 0.8798866271972656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c006272",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10880,
+      "col": 6272,
+      "coverage_ratio": 0.8900985717773438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c089984",
+      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 88640,
+      "col": 89984,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r076864_c109632",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 76864,
+      "col": 109632,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14464,
+      "col": 16384,
+      "coverage_ratio": 0.9232406616210938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15360,
+      "col": 16384,
+      "coverage_ratio": 0.9944801330566406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r003584_c004928",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 3584,
+      "col": 4928,
+      "coverage_ratio": 0.9148521423339844,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16256,
+      "col": 16256,
+      "coverage_ratio": 0.8973846435546875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073728_c106496",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73728,
+      "col": 106496,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c014016",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16384,
+      "col": 14016,
+      "coverage_ratio": 0.9698410034179688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073600_c109184",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73600,
+      "col": 109184,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073600_c108736",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73600,
+      "col": 108736,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r078656_c164288",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78656,
+      "col": 164288,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 20416,
+      "coverage_ratio": 0.9029464721679688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 16256,
+      "coverage_ratio": 0.899871826171875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r015808_c009088",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 9088,
+      "coverage_ratio": 0.9585990905761719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r020416_c008064",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 20416,
+      "col": 8064,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r077760_c107840",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 77760,
+      "col": 107840,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
@@ -1041,21 +518,230 @@
       ]
     },
     {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c072704",
+      "id": "28996_NADALA_ORTHO_r003136_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 3136,
+      "col": 11328,
+      "coverage_ratio": 0.9376716613769531,
+      "class_ids": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r016832_c008640",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 8640,
+      "coverage_ratio": 0.9606552124023438,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r007616_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7616,
+      "col": 18176,
+      "coverage_ratio": 0.9092445373535156,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r011776_c013120",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11776,
+      "col": 13120,
+      "coverage_ratio": 0.9771499633789062,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r097280_c093248",
       "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 88192,
-      "col": 72704,
+      "row": 97280,
+      "col": 93248,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r087744_c073600",
+      "id": "37458_fattu_bhila_ortho_3857_r007616_c017728",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7616,
+      "col": 17728,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 14464,
+      "coverage_ratio": 0.9517898559570312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c004032",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10880,
+      "col": 4032,
+      "coverage_ratio": 0.9933547973632812,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r007616_c017280",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7616,
+      "col": 17280,
+      "coverage_ratio": 0.9556312561035156,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r007168_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7168,
+      "col": 13120,
+      "coverage_ratio": 0.9768867492675781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r014912_c002688",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14912,
+      "col": 2688,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r004032_c017728",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 4032,
+      "col": 17728,
+      "coverage_ratio": 0.9005050659179688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012672_c018624",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 12672,
+      "col": 18624,
+      "coverage_ratio": 0.8838233947753906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15360,
+      "col": 15808,
+      "coverage_ratio": 0.8738174438476562,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r009984_c013120",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 13120,
+      "coverage_ratio": 0.9048995971679688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r010432_c015808",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10432,
+      "col": 15808,
+      "coverage_ratio": 0.9146881103515625,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r074624_c107392",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 74624,
+      "col": 107392,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r096832_c092800",
       "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 87744,
+      "row": 96832,
+      "col": 92800,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r087296_c073600",
+      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 87296,
       "col": 73600,
       "coverage_ratio": 1.0,
       "class_ids": [
@@ -1063,51 +749,1177 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r016256_c007168",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r015808_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 16256,
+      "row": 15808,
+      "col": 15808,
+      "coverage_ratio": 0.9593429565429688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c007168",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17728,
       "col": 7168,
-      "coverage_ratio": 0.9242210388183594,
+      "coverage_ratio": 0.9978752136230469,
       "class_ids": [
         0,
-        1,
-        2
+        1
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r008640_c014464",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r076416_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 8640,
-      "col": 14464,
-      "coverage_ratio": 0.7712821960449219,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013120_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 22656,
+      "row": 76416,
+      "col": 108288,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r010880_c021760",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r078208_c107392",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78208,
+      "col": 107392,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r008064_c016832",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8064,
+      "col": 16832,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r005376_c008640",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 5376,
+      "col": 8640,
+      "coverage_ratio": 0.890289306640625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 10880,
-      "col": 21760,
+      "col": 16384,
+      "coverage_ratio": 0.9473190307617188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r000896_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 896,
+      "col": 10880,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 10880,
+      "coverage_ratio": 0.9621315002441406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009536_c008640",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9536,
+      "col": 8640,
+      "coverage_ratio": 0.8910789489746094,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r009536_c007168",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9536,
+      "col": 7168,
+      "coverage_ratio": 0.9532241821289062,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c025472",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13120,
+      "col": 25472,
+      "coverage_ratio": 0.9521064758300781,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r071808_c103680",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 71808,
+      "col": 103680,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r021312_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 21312,
+      "col": 15360,
+      "coverage_ratio": 0.990509033203125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018624_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 18624,
+      "col": 15360,
+      "coverage_ratio": 0.889862060546875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013120_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13120,
+      "col": 10432,
+      "coverage_ratio": 0.909332275390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018624_c008064",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 18624,
+      "col": 8064,
+      "coverage_ratio": 0.9372901916503906,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010432_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10432,
+      "col": 9984,
+      "coverage_ratio": 0.8732032775878906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r009536_c016256",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9536,
+      "col": 16256,
+      "coverage_ratio": 0.9649124145507812,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011328_c004480",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11328,
+      "col": 4480,
+      "coverage_ratio": 0.8743019104003906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c008640",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 8640,
+      "coverage_ratio": 0.8726310729980469,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r071360_c105920",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 71360,
+      "col": 105920,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018176_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 18176,
+      "col": 13120,
+      "coverage_ratio": 0.8764839172363281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r063168_c161024",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 63168,
+      "col": 161024,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10880,
+      "col": 16256,
+      "coverage_ratio": 0.97137451171875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r019968_c010432",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 19968,
+      "col": 10432,
+      "coverage_ratio": 0.8999557495117188,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c007168",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 7168,
+      "coverage_ratio": 0.8733482360839844,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r021312_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 21312,
+      "col": 17280,
+      "coverage_ratio": 0.9471664428710938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r065408_c152384",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 65408,
+      "col": 152384,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r016832_c008064",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 8064,
+      "coverage_ratio": 0.964508056640625,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075968_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 75968,
+      "col": 108288,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c014016",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 14016,
+      "coverage_ratio": 0.9237251281738281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c019968",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14464,
+      "col": 19968,
+      "coverage_ratio": 0.9552154541015625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 6720,
+      "coverage_ratio": 0.884735107421875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16384,
+      "col": 16832,
+      "coverage_ratio": 0.9169998168945312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r008192_c016256",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8192,
+      "col": 16256,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 20416,
+      "coverage_ratio": 0.9201011657714844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r001792_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 1792,
+      "col": 10880,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16384,
+      "col": 16256,
+      "coverage_ratio": 0.9133644104003906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r077312_c110080",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 77312,
+      "col": 110080,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r008192_c016384",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8192,
+      "col": 16384,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075072_c107392",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 75072,
+      "col": 107392,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c019072",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17728,
+      "col": 19072,
+      "coverage_ratio": 0.9333763122558594,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012224_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 12224,
+      "col": 13120,
+      "coverage_ratio": 0.8775978088378906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10880,
+      "col": 6720,
+      "coverage_ratio": 0.9699020385742188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c017728",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 17728,
+      "coverage_ratio": 0.9812393188476562,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018624_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 18624,
+      "col": 9984,
+      "coverage_ratio": 0.9440650939941406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r011328_c009088",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11328,
+      "col": 9088,
+      "coverage_ratio": 0.9503211975097656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c020864",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17728,
+      "col": 20864,
+      "coverage_ratio": 0.9254150390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010432_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10432,
+      "col": 11776,
+      "coverage_ratio": 0.8972129821777344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r063616_c156096",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 63616,
+      "col": 156096,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r077312_c107392",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 77312,
+      "col": 107392,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 13120,
+      "coverage_ratio": 0.8735847473144531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019968_c007168",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 19968,
+      "col": 7168,
+      "coverage_ratio": 0.9278984069824219,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r065536_c152384",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 65536,
+      "col": 152384,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14464,
+      "col": 20416,
+      "coverage_ratio": 0.9049224853515625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r063616_c154176",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 63616,
+      "col": 154176,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r017280_c008192",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 8192,
+      "coverage_ratio": 0.98040771484375,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 12672,
+      "coverage_ratio": 0.8976325988769531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 18176,
+      "coverage_ratio": 0.9896774291992188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 13568,
+      "coverage_ratio": 0.8976783752441406,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14016,
+      "col": 15808,
+      "coverage_ratio": 0.9393882751464844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r020416_c007616",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 20416,
+      "col": 7616,
+      "coverage_ratio": 0.9191398620605469,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c008192",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 8192,
+      "coverage_ratio": 0.9730606079101562,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14912,
+      "col": 16256,
+      "coverage_ratio": 0.9909820556640625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16256,
+      "col": 15360,
+      "coverage_ratio": 0.95013427734375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009536_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9536,
+      "col": 13120,
+      "coverage_ratio": 0.9325675964355469,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073600_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73600,
+      "col": 108288,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r076864_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 76864,
+      "col": 108288,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016384_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16384,
+      "col": 16384,
+      "coverage_ratio": 0.9948692321777344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r008640_c011776",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8640,
+      "col": 11776,
+      "coverage_ratio": 0.8789215087890625,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14464,
+      "col": 16256,
+      "coverage_ratio": 0.9276618957519531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r016832_c008192",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 8192,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        1
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c073728",
+      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 88640,
+      "col": 73728,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r078656_c163840",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78656,
+      "col": 163840,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r002688_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 2688,
+      "col": 10880,
+      "coverage_ratio": 0.9136695861816406,
+      "class_ids": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073728_c109184",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73728,
+      "col": 109184,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r024000_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 24000,
+      "col": 14912,
+      "coverage_ratio": 0.9570541381835938,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018176_c007168",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 18176,
+      "col": 7168,
+      "coverage_ratio": 0.9988479614257812,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008192_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8192,
+      "col": 6720,
+      "coverage_ratio": 0.9349327087402344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14464,
+      "col": 14912,
+      "coverage_ratio": 0.9762420654296875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14016,
+      "col": 16832,
+      "coverage_ratio": 0.8931694030761719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 11328,
+      "coverage_ratio": 0.9600296020507812,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 14464,
+      "coverage_ratio": 0.8940925598144531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r001792_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 1792,
+      "col": 11776,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15360,
+      "col": 16256,
+      "coverage_ratio": 0.9998092651367188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c072704",
+      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 88640,
+      "col": 72704,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r072704_c103680",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 72704,
+      "col": 103680,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r011328_c012672",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11328,
+      "col": 12672,
+      "coverage_ratio": 0.9044456481933594,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c006272",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 6272,
+      "coverage_ratio": 0.9359054565429688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073152_c104128",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73152,
+      "col": 104128,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 17280,
+      "coverage_ratio": 0.9218559265136719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r079104_c108736",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 79104,
+      "col": 108736,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r014912_c002240",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14912,
+      "col": 2240,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14912,
+      "col": 16384,
+      "coverage_ratio": 0.9750556945800781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11776,
+      "col": 10432,
+      "coverage_ratio": 0.9979095458984375,
+      "class_ids": [
+        0,
+        1,
+        2
       ]
     },
     {
@@ -1117,6 +1929,374 @@
       "row": 10880,
       "col": 13120,
       "coverage_ratio": 0.8820343017578125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012224_c018624",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 12224,
+      "col": 18624,
+      "coverage_ratio": 0.9478759765625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r071360_c097728",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 71360,
+      "col": 97728,
+      "coverage_ratio": 0.9765853881835938,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018176_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 18176,
+      "col": 6720,
+      "coverage_ratio": 0.9050140380859375,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089536_c090112",
+      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 89536,
+      "col": 90112,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r009984_c014016",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 14016,
+      "coverage_ratio": 0.9374275207519531,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14912,
+      "col": 9984,
+      "coverage_ratio": 0.9118309020996094,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073152_c105472",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73152,
+      "col": 105472,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14912,
+      "col": 20416,
+      "coverage_ratio": 0.8742485046386719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15360,
+      "col": 14464,
+      "coverage_ratio": 0.9028396606445312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012672_c025472",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 12672,
+      "col": 25472,
+      "coverage_ratio": 0.9941024780273438,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r007616_c016832",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7616,
+      "col": 16832,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010880_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10880,
+      "col": 10432,
+      "coverage_ratio": 0.9642105102539062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r006720_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 6720,
+      "col": 18176,
+      "coverage_ratio": 0.9759941101074219,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r079104_c105472",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 79104,
+      "col": 105472,
+      "coverage_ratio": 0.8745231628417969,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014464_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14464,
+      "col": 9984,
+      "coverage_ratio": 0.9797554016113281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r010432_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10432,
+      "col": 16256,
+      "coverage_ratio": 0.8956794738769531,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11776,
+      "col": 14464,
+      "coverage_ratio": 0.8912162780761719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073728_c104576",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73728,
+      "col": 104576,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r014016_c002240",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14016,
+      "col": 2240,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009536_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9536,
+      "col": 11776,
+      "coverage_ratio": 0.9164352416992188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075520_c106496",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 75520,
+      "col": 106496,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r078656_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78656,
+      "col": 108288,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 10880,
+      "coverage_ratio": 0.9027938842773438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r007616_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7616,
+      "col": 14912,
+      "coverage_ratio": 0.876129150390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r013568_c002688",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 2688,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 16384,
+      "coverage_ratio": 0.8856048583984375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c019968",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 19968,
+      "coverage_ratio": 0.8802833557128906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r015808_c008064",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 8064,
+      "coverage_ratio": 0.9834327697753906,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r020416_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 20416,
+      "col": 15808,
+      "coverage_ratio": 0.9697723388671875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r007616_c010880",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7616,
+      "col": 10880,
+      "coverage_ratio": 0.9471015930175781,
       "class_ids": [
         0,
         1,
@@ -1137,12 +2317,12 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r017280_c013568",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r000448_c009984",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 17280,
-      "col": 13568,
-      "coverage_ratio": 0.8208847045898438,
+      "row": 448,
+      "col": 9984,
+      "coverage_ratio": 0.8992919921875,
       "class_ids": [
         0,
         1,
@@ -1150,921 +2330,437 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r018624_c010432",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 10432,
-      "coverage_ratio": 0.8705406188964844,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019520_c004928",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19520,
-      "col": 4928,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c019520",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 19520,
-      "coverage_ratio": 0.8735542297363281,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r018624_c011328",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 11328,
-      "coverage_ratio": 0.7857856750488281,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r013568_c011328",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13568,
-      "col": 11328,
-      "coverage_ratio": 0.8622245788574219,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089088_c073600",
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089088_c073152",
       "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 89088,
-      "col": 73600,
+      "col": 73152,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c089984",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r084608_c102336",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 88640,
-      "col": 89984,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015360_c010432",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 10432,
-      "coverage_ratio": 0.7577133178710938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016256_c009536",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16256,
-      "col": 9536,
-      "coverage_ratio": 0.8983840942382812,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c008192",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 8192,
-      "coverage_ratio": 0.8089447021484375,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r012672_c013120",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 13120,
-      "coverage_ratio": 0.9290313720703125,
+      "row": 84608,
+      "col": 102336,
+      "coverage_ratio": 0.9187736511230469,
       "class_ids": [
         0,
         1
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r019072_c009984",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 9984,
-      "coverage_ratio": 0.9588623046875,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013120_c013568",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 13568,
-      "coverage_ratio": 0.9204330444335938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013120_c014016",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 14016,
-      "coverage_ratio": 0.9454231262207031,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c017728",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 17728,
-      "coverage_ratio": 0.8838424682617188,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r021312_c014464",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 21312,
-      "col": 14464,
-      "coverage_ratio": 0.8338432312011719,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019520_c004480",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19520,
-      "col": 4480,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014912_c011328",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14912,
-      "col": 11328,
-      "coverage_ratio": 0.7608985900878906,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014016_c017280",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14016,
-      "col": 17280,
-      "coverage_ratio": 0.7915306091308594,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 22656,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c018624",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 18624,
-      "coverage_ratio": 0.7502326965332031,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c012224",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 12224,
-      "coverage_ratio": 0.8516845703125,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c023552",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 23552,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c023552",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 23552,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015360_c024000",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 24000,
-      "coverage_ratio": 0.8343772888183594,
-      "class_ids": [
-        0,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013120_c007616",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 7616,
-      "coverage_ratio": 0.9763603210449219,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r006720_c013120",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 6720,
-      "col": 13120,
-      "coverage_ratio": 0.8356208801269531,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013120_c015360",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 15360,
-      "coverage_ratio": 0.9114761352539062,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010432_c006720",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 6720,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r009984_c014016",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9984,
-      "col": 14016,
-      "coverage_ratio": 0.9374275207519531,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r015808_c008064",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 8064,
-      "coverage_ratio": 0.9834327697753906,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016384_c018176",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r016384_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 16384,
-      "col": 18176,
-      "coverage_ratio": 0.9437026977539062,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016256_c017728",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16256,
-      "col": 17728,
-      "coverage_ratio": 0.89801025390625,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c014016",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 14016,
-      "coverage_ratio": 0.771240234375,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014912_c021760",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14912,
-      "col": 21760,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019968_c009088",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19968,
-      "col": 9088,
-      "coverage_ratio": 0.9910240173339844,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c023104",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 23104,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c010880",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 10880,
-      "coverage_ratio": 0.8901710510253906,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089536_c090112",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 89536,
-      "col": 90112,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015360_c023104",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 23104,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r150592_c124224",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 150592,
-      "col": 124224,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009984_c013568",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9984,
-      "col": 13568,
-      "coverage_ratio": 0.864013671875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r018624_c010880",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 10880,
-      "coverage_ratio": 0.7768287658691406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c019072",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 19072,
-      "coverage_ratio": 0.9712142944335938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c021760",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 21760,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r021312_c015360",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 21312,
-      "col": 15360,
-      "coverage_ratio": 0.8987617492675781,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r007168_c009984",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7168,
-      "col": 9984,
-      "coverage_ratio": 0.9505844116210938,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c014912",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 14912,
-      "coverage_ratio": 0.8272666931152344,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r011328_c012672",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
       "col": 12672,
-      "coverage_ratio": 0.9044456481933594,
+      "coverage_ratio": 0.8947105407714844,
       "class_ids": [
         0,
-        1
+        1,
+        2
       ]
     },
     {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089536_c089088",
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088192_c072704",
       "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 89536,
-      "col": 89088,
-      "coverage_ratio": 0.8273086547851562,
-      "class_ids": [
-        0,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010880_c009088",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10880,
-      "col": 9088,
+      "row": 88192,
+      "col": 72704,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r016832_c008192",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r078656_c107840",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 8192,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r019072_c014464",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 14464,
+      "row": 78656,
+      "col": 107840,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r008640_c011328",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r063616_c159680",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 8640,
-      "col": 11328,
-      "coverage_ratio": 0.7778739929199219,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009984_c008640",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9984,
-      "col": 8640,
+      "row": 63616,
+      "col": 159680,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r019072_c010880",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 10880,
-      "coverage_ratio": 0.9030113220214844,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r150144_c123776",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 150144,
-      "col": 123776,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r013568_c011776",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13568,
-      "col": 11776,
-      "coverage_ratio": 0.8807220458984375,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r020864_c019520",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 20864,
-      "col": 19520,
-      "coverage_ratio": 0.7530059814453125,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015808_c021312",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 21312,
-      "coverage_ratio": 0.7675247192382812,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019520_c009536",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19520,
-      "col": 9536,
-      "coverage_ratio": 0.9384422302246094,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r020864_c014464",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 20864,
-      "col": 14464,
-      "coverage_ratio": 0.993377685546875,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019072_c019968",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 19968,
-      "coverage_ratio": 0.8197021484375,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016384_c007168",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16384,
-      "col": 7168,
-      "coverage_ratio": 0.9326286315917969,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010432_c006272",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 6272,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c023104",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 23104,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r014464_c013120",
+      "id": "37774_bagga ortho_3857_r014464_c015360",
       "source": "37774_bagga ortho_3857.tif",
       "folder": "/raw_data/ALL",
       "row": 14464,
-      "col": 13120,
-      "coverage_ratio": 0.7807731628417969,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010880_c006272",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10880,
-      "col": 6272,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015808_c018624",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 18624,
-      "coverage_ratio": 0.860137939453125,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r008064_c015360",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8064,
       "col": 15360,
-      "coverage_ratio": 0.7542724609375,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014912_c016832",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14912,
-      "col": 16832,
-      "coverage_ratio": 0.7931671142578125,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r006720_c018624",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 6720,
-      "col": 18624,
-      "coverage_ratio": 0.8473281860351562,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r150144_c124224",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 150144,
-      "col": 124224,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r022208_c018176",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 22208,
-      "col": 18176,
-      "coverage_ratio": 0.7883758544921875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r007616_c011776",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7616,
-      "col": 11776,
-      "coverage_ratio": 0.9173240661621094,
+      "coverage_ratio": 0.9717903137207031,
       "class_ids": [
         0,
         1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c016256",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 16256,
+      "coverage_ratio": 0.8791427612304688,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 10432,
+      "coverage_ratio": 0.9527397155761719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r020416_c010432",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 20416,
+      "col": 10432,
+      "coverage_ratio": 0.8999290466308594,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017728_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17728,
+      "col": 6720,
+      "coverage_ratio": 0.9326896667480469,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008640_c006272",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8640,
+      "col": 6272,
+      "coverage_ratio": 0.9078407287597656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 12672,
+      "coverage_ratio": 0.9296188354492188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c015360",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 15360,
+      "coverage_ratio": 0.9908409118652344,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r007168_c016256",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7168,
+      "col": 16256,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15360,
+      "col": 9536,
+      "coverage_ratio": 0.9885368347167969,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r079104_c163840",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 79104,
+      "col": 163840,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075520_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 75520,
+      "col": 108288,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r019968_c017728",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 19968,
+      "col": 17728,
+      "coverage_ratio": 0.926910400390625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r063168_c160576",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 63168,
+      "col": 160576,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r012672_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 12672,
+      "col": 10432,
+      "coverage_ratio": 0.9517440795898438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r017280_c008064",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 8064,
+      "coverage_ratio": 0.9518318176269531,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r012224_c016256",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 12224,
+      "col": 16256,
+      "coverage_ratio": 0.9752731323242188,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r076416_c108736",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 76416,
+      "col": 108736,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014912_c018624",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14912,
+      "col": 18624,
+      "coverage_ratio": 0.9449348449707031,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r078208_c164288",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78208,
+      "col": 164288,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r004928_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 4928,
+      "col": 13568,
+      "coverage_ratio": 0.8990631103515625,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r077760_c163840",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 77760,
+      "col": 163840,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r015808_c009536",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 9536,
+      "coverage_ratio": 0.9495925903320312,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r065536_c151936",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 65536,
+      "col": 151936,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r083264_c123328",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 83264,
+      "col": 123328,
+      "coverage_ratio": 0.8872108459472656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r014016_c013120",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14016,
+      "col": 13120,
+      "coverage_ratio": 0.9613914489746094,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r072704_c102336",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 72704,
+      "col": 102336,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c017728",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 17728,
+      "coverage_ratio": 0.8733940124511719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r017280_c015808",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 17280,
+      "col": 15808,
+      "coverage_ratio": 0.9843406677246094,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r079104_c163264",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 79104,
+      "col": 163264,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
       ]
     },
     {
@@ -2080,237 +2776,23 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r011328_c021760",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073152_c108288",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 21760,
+      "row": 73152,
+      "col": 108288,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r017728_c013120",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 17728,
-      "col": 13120,
-      "coverage_ratio": 0.9575576782226562,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r020416_c014016",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 20416,
-      "col": 14016,
-      "coverage_ratio": 0.8332977294921875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019072_c016256",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 16256,
-      "coverage_ratio": 0.8267288208007812,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r008192_c008640",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8192,
-      "col": 8640,
-      "coverage_ratio": 0.7631683349609375,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011328_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 22656,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r014464_c008064",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 8064,
-      "coverage_ratio": 0.8703422546386719,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013120_c016384",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 16384,
-      "coverage_ratio": 0.7529029846191406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c008064",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 8064,
-      "coverage_ratio": 0.7693214416503906,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c018624",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 18624,
-      "coverage_ratio": 0.8469123840332031,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r007168_c018624",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7168,
-      "col": 18624,
-      "coverage_ratio": 0.80084228515625,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009984_c014016",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9984,
-      "col": 14016,
-      "coverage_ratio": 0.7628211975097656,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r023552_c006272",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 23552,
-      "col": 6272,
-      "coverage_ratio": 0.8213081359863281,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r009088_c008640",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9088,
-      "col": 8640,
-      "coverage_ratio": 0.8108749389648438,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r087296_c073600",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 87296,
-      "col": 73600,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r006720_c013568",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 6720,
-      "col": 13568,
-      "coverage_ratio": 0.9248237609863281,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019072_c012672",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 12672,
-      "coverage_ratio": 0.9218978881835938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r008064_c012224",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8064,
-      "col": 12224,
-      "coverage_ratio": 0.9242134094238281,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r015360_c009536",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "28996_NADALA_ORTHO_r015360_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 15360,
-      "col": 9536,
-      "coverage_ratio": 0.8399848937988281,
+      "col": 17280,
+      "coverage_ratio": 0.9467926025390625,
       "class_ids": [
         0,
         1,
@@ -2318,160 +2800,23 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r016832_c005376",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r072256_c105920",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 5376,
-      "coverage_ratio": 0.7825126647949219,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018624_c005824",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 5824,
+      "row": 72256,
+      "col": 105920,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r013568_c014464",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13568,
-      "col": 14464,
-      "coverage_ratio": 0.8282699584960938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009536_c017728",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9536,
-      "col": 17728,
-      "coverage_ratio": 0.7804183959960938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r008064_c015808",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8064,
-      "col": 15808,
-      "coverage_ratio": 0.7544593811035156,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r008064_c007168",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 8064,
-      "col": 7168,
-      "coverage_ratio": 0.75213623046875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089088_c089984",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 89088,
-      "col": 89984,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c016384",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 16384,
-      "coverage_ratio": 0.808990478515625,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c009984",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 9984,
-      "coverage_ratio": 0.9599342346191406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r097280_c093248",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 97280,
-      "col": 93248,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010880_c005824",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10880,
-      "col": 5824,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r014464_c008192",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 8192,
-      "coverage_ratio": 0.852508544921875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016384_c016832",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r016384_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 16384,
-      "col": 16832,
-      "coverage_ratio": 0.8958053588867188,
+      "col": 13120,
+      "coverage_ratio": 0.9543075561523438,
       "class_ids": [
         0,
         1,
@@ -2479,23 +2824,258 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r017280_c008192",
+      "id": "28996_NADALA_ORTHO_r007168_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 7168,
+      "col": 13568,
+      "coverage_ratio": 0.9180030822753906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r018176_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 18176,
+      "col": 20416,
+      "coverage_ratio": 0.9148292541503906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015360_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15360,
+      "col": 10880,
+      "coverage_ratio": 0.9629745483398438,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14016,
+      "col": 20416,
+      "coverage_ratio": 0.9161376953125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r072704_c106496",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 72704,
+      "col": 106496,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r072256_c103680",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 72256,
+      "col": 103680,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c011776",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 11776,
+      "coverage_ratio": 0.8996162414550781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r014016_c009984",
       "source": "37774_bagga ortho_3857.tif",
       "folder": "/raw_data/ALL",
-      "row": 17280,
-      "col": 8192,
-      "coverage_ratio": 0.98040771484375,
+      "row": 14016,
+      "col": 9984,
+      "coverage_ratio": 0.880401611328125,
       "class_ids": [
         0,
         1
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r014464_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r015360_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 22208,
+      "row": 15360,
+      "col": 10432,
+      "coverage_ratio": 0.9120445251464844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016256_c014016",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16256,
+      "col": 14016,
+      "coverage_ratio": 0.9769859313964844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r078208_c163264",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78208,
+      "col": 163264,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r013568_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 13120,
+      "coverage_ratio": 0.9509315490722656,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073600_c105920",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73600,
+      "col": 105920,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008640_c012672",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 8640,
+      "col": 12672,
+      "coverage_ratio": 0.9825782775878906,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r016832_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 17280,
+      "coverage_ratio": 0.9374847412109375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r075968_c107840",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 75968,
+      "col": 107840,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011776_c013568",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11776,
+      "col": 13568,
+      "coverage_ratio": 0.951202392578125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO_r077760_c163712",
+      "source": "NAGUL_450171_MADASE_450172_GHOTPAL_450137_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 77760,
+      "col": 163712,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r016832_c008192",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16832,
+      "col": 8192,
+      "coverage_ratio": 0.9894065856933594,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14016,
+      "col": 11328,
+      "coverage_ratio": 0.9856414794921875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r078208_c108736",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 78208,
+      "col": 108736,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
@@ -2514,12 +3094,36 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r008064_c018624",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "28996_NADALA_ORTHO_r013568_c011328",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 11328,
+      "coverage_ratio": 0.8765106201171875,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073600_c105024",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 73600,
+      "col": 105024,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r008064_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 8064,
-      "col": 18624,
-      "coverage_ratio": 0.7549285888671875,
+      "col": 6720,
+      "coverage_ratio": 0.8746986389160156,
       "class_ids": [
         0,
         1,
@@ -2527,160 +3131,12 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r013568_c007168",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13568,
-      "col": 7168,
-      "coverage_ratio": 0.7574691772460938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c014464",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 14464,
-      "coverage_ratio": 0.8840408325195312,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c013568",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 13568,
-      "coverage_ratio": 0.7741432189941406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016256_c016832",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r016256_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 16256,
-      "col": 16832,
-      "coverage_ratio": 0.9541358947753906,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r088640_c072704",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 88640,
-      "col": 72704,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r018176_c015360",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 15360,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r016832_c005824",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 5824,
-      "coverage_ratio": 0.7849349975585938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015808_c018176",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 18176,
-      "coverage_ratio": 0.921051025390625,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014912_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14912,
-      "col": 22656,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015808_c019968",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 19968,
-      "coverage_ratio": 0.8382301330566406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011328_c005376",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 5376,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014016_c016832",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14016,
-      "col": 16832,
-      "coverage_ratio": 0.9419784545898438,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r028160_c014464",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 28160,
       "col": 14464,
-      "coverage_ratio": 0.7647857666015625,
+      "coverage_ratio": 0.963958740234375,
       "class_ids": [
         0,
         1,
@@ -2688,48 +3144,23 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r015360_c007616",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r073728_c105920",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 7616,
-      "coverage_ratio": 0.8227767944335938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r021760_c010880",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 21760,
-      "col": 10880,
-      "coverage_ratio": 0.907501220703125,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011328_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 22208,
+      "row": 73728,
+      "col": 105920,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r012672_c017728",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "28996_NADALA_ORTHO_r008640_c006720",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 17728,
-      "coverage_ratio": 0.7912483215332031,
+      "row": 8640,
+      "col": 6720,
+      "coverage_ratio": 0.9495697021484375,
       "class_ids": [
         0,
         1,
@@ -2737,435 +3168,23 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r016832_c008064",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 8064,
-      "coverage_ratio": 0.964508056640625,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r014016_c009536",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14016,
-      "col": 9536,
-      "coverage_ratio": 0.7813262939453125,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012672_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 22656,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r019520_c009984",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19520,
-      "col": 9984,
-      "coverage_ratio": 0.7703971862792969,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016384_c009536",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16384,
-      "col": 9536,
-      "coverage_ratio": 0.9216880798339844,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r007168_c017280",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7168,
-      "col": 17280,
-      "coverage_ratio": 0.7763900756835938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r021312_c009536",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 21312,
-      "col": 9536,
-      "coverage_ratio": 0.9610404968261719,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009536_c018624",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9536,
-      "col": 18624,
-      "coverage_ratio": 0.8709945678710938,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r006720_c014016",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 6720,
-      "col": 14016,
-      "coverage_ratio": 0.8652725219726562,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016384_c009984",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16384,
-      "col": 9984,
-      "coverage_ratio": 0.9147796630859375,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015808_c011328",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 11328,
-      "coverage_ratio": 0.8696632385253906,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089536_c089536",
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r087744_c073152",
       "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 89536,
-      "col": 89536,
+      "row": 87744,
+      "col": 73152,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r015360_c011328",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 11328,
-      "coverage_ratio": 0.7851371765136719,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011776_c015360",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 15360,
-      "coverage_ratio": 0.8406944274902344,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018176_c004928",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 4928,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089088_c089088",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 89088,
-      "col": 89088,
-      "coverage_ratio": 0.8611373901367188,
-      "class_ids": [
-        0,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r009536_c007168",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9536,
-      "col": 7168,
-      "coverage_ratio": 0.9532241821289062,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r011328_c023104",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 23104,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016256_c018176",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16256,
-      "col": 18176,
-      "coverage_ratio": 0.9457778930664062,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r151040_c124224",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 151040,
-      "col": 124224,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r007168_c014016",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7168,
-      "col": 14016,
-      "coverage_ratio": 0.9589385986328125,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r007616_c015808",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7616,
-      "col": 15808,
-      "coverage_ratio": 0.9091148376464844,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r012672_c013568",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12672,
-      "col": 13568,
-      "coverage_ratio": 0.7569465637207031,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013568_c013120",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13568,
-      "col": 13120,
-      "coverage_ratio": 0.9459266662597656,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018624_c016384",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 16384,
-      "coverage_ratio": 0.77703857421875,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r012224_c016256",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 16256,
-      "coverage_ratio": 0.9752731323242188,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r009536_c016256",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9536,
-      "col": 16256,
-      "coverage_ratio": 0.9649124145507812,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018624_c017280",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 17280,
-      "coverage_ratio": 0.7703590393066406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r151936_c124224",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 151936,
-      "col": 124224,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r010432_c014912",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 14912,
-      "coverage_ratio": 0.8071022033691406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r015808_c007168",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 7168,
-      "coverage_ratio": 0.7671852111816406,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r015808_c024000",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15808,
-      "col": 24000,
-      "coverage_ratio": 0.8006477355957031,
-      "class_ids": [
-        0,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009984_c019968",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r009984_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 9984,
-      "col": 19968,
-      "coverage_ratio": 0.9153900146484375,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r018176_c015808",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18176,
-      "col": 15808,
-      "coverage_ratio": 0.7596588134765625,
-      "class_ids": [
-        0,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r013568_c007616",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 13568,
-      "col": 7616,
-      "coverage_ratio": 0.933441162109375,
+      "col": 17280,
+      "coverage_ratio": 0.9801483154296875,
       "class_ids": [
         0,
         1,
@@ -3173,35 +3192,12 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r011776_c024000",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r017728_c013120",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 11776,
-      "col": 24000,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016832_c019520",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 19520,
-      "coverage_ratio": 0.9583740234375,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r015360_c008192",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 15360,
-      "col": 8192,
-      "coverage_ratio": 0.8240852355957031,
+      "row": 17728,
+      "col": 13120,
+      "coverage_ratio": 0.8873291015625,
       "class_ids": [
         0,
         1,
@@ -3209,136 +3205,154 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r011328_c019520",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 11328,
-      "col": 19520,
-      "coverage_ratio": 0.7716102600097656,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r023552_c019520",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 23552,
-      "col": 19520,
-      "coverage_ratio": 0.7675743103027344,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019072_c009088",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19072,
-      "col": 9088,
-      "coverage_ratio": 0.9784278869628906,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c009088",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 9088,
-      "coverage_ratio": 0.7585525512695312,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r097280_c092800",
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r097280_c092352",
       "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 97280,
-      "col": 92800,
+      "col": 92352,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r014016_c022656",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r077760_c110080",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 14016,
-      "col": 22656,
+      "row": 77760,
+      "col": 110080,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r008064_c008640",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r009536_c019968",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9536,
+      "col": 19968,
+      "coverage_ratio": 0.9571075439453125,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r071808_c105024",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 71808,
+      "col": 105024,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r008064_c010880",
+      "source": "37774_bagga ortho_3857.tif",
       "folder": "/raw_data/ALL",
       "row": 8064,
-      "col": 8640,
-      "coverage_ratio": 0.7754669189453125,
+      "col": 10880,
+      "coverage_ratio": 0.9026832580566406,
       "class_ids": [
         0,
-        1,
-        2
+        1
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r018624_c012672",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r071808_c097728",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 12672,
-      "coverage_ratio": 0.8458023071289062,
+      "row": 71808,
+      "col": 97728,
+      "coverage_ratio": 0.8820037841796875,
       "class_ids": [
         0,
-        1,
-        2
+        1
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r016384_c017728",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r074176_c108736",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 16384,
-      "col": 17728,
-      "coverage_ratio": 0.8975906372070312,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r012224_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 12224,
-      "col": 22208,
+      "row": 74176,
+      "col": 108736,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r008192_c014912",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r019968_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 8192,
+      "row": 19968,
+      "col": 14464,
+      "coverage_ratio": 0.9015884399414062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r005376_c014016",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 5376,
+      "col": 14016,
+      "coverage_ratio": 0.9321060180664062,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r024576_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 24576,
       "col": 14912,
-      "coverage_ratio": 0.7746925354003906,
+      "coverage_ratio": 0.9341087341308594,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r074176_c105472",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 74176,
+      "col": 105472,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r070464_c097280",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 70464,
+      "col": 97280,
+      "coverage_ratio": 0.8938789367675781,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r009984_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 9984,
+      "col": 16384,
+      "coverage_ratio": 0.9278068542480469,
       "class_ids": [
         0,
         1,
@@ -3346,23 +3360,98 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r010880_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r011776_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 10880,
-      "col": 22208,
+      "row": 11776,
+      "col": 10880,
+      "coverage_ratio": 0.9967575073242188,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r013568_c011776",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 13568,
+      "col": 11776,
+      "coverage_ratio": 0.8807220458984375,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r071360_c105472",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 71360,
+      "col": 105472,
       "coverage_ratio": 1.0,
       "class_ids": [
         3
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r012672_c009984",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r015360_c007616",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15360,
+      "col": 7616,
+      "coverage_ratio": 0.9005699157714844,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r087744_c073600",
+      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 87744,
+      "col": 73600,
+      "coverage_ratio": 1.0,
+      "class_ids": [
+        3
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r010432_c016256",
+      "source": "37774_bagga ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 10432,
+      "col": 16256,
+      "coverage_ratio": 0.8827438354492188,
+      "class_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r014016_c018176",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 14016,
+      "col": 18176,
+      "coverage_ratio": 0.9079780578613281,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r012672_c009984",
+      "source": "37774_bagga ortho_3857.tif",
       "folder": "/raw_data/ALL",
       "row": 12672,
       "col": 9984,
-      "coverage_ratio": 0.8957557678222656,
+      "coverage_ratio": 0.9889297485351562,
       "class_ids": [
         0,
         1,
@@ -3382,36 +3471,12 @@
       ]
     },
     {
-      "id": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO_r089984_c089088",
-      "source": "BADETUMNAR_450157_BANGAPAL_450155_CHHOTETUMAR_450149_MOFALNAR_450150_ORTHO.tif",
+      "id": "28996_NADALA_ORTHO_r016384_c014464",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 89984,
-      "col": 89088,
-      "coverage_ratio": 0.8120307922363281,
-      "class_ids": [
-        0,
-        2,
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r014464_c025472",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 25472,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r007616_c015360",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 7616,
-      "col": 15360,
-      "coverage_ratio": 0.8431434631347656,
+      "row": 16384,
+      "col": 14464,
+      "coverage_ratio": 0.8988609313964844,
       "class_ids": [
         0,
         1,
@@ -3419,70 +3484,100 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r013120_c022208",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r015360_c016832",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 13120,
-      "col": 22208,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r018624_c004928",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 18624,
-      "col": 4928,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010880_c011328",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10880,
-      "col": 11328,
-      "coverage_ratio": 0.8545646667480469,
+      "row": 15360,
+      "col": 16832,
+      "coverage_ratio": 0.9006690979003906,
       "class_ids": [
         0,
-        2,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37458_fattu_bhila_ortho_3857_r005824_c011776",
+      "source": "37458_fattu_bhila_ortho_3857.tif",
+      "folder": "/raw_data/ALL",
+      "row": 5824,
+      "col": 11776,
+      "coverage_ratio": 0.9588203430175781,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r011328_c010880",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 11328,
+      "col": 10880,
+      "coverage_ratio": 0.9885063171386719,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "28996_NADALA_ORTHO_r015808_c009088",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 15808,
+      "col": 9088,
+      "coverage_ratio": 0.9861488342285156,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO_r079104_c109184",
+      "source": "MURDANDA_450879_AWAPALLI_CHINTAKONTA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 79104,
+      "col": 109184,
+      "coverage_ratio": 1.0,
+      "class_ids": [
         3
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r014464_c015360",
+      "id": "28996_NADALA_ORTHO_r016256_c016384",
+      "source": "28996_NADALA_ORTHO.tif",
+      "folder": "/raw_data/ALL",
+      "row": 16256,
+      "col": 16384,
+      "coverage_ratio": 0.9602317810058594,
+      "class_ids": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "37774_bagga ortho_3857_r012672_c013120",
       "source": "37774_bagga ortho_3857.tif",
       "folder": "/raw_data/ALL",
-      "row": 14464,
-      "col": 15360,
-      "coverage_ratio": 0.9717903137207031,
+      "row": 12672,
+      "col": 13120,
+      "coverage_ratio": 0.9290313720703125,
       "class_ids": [
         0,
         1
       ]
     },
     {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r150592_c123776",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
+      "id": "28996_NADALA_ORTHO_r005824_c017280",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 150592,
-      "col": 123776,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r010432_c015360",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 15360,
-      "coverage_ratio": 0.8365859985351562,
+      "row": 5824,
+      "col": 17280,
+      "coverage_ratio": 0.9549293518066406,
       "class_ids": [
         0,
         1,
@@ -3490,12 +3585,12 @@
       ]
     },
     {
-      "id": "37774_bagga ortho_3857_r014912_c012224",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "28996_NADALA_ORTHO_r017728_c005824",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 14912,
-      "col": 12224,
-      "coverage_ratio": 0.8449287414550781,
+      "row": 17728,
+      "col": 5824,
+      "coverage_ratio": 0.942352294921875,
       "class_ids": [
         0,
         1,
@@ -3503,12 +3598,12 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r011776_c009088",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r011776_c020416",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 11776,
-      "col": 9088,
-      "coverage_ratio": 0.9975967407226562,
+      "col": 20416,
+      "coverage_ratio": 0.9000434875488281,
       "class_ids": [
         0,
         1,
@@ -3516,70 +3611,38 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r008640_c009088",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r024448_c014912",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 8640,
-      "col": 9088,
-      "coverage_ratio": 0.9677886962890625,
+      "row": 24448,
+      "col": 14912,
+      "coverage_ratio": 0.8969535827636719,
       "class_ids": [
         0,
-        1
+        1,
+        2
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r010432_c019072",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r011328_c019520",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 19072,
-      "coverage_ratio": 0.9663887023925781,
+      "row": 11328,
+      "col": 19520,
+      "coverage_ratio": 0.8833122253417969,
       "class_ids": [
         0,
-        1
+        1,
+        2
       ]
     },
     {
-      "id": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO_r151488_c124224",
-      "source": "SAMLUR_450163_SIYANAR_450164_KUTULNAR_450165_BINJAM_450166_JHODIYAWADAM_450167_ORTHO.tif",
-      "folder": "/raw_data/ALL",
-      "row": 151488,
-      "col": 124224,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016256_c018624",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16256,
-      "col": 18624,
-      "coverage_ratio": 0.9053688049316406,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r010432_c009088",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 10432,
-      "col": 9088,
-      "coverage_ratio": 1.0,
-      "class_ids": [
-        3
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r014016_c013120",
-      "source": "37774_bagga ortho_3857.tif",
+      "id": "28996_NADALA_ORTHO_r014016_c010432",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
       "row": 14016,
-      "col": 13120,
-      "coverage_ratio": 0.9613914489746094,
+      "col": 10432,
+      "coverage_ratio": 0.9890708923339844,
       "class_ids": [
         0,
         1,
@@ -3587,76 +3650,12 @@
       ]
     },
     {
-      "id": "TIMMOWAL_37695_ORI_r016256_c017280",
-      "source": "TIMMOWAL_37695_ORI.tif",
+      "id": "28996_NADALA_ORTHO_r018624_c009536",
+      "source": "28996_NADALA_ORTHO.tif",
       "folder": "/raw_data/ALL",
-      "row": 16256,
-      "col": 17280,
-      "coverage_ratio": 0.913604736328125,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "37774_bagga ortho_3857_r016256_c005824",
-      "source": "37774_bagga ortho_3857.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16256,
-      "col": 5824,
-      "coverage_ratio": 0.8423347473144531,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r019520_c019520",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 19520,
-      "col": 19520,
-      "coverage_ratio": 0.8334732055664062,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009984_c018624",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9984,
-      "col": 18624,
-      "coverage_ratio": 0.8203201293945312,
-      "class_ids": [
-        0,
-        1,
-        2
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r009088_c018624",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 9088,
-      "col": 18624,
-      "coverage_ratio": 0.9722480773925781,
-      "class_ids": [
-        0,
-        1
-      ]
-    },
-    {
-      "id": "TIMMOWAL_37695_ORI_r016832_c018176",
-      "source": "TIMMOWAL_37695_ORI.tif",
-      "folder": "/raw_data/ALL",
-      "row": 16832,
-      "col": 18176,
-      "coverage_ratio": 0.9471855163574219,
+      "row": 18624,
+      "col": 9536,
+      "coverage_ratio": 0.9516716003417969,
       "class_ids": [
         0,
         1,

@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxext6 \
         libxrender-dev \
         libgomp1 \
+        procps \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -31,8 +32,18 @@ RUN conda update -n base -c defaults conda -y && \
 COPY src/requirements.txt ./src/requirements.txt
 RUN pip install --no-cache-dir -r src/requirements.txt
 
-COPY src/ ./src/
-RUN mkdir -p data/raw data/processed outputs checkpoints
+# ── Application code ──────────────────────────────────────────────────────────
+# NOTE: src/ and specialist/ are also volume-mounted at runtime (see
+# docker-compose.yml) so code edits are reflected without a rebuild.
+# These COPY instructions bake a working image for production deployments
+# where volume mounts may not be used.
+COPY src/       ./src/
+COPY specialist/ ./specialist/
 
+# Create required directories
+RUN mkdir -p data/raw data/processed data/relay outputs checkpoints \
+             specialist/checkpoints
+
+# Default entrypoint is inference — override with docker compose services
 ENTRYPOINT ["python", "src/04_inference.py"]
 CMD ["--help"]
