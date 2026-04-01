@@ -84,11 +84,11 @@ CLASS_THRESHOLDS = {
 # To actually label Bridge / Railway / Utility pixels during preprocessing,
 # add entries to SHAPEFILE_MAP in this file (overriding the base config):
 #
-#   SHAPEFILE_MAP = {
-#       "builtup":   "Built_Up_Area_type.shp",
-#       "road":      "Road.shp",
-#       "waterbody": "Water_Body.shp",
-#       "bridge":    "Bridge.shp",      ← add your shapefiles
-#       "railway":   "Railway.shp",
-#       "utility":   "Utility.shp",
-#   }
+SHAPEFILE_MAP = {
+      "builtup":   "Built_Up_Area_type.shp",
+      "road":      "Road.shp",
+      "waterbody": "Water_Body.shp",
+      "bridge":    "Bridge.shp",      #← add your shapefiles
+      "railway":   "Railway.shp",
+      "utility":   "Utility.shp",
+  }
